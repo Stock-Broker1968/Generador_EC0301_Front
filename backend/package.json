@@ -1,7 +1,7 @@
 {
   "name": "generando-ec-backend",
   "version": "1.0.0",
-  "description": "Backend para manejar pagos de Stripe y lógica de la app Generando EC.",
+  "description": "Backend para manejar pagos de Stripe, envío de códigos por email/WhatsApp y autenticación JWT para Generando EC0301.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -14,7 +14,9 @@
     "cors": "^2.8.5",
     "mysql2": "^3.9.7",
     "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3"
+    "bcryptjs": "^2.4.3",
+    "postmark": "^4.0.2",
+    "node-fetch": "^3.3.2"
   },
   "engines": {
     "node": "20.x"

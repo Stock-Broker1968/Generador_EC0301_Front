@@ -1,7 +1,7 @@
 /**
  * Sistema de Pagos para SkillsCert EC0301
- * Integración con Stripe para procesamiento de pagos
- * @version 2.0.0
+ * Integración con Stripe y Verificación de Pagos
+ * @version 2.1.0 (Sin conflictos con auth.js)
  */
 
 const payment = (function() {
@@ -47,6 +47,10 @@ const payment = (function() {
         try {
             console.log('[Payment] Creando sesión de checkout...');
 
+            // ¡IMPORTANTE! Esta URL ahora apunta a success.html
+            const successUrl = `${window.location.origin}/success.html?session_id={CHECKOUT_SESSION_ID}`;
+            const cancelUrl = `${window.location.origin}/index.html`;
+
             const response = await fetchWithRetry(`${CONFIG.BACKEND_URL}/create-checkout-session`, {
                 method: 'POST',
                 headers: {
@@ -55,8 +59,8 @@ const payment = (function() {
                 },
                 body: JSON.stringify({
                     priceId: 'price_skillscert_ec0301', // ID del producto en Stripe
-                    successUrl: `${window.location.origin}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-                    cancelUrl: `${window.location.origin}/index.html`,
+                    successUrl: successUrl,
+                    cancelUrl: cancelUrl,
                     metadata: {
                         product: 'EC0301 Full Access',
                         ...metadata
@@ -157,7 +161,6 @@ const payment = (function() {
                 throw new Error(result.error.message);
             }
 
-            // Si llegamos aquí, hubo un error (no debería ocurrir porque redirectToCheckout redirige)
             return true;
         } catch (error) {
             console.error('[Payment] Error en proceso de pago:', error);
@@ -185,6 +188,8 @@ const payment = (function() {
         try {
             console.log('[Payment] Verificando pago:', sessionId);
 
+            // IMPORTANTE: Esta es la ruta que tu backend debe exponer
+            // para verificar la sesión y generar el código de acceso.
             const response = await fetch(`${CONFIG.BACKEND_URL}/api/payment/verify`, {
                 method: 'POST',
                 headers: {
@@ -194,70 +199,21 @@ const payment = (function() {
             });
 
             if (!response.ok) {
-                throw new Error('No se pudo verificar el pago');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'No se pudo verificar el pago');
             }
 
             const data = await response.json();
             
             return {
                 success: data.success,
-                accessCode: data.accessCode,
-                email: data.email,
+                accessCode: data.accessCode, // El backend debe devolver esto
+                email: data.email,           // El backend debe devolver esto
                 paymentStatus: data.paymentStatus
             };
         } catch (error) {
             console.error('[Payment] Error verificando pago:', error);
             throw error;
-        }
-    }
-
-    // ==================== GESTIÓN DE CÓDIGOS ====================
-    async function requestAccessCode(email) {
-        try {
-            const response = await fetch(`${CONFIG.BACKEND_URL}/api/access/request-code`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'No se pudo solicitar el código');
-            }
-
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('[Payment] Error solicitando código:', error);
-            throw error;
-        }
-    }
-
-    async function validateAccessCode(code) {
-        try {
-            const response = await fetch(`${CONFIG.BACKEND_URL}/api/access/validate-code`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ code })
-            });
-
-            if (!response.ok) {
-                return { valid: false };
-            }
-
-            const data = await response.json();
-            return {
-                valid: data.valid,
-                email: data.email,
-                expiresAt: data.expiresAt
-            };
-        } catch (error) {
-            console.error('[Payment] Error validando código:', error);
-            return { valid: false };
         }
     }
 
@@ -322,34 +278,42 @@ const payment = (function() {
         }).format(amount);
     }
 
-    // ==================== WEBHOOKS (PROCESAMIENTO) ====================
-    function handleSuccessfulPayment(sessionData) {
-        console.log('[Payment] Pago exitoso procesado:', sessionData);
+    // ==================== MANEJO DE UI POST-PAGO ====================
+    // Estas funciones son llamadas por la página success.html
+    
+    function handleSuccessfulPayment(data) {
+        console.log('[Payment] Pago exitoso procesado:', data);
         
-        // Guardar información del pago
+        // Guardar información del pago (opcional, para depuración)
         try {
             localStorage.setItem('payment_success', JSON.stringify({
-                sessionId: sessionData.sessionId,
+                sessionId: currentSessionId,
                 timestamp: Date.now(),
-                amount: sessionData.amount,
-                email: sessionData.email
+                email: data.email
             }));
         } catch (error) {
             console.error('[Payment] Error guardando información de pago:', error);
         }
 
-        // Notificar éxito
+        // Notificar éxito con el código
         Swal.fire({
             icon: 'success',
             title: '¡Pago Exitoso!',
             html: `
-                <p>Tu código de acceso ha sido enviado a:</p>
-                <p style="font-weight: bold; color: #1E3A8A;">${sessionData.email}</p>
-                <p style="font-size: 0.9rem; color: #6B7280; margin-top: 1rem;">
-                    Revisa tu WhatsApp para obtener el código de 6 dígitos.
-                </p>
+                <p>Tu pago ha sido procesado correctamente.</p>
+                <p>Tu código de acceso es:</p>
+                <div style="font-size: 2.5rem; font-weight: bold; color: #1E3A8A; margin: 1rem 0; letter-spacing: 0.2rem; background: #F8FAFC; padding: 1rem; border-radius: 8px;">
+                    ${data.accessCode}
+                </div>
+                <p style="margin-top: 1rem;">Hemos enviado tu código a <strong>${data.email}</strong> y a tu número de <strong>WhatsApp</strong>.</p>
+                <p>Serás redirigido a la página de inicio.</p>
             `,
-            confirmButtonColor: '#22C55E'
+            confirmButtonText: '¡Entendido!',
+            confirmButtonColor: '#22C55E',
+            allowOutsideClick: false
+        }).then(() => {
+            // Redirigir al usuario de vuelta al index
+            window.location.href = '/index.html';
         });
     }
 
@@ -362,10 +326,14 @@ const payment = (function() {
             html: `
                 <p>${error.message || 'El pago no pudo ser procesado'}</p>
                 <p style="font-size: 0.9rem; color: #6B7280; margin-top: 1rem;">
-                    No se realizó ningún cargo. Puedes intentar nuevamente.
+                    No se realizó ningún cargo. Serás redirigido.
                 </p>
             `,
-            confirmButtonColor: '#EF4444'
+            confirmButtonColor: '#EF4444',
+            allowOutsideClick: false
+        }).then(() => {
+            // Redirigir al usuario de vuelta al index
+            window.location.href = '/index.html';
         });
     }
 
@@ -374,8 +342,6 @@ const payment = (function() {
         init,
         processPayment,
         verifyPayment,
-        requestAccessCode,
-        validateAccessCode,
         checkBackendHealth,
         formatPrice,
         handleSuccessfulPayment,

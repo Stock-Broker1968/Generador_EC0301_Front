@@ -1,24 +1,84 @@
 {
-  "name": "generando-ec-backend",
-  "version": "1.0.0",
-  "description": "Backend para manejar pagos de Stripe, envío de códigos por email/WhatsApp y autenticación JWT para Generando EC0301.",
-  "main": "server.js",
+  "name": "skillscert-ec0301",
+  "version": "2.0.0",
+  "description": "Sistema Integral de Diseño de Cursos bajo el estándar EC0301 del CONOCER",
+  "main": "index.html",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "npx http-server -p 8000 -c-1",
+    "dev": "npx live-server --port=8000 --no-browser",
+    "test": "echo \"No tests configured yet\" && exit 0",
+    "lint": "eslint sistema_central/**/*.js",
+    "format": "prettier --write \"**/*.{js,html,css,md}\"",
+    "validate": "npm run lint && npm run format",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "netlify deploy --prod"
   },
-  "dependencies": {
-    "express": "^4.19.2",
-    "dotenv": "^16.4.5",
-    "stripe": "^16.2.0",
-    "cors": "^2.8.5",
-    "mysql2": "^3.9.7",
-    "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3",
-    "postmark": "^4.0.2",
-    "node-fetch": "^3.3.2"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tu-usuario/skillscert-ec0301.git"
+  },
+  "keywords": [
+    "ec0301",
+    "conocer",
+    "capacitacion",
+    "cursos",
+    "teleformacion",
+    "elearning",
+    "educacion",
+    "certificacion",
+    "stripe",
+    "javascript"
+  ],
+  "author": {
+    "name": "SkillsCert Team",
+    "email": "soporte@skillscert.com",
+    "url": "https://skillscert.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tu-usuario/skillscert-ec0301/issues"
+  },
+  "homepage": "https://github.com/tu-usuario/skillscert-ec0301#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
   },
   "engines": {
-    "node": "20.x"
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions"
+  ],
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 4,
+    "useTabs": false,
+    "printWidth": 100,
+    "trailingComma": "none"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-console": "warn",
+      "no-unused-vars": "warn",
+      "semi": ["error", "always"],
+      "quotes": ["error", "single"]
+    }
   }
 }

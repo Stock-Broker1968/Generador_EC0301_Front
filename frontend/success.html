@@ -3,86 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillsCert EC0301 - Verificando Pago</title>
-    
+    <title>Pago Exitoso - SkillsCert EC0301</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <script src="../sistema_central/payment.js" defer></script>
-    
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            color: white;
-            text-align: center;
-        }
-    </style>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="../sistema_central/payment.js"></script>
 </head>
 <body>
-
-    <h1>Verificando tu pago...</h1>
-    <p>Por favor, no cierres ni recargues esta página.</p>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // Esperar a que 'payment.js' se cargue
-            function checkPaymentModule() {
-                if (typeof payment !== 'undefined' && payment.verifyPayment) {
-                    // El módulo está listo, iniciar verificación
-                    handlePaymentVerification();
+        // Obtener session_id de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+
+        if (!sessionId) {
+            window.location.href = '/index.html';
+        }
+
+        // Verificar el pago
+        payment.verifyPayment(sessionId)
+            .then(data => {
+                if (data.success) {
+                    payment.handleSuccessfulPayment(data);
                 } else {
-                    // Esperar 100ms y reintentar
-                    setTimeout(checkPaymentModule, 100);
+                    payment.handleFailedPayment(new Error('Pago no verificado'));
                 }
-            }
-
-            async function handlePaymentVerification() {
-                try {
-                    // 1. Mostrar modal de carga
-                    Swal.fire({
-                        title: 'Verificando tu pago...',
-                        text: 'Estamos generando tu código de acceso. ¡No recargues la página!',
-                        icon: 'info',
-                        allowOutsideClick: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-
-                    // 2. Obtener el session_id de la URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const sessionId = urlParams.get('session_id');
-
-                    if (!sessionId) {
-                        throw new Error('ID de sesión no encontrado. Pago inválido.');
-                    }
-
-                    // 3. Verificar el pago con el backend
-                    // Esta función ahora existe en 'payment.js'
-                    const data = await payment.verifyPayment(sessionId);
-
-                    if (data.success && data.accessCode) {
-                        // 4. Mostrar modal de éxito
-                        // Esta función también existe en 'payment.js'
-                        payment.handleSuccessfulPayment(data);
-                    } else {
-                        throw new Error(data.message || 'Verificación fallida');
-                    }
-
-                } catch (error) {
-                    console.error('Error en la página de éxito:', error);
-                    // 5. Mostrar modal de error
-                    // Esta función también existe en 'payment.js'
-                    payment.handleFailedPayment(error);
-                }
-            }
-
-            // Iniciar el proceso
-            checkPaymentModule();
-        });
+            })
+            .catch(error => {
+                payment.handleFailedPayment(error);
+            });
     </script>
 </body>
 </html>

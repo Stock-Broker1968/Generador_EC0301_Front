@@ -1,497 +1,510 @@
-# 🎓 SISTEMA EC0301 SKILLSCERT
-## Plataforma Integral para Diseño de Cursos de Capacitación Presencial
+# 🎓 SkillsCert EC0301 - Sistema Integral de Diseño de Cursos
 
-[![Versión](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/skillscert/ec0301)
-[![Estándar](https://img.shields.io/badge/estándar-EC0301-green.svg)](https://conocer.gob.mx)
-[![Licencia](https://img.shields.io/badge/licencia-Propietaria-red.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-2.0.0-green.svg)](package.json)
+[![Status](https://img.shields.io/badge/status-production-success.svg)]()
 
----
-
-## 🌟 DESCRIPCIÓN
-
-**SkillsCert EC0301** es un sistema web completo y profesional para el diseño de cursos de capacitación presencial, sus instrumentos de evaluación y material didáctico, completamente alineado al **Estándar de Competencia EC0301 del CONOCER**.
-
-### ✨ Características Destacadas
-
-- 🤖 **Generación por Inteligencia Artificial** de contenido educativo
-- 📊 **Auditoría automática** de cumplimiento EC0301 en tiempo real
-- 🔄 **Flujo de trabajo modular** con 6 etapas interconectadas
-- 📦 **Generación automática** de portafolio completo de evidencias
-- 💾 **Sistema de autoguardado** y respaldos automáticos
-- 🎨 **Interfaz profesional** e intuitiva
+Sistema profesional para el diseño completo de cursos de capacitación bajo el estándar **EC0301 del CONOCER**, especializado en **teleformación en línea**.
 
 ---
 
-## 🚀 INICIO RÁPIDO
+## 📋 Tabla de Contenidos
 
-### 1. Instalación Simple
-```bash
-# Descargar archivos del sistema
-git clone https://github.com/skillscert/ec0301.git
-cd ec0301
-
-# Servidor local (Python)
-python -m http.server 8000
-
-# Acceder en navegador
-http://localhost:8000
-```
-
-### 2. Primer Uso
-1. Abrir `index.html` en navegador moderno
-2. Hacer clic en "Comenzar Proyecto"
-3. Completar información básica del curso
-4. Seguir el flujo modular hasta completar 95%+ de cumplimiento
-5. Generar portafolio ZIP final
+- [Características](#-características)
+- [Requisitos](#-requisitos)
+- [Instalación](#-instalación)
+- [Configuración](#-configuración)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
+- [Uso](#-uso)
+- [Módulos del Sistema](#-módulos-del-sistema)
+- [API y Endpoints](#-api-y-endpoints)
+- [Seguridad](#-seguridad)
+- [Despliegue](#-despliegue)
+- [Contribuir](#-contribuir)
+- [Licencia](#-licencia)
+- [Soporte](#-soporte)
 
 ---
 
-## 📁 ESTRUCTURA DEL PROYECTO
+## ✨ Características
 
-```
-📦 skillscert-ec0301/
-├── 🌐 PÁGINAS PRINCIPALES
-│   ├── 📄 index.html                     # Dashboard principal
-│   ├── 📄 carta-descriptiva.html         # Módulo 1: Carta Descriptiva
-│   ├── 📄 logistica.html                 # Módulo 2: Logística
-│   ├── 📄 evaluaciones.html              # Módulo 3: Evaluaciones
-│   ├── 📄 manuales.html                  # Módulo 4: Manuales
-│   ├── 📄 resultados.html                # Módulo 5: Resultados
-│   └── 📄 auditoria.html                 # Módulo 6: Auditoría
-│
-├── ⚙️ SISTEMA CENTRAL
-│   ├── 🔧 ec0301-data-manager.js         # Gestor central de datos
-│   └── 🔐 auth.js                        # Sistema de autenticación
-│
-└── 📚 DOCUMENTACIÓN
-    ├── 📋 MANUAL_USUARIO_COMPLETO.md
-    ├── 📊 RESUMEN_EJECUTIVO_EC0301.md
-    ├── ✅ recomendaciones_compliance_ec0301.md
-    └── 🛠️ GUIA_INSTALACION_CONFIGURACION.md
-```
+### 🎯 Cumplimiento EC0301
+- ✅ Validación automática de criterios del estándar CONOCER
+- ✅ Generación de portafolio de evidencias completo
+- ✅ Auditoría integrada para certificación
 
----
+### 🤖 Inteligencia Artificial
+- Generación automática de contenido educativo
+- Creación de instrumentos de evaluación
+- Manuales del participante e instructor por IA
 
-## 🛠️ MÓDULOS DEL SISTEMA
+### 📊 Sistema Modular
+1. **Carta Descriptiva** - Documento maestro del curso
+2. **Logística** - Gestión operativa y administrativa
+3. **Evaluaciones** - Diagnóstica, formativa, sumativa y satisfacción
+4. **Manuales** - Material didáctico completo
+5. **Resultados** - Captura de calificaciones y reportes
+6. **Auditoría** - Validación final y exportación
 
-### 1️⃣ Carta Descriptiva
-**El Documento Maestro**
-- ✅ Información general del curso
-- ✅ Objetivos general y particulares
-- ✅ Temario de desarrollo detallado
-- ✅ Sistema de evaluación configurable
-- ✅ Requerimientos técnicos y logísticos
-
-### 2️⃣ Logística
-**Documentos Operativos**
-- ✅ Lista de asistencia dinámica
-- ✅ Contrato de aprendizaje personalizable
-- ✅ Lista de requerimientos técnicos
-- ✅ Exportación a PDF profesional
-
-### 3️⃣ Evaluaciones
-**Instrumentos con IA**
-- ✅ Evaluación diagnóstica (preguntas múltiples)
-- ✅ Evaluación formativa (criterios de observación)
-- ✅ Evaluación sumativa (examen final)
-- ✅ Evaluación de satisfacción (encuesta estándar)
-- ✅ Editor interactivo de preguntas
-
-### 4️⃣ Manuales
-**Material Didáctico IA**
-- ✅ Manual del participante (contenido educativo)
-- ✅ Manual del instructor (guía metodológica)
-- ✅ Generación automática basada en objetivos
-- ✅ Editor de contenido en tiempo real
-
-### 5️⃣ Resultados
-**Gestión de Calificaciones**
-- ✅ Tabla dinámica de participantes
-- ✅ Cálculo automático de calificaciones
-- ✅ Estadísticas en tiempo real
-- ✅ Exportación a Excel y PDF
-- ✅ Generación de constancias
-
-### 6️⃣ Auditoría
-**Validación y Empaquetado**
-- ✅ Auditoría automática de 20+ criterios EC0301
-- ✅ Score de cumplimiento visual
-- ✅ Generación de portafolio ZIP completo
-- ✅ Recomendaciones inteligentes
-
----
-
-## 📊 FLUJO DE TRABAJO
-
-```mermaid
-graph TD
-    A[🏁 Inicio] --> B[📝 Carta Descriptiva]
-    B --> C[📦 Logística]
-    B --> D[📊 Evaluaciones]
-    B --> E[📚 Manuales]
-    C --> F[📈 Resultados]
-    D --> F
-    E --> F
-    F --> G[🔍 Auditoría]
-    G --> H[📁 Portafolio ZIP]
-    H --> I[✅ Completado]
-```
-
-### Fases del Proyecto
-
-1. **📝 Planificación** - Carta descriptiva completa
-2. **🤖 Generación** - Documentos con IA
-3. **📊 Implementación** - Captura de resultados
-4. **🔍 Validación** - Auditoría y empaquetado
-
----
-
-## 🎯 CUMPLIMIENTO EC0301
-
-### Criterios de Evaluación Cubiertos
-
-| Criterio | Descripción | Peso | Estado |
-|----------|-------------|------|--------|
-| **Información General** | Datos básicos del curso | 20% | ✅ |
-| **Objetivos** | General y particulares | 25% | ✅ |
-| **Contenido** | Temario desarrollado | 20% | ✅ |
-| **Evaluación** | Sistema completo | 15% | ✅ |
-| **Requerimientos** | Técnicos y logísticos | 10% | ✅ |
-| **Instrumentos** | Evaluaciones validadas | 10% | ✅ |
-
-### 📈 Score de Cumplimiento
-
-- **95-100%**: Excelente - Portafolio completo
-- **80-94%**: Bueno - Requiere ajustes menores
-- **60-79%**: Regular - Completar elementos faltantes
-- **<60%**: Deficiente - Revisar criterios básicos
-
----
-
-## 🤖 INTELIGENCIA ARTIFICIAL
-
-### Funcionalidades IA Integradas
-
-- **📝 Generación de Preguntas**: Evaluaciones basadas en temario
-- **📚 Creación de Manuales**: Contenido educativo estructurado
-- **🎯 Objetivos Inteligentes**: Sugerencias basadas en competencias
-- **📋 Criterios de Evaluación**: Observación formativa automatizada
-
-### Tecnología Subyacente
-
-- **Simulación Inteligente**: Patrones predefinidos adaptativos
-- **Contextualización**: Basada en objetivos y temario del usuario
-- **Validación Cruzada**: Coherencia entre módulos
-- **Personalización**: Adaptación al nivel y tipo de curso
-
----
-
-## 💻 REQUISITOS TÉCNICOS
-
-### Cliente (Navegador)
-- **Chrome 90+** (Recomendado)
-- **Firefox 88+**
-- **Safari 14+**
-- **Edge 90+**
-- **JavaScript habilitado**
-- **LocalStorage 5MB+**
-
-### Librerías Utilizadas
-- **Font Awesome 6.5.1** - Iconografía
-- **SweetAlert2** - Alertas elegantes
-- **jsPDF 2.5.1** - Generación PDF
-- **JSZip 3.10.1** - Compresión ZIP
-- **SheetJS** - Manejo Excel
-
-### Compatibilidad
-- ✅ **Responsive Design** - Móvil y desktop
-- ✅ **Cross-browser** - Principales navegadores
-- ✅ **Offline Partial** - Funcionalidad sin internet
-- ✅ **Progressive Web App** - Instalable
-
----
-
-## 📋 FUNCIONALIDADES PRINCIPALES
-
-### 🎨 Interfaz de Usuario
-- **Dashboard Central** con estado del proyecto
-- **Navegación Modular** progresiva y bloqueada
-- **Autoguardado** cada 30 segundos
-- **Indicadores Visuales** de progreso
-- **Responsive Design** para todos los dispositivos
+### 💳 Sistema de Pagos
+- Integración con Stripe
+- Pago único de **$500 MXN**
+- Códigos de acceso por WhatsApp
+- Transacciones seguras PCI-DSS
 
 ### 💾 Gestión de Datos
-- **LocalStorage** para persistencia local
-- **Backup Automático** cada 5 minutos
-- **Exportación/Importación** de proyectos
-- **Validación de Integridad** automática
-- **Migración de Versiones** transparente
-
-### 📄 Generación de Documentos
-- **PDF Profesional** con formato corporativo
-- **Excel Completo** con fórmulas y formato
-- **ZIP Estructurado** con 12+ documentos
-- **Impresión Optimizada** para cada módulo
-- **Constancias Personalizadas** automáticas
-
-### 🔍 Sistema de Auditoría
-- **20+ Criterios EC0301** evaluados automáticamente
-- **Score Visual** con círculo de progreso
-- **Recomendaciones Inteligentes** contextuales
-- **Estado de Módulos** en tiempo real
-- **Validación Cruzada** entre componentes
+- Persistencia local (LocalStorage)
+- Auto-guardado cada 30 segundos
+- Exportación/importación de proyectos
+- Backups automáticos
 
 ---
 
-## 🔧 CONFIGURACIÓN AVANZADA
+## 🔧 Requisitos
 
-### Modo de Desarrollo
-```javascript
-// Habilitar modo debug
-localStorage.setItem('ec0301_debug', 'true');
+### Navegadores Soportados
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
 
-// Ver logs detallados
-console.log(EC0301Manager.getSystemInfo());
-```
+### Tecnologías Core
+- HTML5
+- CSS3 (Variables, Grid, Flexbox)
+- JavaScript ES6+ (Módulos, Async/Await)
 
-### Personalización
-```css
-/* Cambiar colores corporativos */
-:root {
-    --primary: #1E3A8A;    /* Azul corporativo */
-    --accent: #FF6B35;     /* Naranja de acento */
-    --success: #22C55E;    /* Verde de éxito */
-}
-```
+### Dependencias CDN
+```html
+<!-- Font Awesome 6.5.1 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-### Integración API
-```javascript
-// Conectar con backend personalizado
-EC0301Manager.apiEndpoint = 'https://api.tudominio.com/ec0301';
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
 ```
 
 ---
 
-## 📊 MÉTRICAS Y ANALYTICS
+## 📦 Instalación
 
-### KPIs del Sistema
-- **Tiempo promedio** de completado: 2-4 horas
-- **Tasa de cumplimiento**: >95% en proyectos terminados
-- **Satisfacción del usuario**: 4.8/5.0
-- **Documentos generados**: 12+ por proyecto
+### Opción 1: Clonar Repositorio
 
-### Estadísticas de Uso
-- **Módulo más utilizado**: Carta Descriptiva (100%)
-- **IA más solicitada**: Generación de preguntas (85%)
-- **Exportación preferida**: Portafolio ZIP (78%)
-- **Dispositivo principal**: Desktop (92%)
-
----
-
-## 🛡️ SEGURIDAD Y PRIVACIDAD
-
-### Protección de Datos
-- **Almacenamiento Local**: Datos nunca salen del dispositivo
-- **Sin Tracking**: No se recopilan datos personales
-- **Encriptación**: LocalStorage protegido por navegador
-- **Backups Locales**: Respaldos en el mismo dispositivo
-
-### Control de Acceso
-- **Sistema de Códigos**: Acceso controlado (opcional)
-- **Sesiones Temporales**: Expiración automática
-- **Modo Demo**: Para pruebas sin restricciones
-- **Logs de Auditoría**: Seguimiento de acciones
-
----
-
-## 📈 ROADMAP Y FUTURAS VERSIONES
-
-### Versión 1.1 (Q2 2024)
-- 🔌 **API REST** para integración con sistemas LMS
-- 🌐 **Multi-idioma** (Inglés, Portugués)
-- 📱 **App Móvil** nativa para iOS y Android
-- 🤖 **IA Avanzada** con GPT-4 integration
-
-### Versión 1.2 (Q3 2024)
-- ☁️ **Cloud Storage** opcional
-- 👥 **Colaboración Multi-usuario**
-- 📊 **Analytics Avanzados**
-- 🎨 **Temas Personalizables**
-
-### Versión 2.0 (Q4 2024)
-- 🏢 **Versión Enterprise** con base de datos
-- 🔄 **Integración SCORM** para e-learning
-- 📺 **Video Tutoriales** integrados
-- 🎓 **Certificación Digital** blockchain
-
----
-
-## 🤝 CONTRIBUCIONES
-
-### Para Desarrolladores
 ```bash
-# Fork del repositorio
-git fork https://github.com/skillscert/ec0301
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/skillscert-ec0301.git
 
-# Clone local
-git clone https://github.com/tuusuario/ec0301.git
+# Entrar al directorio
+cd skillscert-ec0301
 
-# Crear rama de feature
-git checkout -b feature/nueva-funcionalidad
+# Copiar variables de entorno
+cp .env.example .env
 
-# Desarrollar y commit
-git commit -m "feat: agregar nueva funcionalidad"
-
-# Push y Pull Request
-git push origin feature/nueva-funcionalidad
+# Editar .env con tus credenciales
+nano .env
 ```
 
-### Guías de Contribución
-- **Código**: Seguir estándares JavaScript ES6+
-- **Documentación**: Markdown con emojis descriptivos
-- **Commits**: Conventional Commits format
-- **Testing**: Validar en múltiples navegadores
+### Opción 2: Descarga Directa
+
+1. Descarga el ZIP del repositorio
+2. Extrae los archivos
+3. Copia `.env.example` a `.env`
+4. Configura las variables de entorno
 
 ---
 
-## 📞 SOPORTE Y CONTACTO
+## ⚙️ Configuración
 
-### 🆘 Soporte Técnico
-- **📧 Email**: soporte@skillscert.com
-- **💬 Chat**: Sistema en línea 24/7
-- **📞 Teléfono**: +52 (55) 1234-5678
-- **🌐 Portal**: https://support.skillscert.com
+### 1. Variables de Entorno
 
-### 📚 Recursos
-- **📖 Documentación**: Completa en `/docs`
-- **🎥 Video Tutoriales**: YouTube SkillsCert
-- **💬 Comunidad**: Discord oficial
-- **📝 Blog**: Artículos y mejores prácticas
+Edita el archivo `.env`:
 
-### 🏢 Información Corporativa
-- **Empresa**: SkillsCert Technologies S.A. de C.V.
-- **RFCEmpresa**: SKC240101ABC
-- **Dirección**: Av. Reforma 123, CDMX, México
-- **Teléfono**: +52 (55) 1234-5678
+```bash
+# Stripe
+STRIPE_PUBLIC_KEY=pk_test_YOUR_KEY
+STRIPE_SECRET_KEY=sk_test_YOUR_SECRET
+
+# Backend
+BACKEND_URL=https://tu-backend.com
+
+# WhatsApp
+WHATSAPP_API_URL=https://api.twilio.com/...
+WHATSAPP_AUTH_TOKEN=your_token
+
+# JWT
+JWT_SECRET=your_secure_secret_min_32_chars
+```
+
+### 2. Configurar Stripe
+
+1. Crear cuenta en [stripe.com](https://stripe.com)
+2. Obtener claves API (Dashboard → Developers → API Keys)
+3. Configurar webhooks:
+   - Endpoint: `https://tu-backend.com/webhook/stripe`
+   - Eventos: `checkout.session.completed`, `payment_intent.succeeded`
+
+### 3. Configurar WhatsApp (Twilio)
+
+```bash
+# Obtener credenciales en twilio.com
+WHATSAPP_ACCOUNT_SID=ACXXXXXXXXXXXXXXXX
+WHATSAPP_AUTH_TOKEN=your_auth_token
+WHATSAPP_FROM_NUMBER=whatsapp:+14155238886
+```
 
 ---
 
-## 📜 LICENCIA Y TÉRMINOS
+## 📁 Estructura del Proyecto
 
 ```
-Copyright (c) 2024 SkillsCert Technologies
-
-Este software es propietario y está protegido por derechos de autor.
-El uso está limitado a licencias adquiridas legalmente.
-
-Para obtener una licencia comercial, contactar:
-ventas@skillscert.com
+skillscert-ec0301/
+├── index.html                    # Página principal
+├── sistema_central/              # Core del sistema
+│   ├── ec0301-data-manager.js    # Gestor de datos
+│   ├── auth.js                   # Autenticación
+│   └── payment.js                # Sistema de pagos
+├── modulos/                      # Páginas de módulos
+│   ├── carta-descriptiva.html
+│   ├── logistica.html
+│   ├── evaluaciones.html
+│   ├── manuales.html
+│   ├── resultados.html
+│   └── auditoria.html
+├── assets/                       # Recursos estáticos
+│   ├── css/
+│   ├── js/
+│   └── images/
+├── .env.example                  # Variables de entorno (template)
+├── .gitignore                    # Archivos ignorados
+├── README.md                     # Este archivo
+└── LICENSE                       # Licencia MIT
 ```
-
-### Términos de Uso
-- ✅ **Uso Comercial**: Con licencia válida
-- ✅ **Modificación**: Permitida para uso interno
-- ❌ **Redistribución**: No permitida sin autorización
-- ❌ **Ingeniería Inversa**: Prohibida expresamente
 
 ---
 
-## 🏆 RECONOCIMIENTOS
+## 🚀 Uso
 
-### Estándares y Certificaciones
-- 🎓 **CONOCER EC0301** - Cumplimiento total
-- 🏅 **ISO 9001** - Calidad en desarrollo
-- 🔒 **SOC 2** - Seguridad de datos
-- 🌍 **WCAG 2.1** - Accesibilidad web
+### Modo Desarrollo Local
+
+```bash
+# Opción 1: Servidor Python
+python -m http.server 8000
+
+# Opción 2: Servidor Node.js
+npx http-server -p 8000
+
+# Opción 3: Live Server (VS Code)
+# Instalar extensión "Live Server" y hacer clic derecho → Open with Live Server
+```
+
+Acceder a: `http://localhost:8000`
+
+### Flujo de Usuario
+
+1. **Acceso Inicial**
+   - Usuario ingresa al sistema
+   - Se muestra opción de pago ($500 MXN)
+
+2. **Proceso de Pago**
+   - Click en "Pagar Acceso"
+   - Redirección a Stripe Checkout
+   - Pago con tarjeta
+
+3. **Recepción de Código**
+   - Código de 6 dígitos enviado por WhatsApp
+   - Válido por 48 horas
+
+4. **Login**
+   - Ingreso de código
+   - Acceso al sistema completo
+
+5. **Creación de Proyecto**
+   - Completar módulos secuencialmente
+   - Auto-guardado continuo
+   - Exportación final
+
+---
+
+## 📚 Módulos del Sistema
+
+### 1. Carta Descriptiva (40%)
+**Función**: Documento maestro del curso
+
+**Contenido**:
+- Datos generales del curso
+- Objetivo general
+- Perfil de egreso
+- Temario detallado
+- Metodología didáctica
+- Sistema de evaluación
+
+**Salida**: Documento PDF estructurado
+
+---
+
+### 2. Logística (15%)
+**Función**: Gestión operativa
+
+**Contenido**:
+- Lista de asistencia
+- Contrato de aprendizaje
+- Requerimientos técnicos
+- Cronograma de sesiones
+
+**Salida**: Pack de documentos administrativos
+
+---
+
+### 3. Evaluaciones (20%)
+**Función**: Instrumentos de medición
+
+**Contenido**:
+- Evaluación diagnóstica
+- Evaluación formativa
+- Evaluación sumativa
+- Encuesta de satisfacción
+- Rúbricas de evaluación
+
+**Salida**: Suite completa de evaluaciones
+
+---
+
+### 4. Manuales (15%)
+**Función**: Material didáctico generado por IA
+
+**Contenido**:
+- Manual del Participante
+- Manual del Instructor
+- Presentaciones por tema
+- Material de apoyo
+
+**Salida**: Manuales en formato PDF/DOCX
+
+---
+
+### 5. Resultados (5%)
+**Función**: Gestión de calificaciones
+
+**Contenido**:
+- Captura de calificaciones
+- Reportes individuales
+- Estadísticas grupales
+- Constancias de participación
+
+**Salida**: Certificados y reportes
+
+---
+
+### 6. Auditoría (5%)
+**Función**: Validación y exportación
+
+**Contenido**:
+- Checklist EC0301
+- Validación de cumplimiento
+- Generación de portafolio (ZIP)
+- Reporte de auditoría
+
+**Salida**: Portafolio completo de evidencias
+
+---
+
+## 🔌 API y Endpoints
+
+### Autenticación
+
+```javascript
+// Verificar código de acceso
+POST /api/auth/verify-code
+Body: { code: "123456" }
+Response: { token, user: { email, userId } }
+
+// Refrescar token
+POST /api/auth/refresh
+Headers: { Authorization: Bearer TOKEN }
+Response: { token }
+
+// Logout
+POST /api/auth/logout
+Headers: { Authorization: Bearer TOKEN }
+```
+
+### Pagos
+
+```javascript
+// Crear sesión de Stripe
+POST /create-checkout-session
+Response: { id: "cs_test_..." }
+
+// Verificar pago
+POST /api/payment/verify
+Body: { sessionId }
+Response: { success, accessCode, email }
+```
+
+### Datos del Proyecto
+
+```javascript
+// Los datos se manejan localmente (LocalStorage)
+// Ver: sistema_central/ec0301-data-manager.js
+
+EC0301Manager.getData()
+EC0301Manager.setData(section, data)
+EC0301Manager.exportProject()
+```
+
+---
+
+## 🔒 Seguridad
+
+### Implementado
+
+✅ **HTTPS Obligatorio** en producción  
+✅ **JWT** para autenticación  
+✅ **Rate Limiting** en endpoints críticos  
+✅ **CORS** configurado  
+✅ **Input Validation** en todos los formularios  
+✅ **XSS Protection** mediante sanitización  
+✅ **CSRF Tokens** en formularios  
+
+### Recomendaciones
+
+⚠️ **Nunca** expongas claves en el código fuente  
+⚠️ **Rota** tokens y secretos regularmente  
+⚠️ **Usa** variables de entorno en hosting  
+⚠️ **Implementa** 2FA para administradores  
+⚠️ **Monitorea** logs de seguridad  
+
+---
+
+## 🌐 Despliegue
+
+### Vercel (Recomendado)
+
+```bash
+# Instalar Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+
+# Configurar variables de entorno en:
+# Vercel Dashboard → Settings → Environment Variables
+```
+
+### Netlify
+
+```bash
+# Instalar Netlify CLI
+npm i -g netlify-cli
+
+# Deploy
+netlify deploy --prod
+
+# Variables en: Site settings → Environment
+```
+
+### GitHub Pages
+
+```bash
+# Activar GitHub Pages en Settings → Pages
+# Branch: main
+# Folder: / (root)
+
+# NOTA: GitHub Pages solo soporta sitios estáticos
+# El backend debe estar en otro servidor
+```
+
+---
+
+## 🤝 Contribuir
+
+### Proceso
+
+1. Fork el proyecto
+2. Crea una rama: `git checkout -b feature/nueva-funcionalidad`
+3. Commit: `git commit -m 'Agrega nueva funcionalidad'`
+4. Push: `git push origin feature/nueva-funcionalidad`
+5. Abre un Pull Request
+
+### Estándares de Código
+
+- **ES6+** para JavaScript
+- **BEM** para nomenclatura CSS
+- **JSDoc** para documentación
+- **Prettier** para formato
+- **ESLint** para linting
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE)
+
+```
+Copyright (c) 2024 SkillsCert EC0301
+
+Permission is hereby granted, free of charge, to any person obtaining a copy...
+```
+
+---
+
+## 💬 Soporte
+
+### Documentación
+
+📖 [Wiki del Proyecto](https://github.com/tu-usuario/skillscert-ec0301/wiki)  
+📚 [Guías y Tutoriales](https://skillscert.com/docs)  
+
+### Contacto
+
+✉️ Email: soporte@skillscert.com  
+💬 WhatsApp: +52 XXX XXX XXXX  
+🐦 Twitter: [@SkillsCertMX](https://twitter.com/skillscertmx)  
+
+### Reportar Problemas
+
+🐛 [Issues en GitHub](https://github.com/tu-usuario/skillscert-ec0301/issues)
+
+---
+
+## 🙏 Créditos
+
+Desarrollado con ❤️ por el equipo de **SkillsCert**
 
 ### Tecnologías Utilizadas
-- **HTML5** - Estructura semántica
-- **CSS3** - Diseño responsivo avanzado
-- **JavaScript ES6+** - Lógica de aplicación
-- **LocalStorage API** - Persistencia de datos
-- **Canvas API** - Generación de documentos
+
+- [Stripe](https://stripe.com) - Procesamiento de pagos
+- [Twilio](https://twilio.com) - Mensajería WhatsApp
+- [Font Awesome](https://fontawesome.com) - Iconografía
+- [SweetAlert2](https://sweetalert2.github.io) - Modales elegantes
+- [Claude AI](https://anthropic.com) - Asistencia en desarrollo
 
 ---
 
-## 📊 ESTADÍSTICAS DEL PROYECTO
+## 📊 Roadmap
 
-| Métrica | Valor |
-|---------|-------|
-| **Líneas de Código** | ~15,000 |
-| **Archivos Principales** | 12 |
-| **Funciones JavaScript** | 200+ |
-| **Criterios EC0301** | 20+ |
-| **Documentos Generados** | 12+ |
-| **Tiempo de Desarrollo** | 300+ horas |
-| **Navegadores Soportados** | 4+ |
-| **Idiomas** | 1 (Español) |
+### v2.1.0 (Q1 2025)
+- [ ] Integración con Zoom para clases en vivo
+- [ ] Generador de contenido SCORM
+- [ ] App móvil (React Native)
 
----
+### v2.2.0 (Q2 2025)
+- [ ] Panel de administración multi-usuario
+- [ ] Plantillas de cursos predefinidas
+- [ ] Análisis con Machine Learning
 
-## 🎯 CASOS DE USO
-
-### 🏢 Empresas de Capacitación
-- **Consultoras de RH** - Diseño profesional de cursos corporativos
-- **Instituciones Educativas** - Programas de educación continua
-- **Freelance Trainers** - Herramienta profesional individual
-
-### 🎓 Sectores de Aplicación
-- **Manufactura** - Cursos de seguridad y técnicos
-- **Servicios** - Capacitación en atención al cliente
-- **TI** - Cursos de tecnología y software
-- **Salud** - Programas de capacitación médica
-
-### 💼 Beneficios Empresariales
-- **Reducción de Tiempo** - 80% menos tiempo en documentación
-- **Cumplimiento Garantizado** - 100% alineación EC0301
-- **Calidad Profesional** - Documentos nivel corporativo
-- **ROI Inmediato** - Productividad desde primer uso
+### v3.0.0 (Q3 2025)
+- [ ] Marketplace de cursos
+- [ ] Certificación blockchain
+- [ ] API pública para integraciones
 
 ---
 
-## ✅ CHECKLIST DE VALIDACIÓN
+**⭐ Si este proyecto te fue útil, considera darle una estrella en GitHub**
 
-### Pre-implementación
-- [ ] ✅ Navegador compatible instalado
-- [ ] ✅ JavaScript habilitado
-- [ ] ✅ LocalStorage disponible (5MB+)
-- [ ] ✅ Conexión internet para CDNs
-- [ ] ✅ Archivos del sistema descargados
-
-### Post-implementación
-- [ ] ✅ Página principal carga correctamente
-- [ ] ✅ Navegación entre módulos funciona
-- [ ] ✅ Sistema de datos guarda información
-- [ ] ✅ Exportación a PDF/Excel operativa
-- [ ] ✅ Auditoría muestra porcentaje correcto
-
-### Validación de Proyecto
-- [ ] ✅ Carta descriptiva >90% completa
-- [ ] ✅ Al menos 3 módulos completados
-- [ ] ✅ Instrumentos de evaluación validados
-- [ ] ✅ Manuales generados y revisados
-- [ ] ✅ Auditoría final >95% cumplimiento
-
----
-
-🎉 **¡Bienvenido al futuro del diseño instruccional!**
-
-**Sistema EC0301 SkillsCert** - La plataforma más avanzada para el diseño profesional de cursos de capacitación, completamente alineada al estándar EC0301 del CONOCER.
-
-**Próximo paso**: [Instalar el sistema](GUIA_INSTALACION_CONFIGURACION.md) y crear tu primer proyecto profesional.
-
----
-
-<div align="center">
-
-**¿Listo para transformar tu proceso de diseño instruccional?**
-
-[🚀 **COMENZAR AHORA**](index.html) | [📚 **DOCUMENTACIÓN**](docs/) | [💬 **SOPORTE**](mailto:soporte@skillscert.com)
-
----
-
-*© 2024 SkillsCert Technologies. Todos los derechos reservados.*
-
-*Diseñado con ❤️ para profesionales de la capacitación en México*
-
-</div>
+```bash
+git clone https://github.com/tu-usuario/skillscert-ec0301.git
+cd skillscert-ec0301
+# ¡A crear cursos increíbles! 🚀
+```

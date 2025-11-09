@@ -543,4 +543,48 @@ process.on('unhandledRejection', (error) => {
 process.on('uncaughtException', (error) => {
   console.error('❌ Uncaught Exception:', error);
   process.exit(1);
+
+  // ============================================
+// WEBHOOK DE STRIPE
+// ============================================
+app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const body = req.body;
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.error(`⚠️ Webhook signature verification failed.`, err.message);
+    return res.sendStatus(400);
+  }
+
+  console.log(`📧 Webhook recibido: ${event.type}`);
+
+  switch (event.type) {
+    case 'checkout.session.completed': {
+      const session = event.data.object;
+      console.log(`✅ Pago completado: ${session.id}`);
+      console.log(`📧 Email: ${session.customer_email}`);
+      break;
+    }
+    case 'payment_intent.succeeded': {
+      console.log(`💳 Payment succeeded`);
+      break;
+    }
+    case 'payment_intent.payment_failed': {
+      console.log(`❌ Payment failed`);
+      break;
+    }
+    default:
+      console.log(`Evento sin manejar: ${event.type}`);
+  }
+
+  res.json({received: true});
+});
 });

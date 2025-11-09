@@ -1,325 +1,197 @@
-/**
- * SkillsCert EC0301 - Sistema de Autenticación
- * Gestiona login, logout y sesiones de usuario (90 días)
- * @version 1.0
- */
+// ============================================================
+// auth.js - Autenticación con JWT y Códigos de Acceso
+// ============================================================
+// ✅ Login con código de acceso
+// ✅ Validación de JWT
+// ✅ Renovación de tokens
+// ✅ Revocación de códigos
+// ============================================================
 
-const auth = (() => {
-    const BACKEND_URL = 'https://ec0301-globalskillscert-backend.onrender.com';
-    const SESSION_KEY = 'ec0301_session';
-    const SESSION_DURATION = 90 * 24 * 60 * 60 * 1000; // 90 días en milisegundos
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const { dbPool } = require('./helpers');
 
-    /**
-     * Verifica si el usuario está autenticado
-     * @returns {Promise<boolean>}
-     */
-    async function isLoggedIn() {
-        try {
-            const session = getSession();
-            
-            if (!session) {
-                return false;
-            }
+// ============================================================
+// FUNCIÓN: Login con código de acceso
+// ============================================================
+async function loginWithAccessCode(req, res) {
+  try {
+    const { accessCode } = req.body;
 
-            // Verificar si la sesión ha expirado
-            if (Date.now() > session.expiresAt) {
-                console.log('Sesión expirada');
-                await logout();
-                return false;
-            }
+    // 🔍 Validar entrada
+    if (!accessCode || accessCode.trim().length === 0) {
+      return res.status(400).json({
+        error: 'Código de acceso requerido.',
+        code: 'MISSING_CODE'
+      });
+    }
 
-            // Verificar token con el backend
-            const isValid = await validateTokenWithBackend(session.token);
-            
-            if (!isValid) {
-                console.log('Token inválido en backend');
-                await logout();
-                return false;
-            }
+    // 🔐 Buscar códigos válidos (no usados y no expirados)
+    const [rows] = await dbPool.execute(
+      `SELECT id, email, phone, code_hash, expires_at, created_at 
+       FROM access_codes 
+       WHERE is_used = 0 AND expires_at > NOW()
+       ORDER BY created_at DESC
+       LIMIT 100`
+    );
 
-            return true;
-        } catch (error) {
-            console.error('Error verificando autenticación:', error);
-            return false;
+    if (rows.length === 0) {
+      return res.status(401).json({
+        error: 'No hay códigos de acceso válidos disponibles.',
+        code: 'NO_VALID_CODES'
+      });
+    }
+
+    // 🔑 Comparar el código ingresado con los hashes
+    let validCodeMatch = null;
+    for (const row of rows) {
+      try {
+        const isMatch = await bcrypt.compare(accessCode, row.code_hash);
+        if (isMatch) {
+          validCodeMatch = row;
+          break;
         }
+      } catch (compareError) {
+        console.warn('⚠️ Error comparando código:', compareError.message);
+        continue;
+      }
     }
 
-    /**
-     * Obtiene la sesión actual del almacenamiento local
-     * @returns {Object|null}
-     */
-    function getSession() {
-        try {
-            const sessionData = localStorage.getItem(SESSION_KEY);
-            if (!sessionData) return null;
-
-            const session = JSON.parse(sessionData);
-            return session;
-        } catch (error) {
-            console.error('Error obteniendo sesión:', error);
-            return null;
-        }
+    if (!validCodeMatch) {
+      return res.status(401).json({
+        error: 'Código inválido o expirado.',
+        code: 'INVALID_CODE'
+      });
     }
 
-    /**
-     * Guarda la sesión en localStorage
-     * @param {Object} sessionData - Datos de la sesión
-     */
-    function saveSession(sessionData) {
-        try {
-            const session = {
-                token: sessionData.token,
-                user: sessionData.user,
-                email: sessionData.email,
-                accessCode: sessionData.accessCode,
-                createdAt: Date.now(),
-                expiresAt: Date.now() + SESSION_DURATION
-            };
+    // ✅ Marcar código como usado
+    await dbPool.execute(
+      'UPDATE access_codes SET is_used = 1, used_at = NOW() WHERE id = ?',
+      [validCodeMatch.id]
+    );
 
-            localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-            console.log('✅ Sesión guardada exitosamente');
-        } catch (error) {
-            console.error('Error guardando sesión:', error);
-            throw new Error('No se pudo guardar la sesión');
-        }
+    // 🎟️ Crear token JWT con 30 días de validez
+    const token = jwt.sign(
+      {
+        accessCodeId: validCodeMatch.id,
+        email: validCodeMatch.email,
+        phone: validCodeMatch.phone,
+        type: 'access'
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+
+    console.log(`✅ Login exitoso para: ${validCodeMatch.email}`);
+
+    return res.status(200).json({
+      message: 'Inicio de sesión exitoso.',
+      token,
+      user: {
+        email: validCodeMatch.email,
+        phone: validCodeMatch.phone
+      },
+      expiresIn: 2592000 // 30 días en segundos
+    });
+
+  } catch (error) {
+    console.error('❌ Error en /login-code:', error.message);
+    return res.status(500).json({
+      error: 'Error interno del servidor.',
+      code: 'INTERNAL_ERROR'
+    });
+  }
+}
+
+// ============================================================
+// FUNCIÓN: Middleware - Verificar JWT
+// ============================================================
+function verifyJWT(req, res, next) {
+  try {
+    const authHeader = req.headers['authorization'];
+
+    if (!authHeader) {
+      return res.status(401).json({
+        error: 'Token de autenticación requerido.',
+        code: 'MISSING_TOKEN'
+      });
     }
 
-    /**
-     * Valida el token con el backend
-     * @param {string} token - JWT token
-     * @returns {Promise<boolean>}
-     */
-    async function validateTokenWithBackend(token) {
-        try {
-            const response = await fetch(`${BACKEND_URL}/validate-token`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ token })
-            });
+    // Esperar formato "Bearer TOKEN"
+    const token = authHeader.split(' ')[1];
 
-            if (!response.ok) {
-                return false;
-            }
-
-            const data = await response.json();
-            return data.valid === true;
-        } catch (error) {
-            console.error('Error validando token con backend:', error);
-            return false;
-        }
+    if (!token) {
+      return res.status(401).json({
+        error: 'Formato de token inválido.',
+        code: 'INVALID_TOKEN_FORMAT'
+      });
     }
 
-    /**
-     * Inicia sesión con código de acceso
-     * @returns {Promise<boolean>}
-     */
-    async function login() {
-        try {
-            // Solicitar código al usuario
-            const { value: accessCode } = await Swal.fire({
-                title: 'Iniciar Sesión',
-                html: `
-                    <p style="margin-bottom: 1rem;">Ingresa el código de 6 dígitos que recibiste por WhatsApp y correo electrónico.</p>
-                    <input id="accessCode" class="swal2-input" placeholder="Código de acceso" maxlength="6" pattern="[0-9]{6}" style="font-size: 1.5rem; text-align: center; letter-spacing: 0.5rem;">
-                `,
-                icon: 'info',
-                confirmButtonText: 'Validar Código',
-                confirmButtonColor: '#1E3A8A',
-                showCancelButton: true,
-                cancelButtonText: 'Cancelar',
-                preConfirm: () => {
-                    const code = document.getElementById('accessCode').value;
-                    if (!code || code.length !== 6 || !/^\d{6}$/.test(code)) {
-                        Swal.showValidationMessage('El código debe tener exactamente 6 dígitos numéricos');
-                        return false;
-                    }
-                    return code;
-                }
-            });
+    // ✅ Verificar token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
 
-            if (!accessCode) {
-                return false;
-            }
-
-            // Mostrar loading
-            Swal.fire({
-                title: 'Validando código...',
-                html: 'Por favor espera',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            // Validar código con el backend
-            const response = await fetch(`${BACKEND_URL}/validate-access-code`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ accessCode })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'Código inválido o expirado');
-            }
-
-            const data = await response.json();
-
-            // Guardar sesión
-            saveSession({
-                token: data.token,
-                user: data.user,
-                email: data.email,
-                accessCode: accessCode
-            });
-
-            // Mostrar éxito
-            await Swal.fire({
-                icon: 'success',
-                title: '¡Bienvenido!',
-                text: `Acceso concedido. Tu sesión es válida por 90 días.`,
-                confirmButtonText: 'Continuar',
-                confirmButtonColor: '#22C55E'
-            });
-
-            return true;
-        } catch (error) {
-            console.error('Error en login:', error);
-            
-            await Swal.fire({
-                icon: 'error',
-                title: 'Error de Autenticación',
-                text: error.message || 'No se pudo validar el código. Verifica e intenta de nuevo.',
-                confirmButtonText: 'Cerrar',
-                confirmButtonColor: '#EF4444'
-            });
-
-            return false;
-        }
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        error: 'Token expirado. Por favor, inicia sesión nuevamente.',
+        code: 'TOKEN_EXPIRED'
+      });
     }
 
-    /**
-     * Cierra la sesión del usuario
-     * @returns {Promise<void>}
-     */
-    async function logout() {
-        try {
-            const session = getSession();
-            
-            // Notificar al backend (opcional)
-            if (session && session.token) {
-                try {
-                    await fetch(`${BACKEND_URL}/logout`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${session.token}`
-                        }
-                    });
-                } catch (error) {
-                    console.warn('Error notificando logout al backend:', error);
-                }
-            }
-
-            // Eliminar sesión local
-            localStorage.removeItem(SESSION_KEY);
-            console.log('✅ Sesión cerrada exitosamente');
-        } catch (error) {
-            console.error('Error en logout:', error);
-        }
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({
+        error: 'Token inválido.',
+        code: 'INVALID_TOKEN'
+      });
     }
 
-    /**
-     * Obtiene los datos del usuario actual
-     * @returns {Promise<Object|null>}
-     */
-    async function getUser() {
-        try {
-            const session = getSession();
-            
-            if (!session) {
-                return null;
-            }
+    console.error('❌ Error verificando JWT:', error.message);
+    return res.status(500).json({
+      error: 'Error verificando autenticación.',
+      code: 'JWT_ERROR'
+    });
+  }
+}
 
-            return {
-                email: session.email,
-                user: session.user,
-                accessCode: session.accessCode,
-                expiresAt: new Date(session.expiresAt),
-                createdAt: new Date(session.createdAt)
-            };
-        } catch (error) {
-            console.error('Error obteniendo usuario:', error);
-            return null;
-        }
+// ============================================================
+// FUNCIÓN: Renovar token JWT
+// ============================================================
+async function renewToken(req, res) {
+  try {
+    const { email } = req.user;
+
+    // 🔍 Verificar que el usuario aún tenga acceso válido
+    const [rows] = await dbPool.execute(
+      `SELECT id FROM access_codes 
+       WHERE email = ? AND is_used = 1 AND expires_at > NOW()
+       ORDER BY used_at DESC
+       LIMIT 1`,
+      [email]
+    );
+
+    if (rows.length === 0) {
+      return res.status(403).json({
+        error: 'Tu acceso ha expirado. Por favor, compra un nuevo acceso.',
+        code: 'ACCESS_EXPIRED'
+      });
     }
 
-    /**
-     * Obtiene el token JWT actual
-     * @returns {string|null}
-     */
-    function getToken() {
-        const session = getSession();
-        return session ? session.token : null;
-    }
+    // 🎟️ Crear nuevo token
+    const newToken = jwt.sign(
+      {
+        accessCodeId: rows[0].id,
+        email: email,
+        type: 'access'
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
+    );
 
-    /**
-     * Refresca el token JWT
-     * @returns {Promise<boolean>}
-     */
-    async function refreshToken() {
-        try {
-            const session = getSession();
-            
-            if (!session || !session.token) {
-                return false;
-            }
+    console.log(`✅ Token renovado para: ${email}`);
 
-            const response = await fetch(`${BACKEND_URL}/refresh-token`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.token}`
-                }
-            });
-
-            if (!response.ok) {
-                return false;
-            }
-
-            const data = await response.json();
-            
-            // Actualizar token en la sesión
-            session.token = data.token;
-            session.expiresAt = Date.now() + SESSION_DURATION;
-            localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-
-            console.log('✅ Token refrescado exitosamente');
-            return true;
-        } catch (error) {
-            console.error('Error refrescando token:', error);
-            return false;
-        }
-    }
-
-    // API pública
-    return {
-        isLoggedIn,
-        login,
-        logout,
-        getUser,
-        getToken,
-        refreshToken,
-        getSession
-    };
-})();
-
-// Hacer disponible globalmente
-window.auth = auth;
-
-console.log('✅ Módulo auth.js cargado correctamente');
+    return res.status(200).json({
+      message: 'Token renovado exitosamente.',
+      token: newToken,
+      expiresIn: 2592000

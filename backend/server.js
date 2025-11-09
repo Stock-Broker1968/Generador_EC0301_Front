@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-// MySQL Hostinger connection (pool)
 const mysql = require('mysql2/promise');
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -74,14 +73,20 @@ async function logActividad(email, accion, info) {
 }
 
 // ========================
-// HEALTH CHECK
+// HEALTH CHECK Mejorado
 // ========================
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
+  let stripeStatus = 'not checked';
+  try {
+    const account = await stripe.accounts.retrieve(); // prueba real de conexión a Stripe
+    stripeStatus = account.id ? 'ok' : 'fail';
+  } catch (e) {
+    stripeStatus = 'fail: ' + e.message;
+  }
   res.status(200).json({
     status: 'ok',
+    stripe: stripeStatus,
     timestamp: new Date().toISOString(),
-    stripe: !!process.env.STRIPE_SECRET_KEY ? 'configured' : 'missing',
-    db: !!process.env.DB_HOST ? 'configured' : 'missing',
     environment: process.env.NODE_ENV || 'development',
     version: '1.0.0'
   });
@@ -92,14 +97,12 @@ app.get('/health', (req, res) => {
 // ========================
 app.post('/create-checkout-session', async (req, res) => {
   try {
-    // Validaciones Stripe variables
     if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
       return res.status(500).json({
         error: 'Stripe no configurado correctamente',
         details: 'Verifica STRIPE_SECRET_KEY en .env'
       });
     }
-
     const email = req.body.email;
     const origin = req.headers.origin || 'https://ec0301-globalskillscert-backend.onrender.com';
     const successUrl = `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}`;

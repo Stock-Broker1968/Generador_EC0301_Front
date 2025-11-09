@@ -2,83 +2,72 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
 const mysql = require('mysql2/promise');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+app.use(express.json());
+app.use(cors());
+
+// MySQL pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
-  password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
   waitForConnections: true,
-  connectionLimit: 10
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-const app = express();
-const PORT = process.env.PORT || 10000;
-
-// =========================
-// MIDDLEWARES
-// =========================
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  next();
-});
-
-// ========================
-// UTILS (DB functions)
-// ========================
-async function guardarCodigoAccesso(email, code) {
-  await pool.execute(
-    "INSERT INTO access_codes (email, code, created_at, expires_at, status) VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR), 1)",
-    [email, code]
-  );
+// Función para generar un código de acceso aleatorio (8 caracteres)
+function generarCodigoAcceso() {
+  return Math.random().toString(36).substr(2, 8).toUpperCase();
 }
 
-async function verificarCodigoAccesso(email, accessCode) {
-  const [rows] = await pool.execute(
-    "SELECT * FROM access_codes WHERE email=? AND code=? AND status=1 AND expires_at>NOW() LIMIT 1",
-    [email, accessCode]
-  );
-  return rows.length > 0;
+// Función para guardar el código de acceso en la base de datos
+async function guardarCodigoAccesso(email, accessCode) {
+  const sql = `INSERT INTO codigos_acceso (email, codigo, fecha_generacion, expiracion)
+               VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR))
+               ON DUPLICATE KEY UPDATE codigo = VALUES(codigo), fecha_generacion = VALUES(fecha_generacion),
+               expiracion = VALUES(expiracion)`;
+  const conn = await pool.getConnection();
+  try {
+    await conn.execute(sql, [email, accessCode]);
+  } finally {
+    conn.release();
+  }
 }
 
-async function registrarTransaccion(email, amount, referencia) {
-  await pool.execute(
-    "INSERT INTO transacciones (email, amount, referencia, fecha) VALUES (?, ?, ?, NOW())",
-    [email, amount, referencia]
-  );
+// Función para registrar la transacción de pago
+async function registrarTransaccion(email, monto, referencia) {
+  const sql = `INSERT INTO transacciones_pagos (email, monto, referencia, fecha)
+               VALUES (?, ?, ?, NOW())`;
+  const conn = await pool.getConnection();
+  try {
+    await conn.execute(sql, [email, monto, referencia]);
+  } finally {
+    conn.release();
+  }
 }
 
-async function registrarModulo(email, modulo, avance) {
-  await pool.execute(
-    "INSERT INTO modulos_completados (email, modulo, avance, completado_en) VALUES (?, ?, ?, NOW())",
-    [email, modulo, avance]
-  );
+// Función para log de actividad
+async function logActividad(email, accion, detalles) {
+  const sql = `INSERT INTO logs_actividad (email, accion, detalles, fecha)
+               VALUES (?, ?, ?, NOW())`;
+  const conn = await pool.getConnection();
+  try {
+    await conn.execute(sql, [email, accion, detalles]);
+  } finally {
+    conn.release();
+  }
 }
 
-async function logActividad(email, accion, info) {
-  await pool.execute(
-    "INSERT INTO logs_actividad (usuario, accion, detalles, fecha) VALUES (?, ?, ?, NOW())",
-    [email, accion, info]
-  );
-}
-
-// ========================
-// HEALTH CHECK Mejorado
-// ========================
+// Ruta de health check mejorada
 app.get('/health', async (req, res) => {
   let stripeStatus = 'not checked';
   try {
-    const account = await stripe.accounts.retrieve(); // prueba real de conexión a Stripe
+    const account = await stripe.accounts.retrieve();
     stripeStatus = account.id ? 'ok' : 'fail';
   } catch (e) {
     stripeStatus = 'fail: ' + e.message;
@@ -92,16 +81,11 @@ app.get('/health', async (req, res) => {
   });
 });
 
-// ========================
-// CREATE CHECKOUT SESSION
-// ========================
+// Crear sesión de pago con Stripe
 app.post('/create-checkout-session', async (req, res) => {
   try {
     if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
-      return res.status(500).json({
-        error: 'Stripe no configurado correctamente',
-        details: 'Verifica STRIPE_SECRET_KEY en .env'
-      });
+      return res.status(500).json({ error: 'Stripe no configurado correctamente', details: 'Verifica STRIPE_SECRET_KEY en .env' });
     }
     const email = req.body.email;
     const origin = req.headers.origin || 'https://ec0301-globalskillscert-backend.onrender.com';
@@ -113,10 +97,7 @@ app.post('/create-checkout-session', async (req, res) => {
       line_items: [{
         price_data: {
           currency: 'mxn',
-          product_data: {
-            name: 'Acceso SkillsCert EC0301',
-            description: 'Curso, acceso por 1 año',
-          },
+          product_data: { name: 'Acceso SkillsCert EC0301', description: 'Curso, acceso por 1 año' },
           unit_amount: 50000,
         },
         quantity: 1,
@@ -125,32 +106,20 @@ app.post('/create-checkout-session', async (req, res) => {
       success_url: successUrl,
       cancel_url: cancelUrl,
       customer_email: email,
-      metadata: {
-        sistema: 'ec0301',
-        email,
-        timestamp: new Date().toISOString()
-      }
+      metadata: { sistema: 'ec0301', email, timestamp: new Date().toISOString() }
     });
-    res.status(200).json({
-      success: true,
-      id: session.id,
-      url: session.url
-    });
+
+    res.status(200).json({ success: true, id: session.id, url: session.url });
   } catch (error) {
-    res.status(500).json({
-      error: error.message,
-      type: error.type || 'api_error',
-      code: error.code || 'unknown_error'
-    });
+    res.status(500).json({ error: error.message, type: error.type || 'api_error', code: error.code || 'unknown_error' });
   }
 });
 
-// ========================
-// VERIFY PAYMENT AND GENERATE ACCESS CODE
-// ========================
+// Verificación de pago y generación de código de acceso
 app.post('/verify-payment', async (req, res) => {
   const { sessionId } = req.body;
-  if (!sessionId) return res.status(400).json({ success: false, error: 'SessionId requerido' });
+  if (!sessionId)
+    return res.status(400).json({ success: false, error: 'SessionId requerido' });
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
@@ -164,80 +133,25 @@ app.post('/verify-payment', async (req, res) => {
         success: true,
         email,
         accessCode,
-        expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+        expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       });
     } else {
       res.json({ success: false, error: 'Pago no completado', status: session.payment_status });
     }
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: error.message, type: error.type || 'api_error', code: error.code || 'unknown_error' });
   }
 });
 
-function generarCodigoAcceso() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 8; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-  return code;
-}
+// Exportar helpers si usarás en otros módulos:
+module.exports = {
+  generarCodigoAcceso,
+  guardarCodigoAccesso,
+  registrarTransaccion,
+  logActividad
+};
 
-// ========================
-// LOGIN
-// ========================
-app.post('/login', async (req, res) => {
-  const { email, accessCode } = req.body;
-  if (!email || !accessCode) return res.status(400).json({ success: false, error: 'Email y código requerido' });
-  try {
-    if (await verificarCodigoAccesso(email, accessCode)) {
-      await logActividad(email, 'Login', `Code: ${accessCode}`);
-      return res.json({ success: true, token: Buffer.from(email + Date.now()).toString('base64') });
-    } else {
-      res.status(401).json({ success: false, error: 'Código inválido o expirado' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// ========================
-// MODULO-COMPLETADO
-// ========================
-app.post('/modulo-completado', async (req, res) => {
-  const { email, modulo, avance } = req.body;
-  try {
-    await registrarModulo(email, modulo, avance);
-    await logActividad(email, 'Módulo completado', `Módulo: ${modulo}, Avance: ${avance}`);
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// ========================
-// ERROR/404 Handlers
-// ========================
-app.use((req, res) => {
-  res.status(404).json({ 
-    error: 'Endpoint no encontrado',
-    path: req.path,
-    method: req.method
-  });
-});
-app.use((error, req, res, next) => {
-  res.status(500).json({ error: 'Error interno', message: error.message });
-});
-
-// ========================
-// Arranque Server
-// ========================
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Backend EC0301 listo en puerto ${PORT}`);
-});
-
-process.on('unhandledRejection', error => {
-  console.error('❌ Unhandled Rejection:', error);
-});
-process.on('uncaughtException', error => {
-  console.error('❌ Uncaught Exception:', error);
-  process.exit(1);
+// Lanzar el servidor
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en puerto ${PORT}`);
 });

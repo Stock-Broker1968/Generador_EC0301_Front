@@ -7,7 +7,7 @@ const mysql = require('mysql2/promise');
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
-app.use(cors());
+app.use(cors({   origin: [     'https://tu-frontend.onrender.com',     'http://localhost:3000',     'http://localhost:5500'   ],   credentials: true,   methods: ['GET', 'POST', 'OPTIONS'],   allowedHeaders: ['Content-Type', 'Authorization'] }));
 
 // MySQL pool
 const pool = mysql.createPool({
@@ -84,10 +84,22 @@ app.get('/health', async (req, res) => {
 // Crear sesión de pago con Stripe
 app.post('/create-checkout-session', async (req, res) => {
   try {
+        console.log('Solicitud recibida:', {
+      email: req.body.email,
+      origin: req.headers.origin,
+      timestamp: new Date().toISOString()
+    });
     if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
       return res.status(500).json({ error: 'Stripe no configurado correctamente', details: 'Verifica STRIPE_SECRET_KEY en .env' });
     }
-    const email = req.body.email;
+    const email = req.body.email?.toLowerCase().trim();
+     if (!email || !email.includes('@')) {
+  return res.status(400).json({ 
+    error: 'Email inválido o no proporcionado',
+    code: 'INVALID_EMAIL'
+  });
+ }
+    
     const origin = req.headers.origin || 'https://ec0301-globalskillscert-backend.onrender.com';
     const successUrl = `${origin}/success.html?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${origin}/index.html?canceled=true`;

@@ -313,11 +313,11 @@ app.post('/create-checkout-session', async (req, res) => {
       line_items: [{
         price_data: {
           currency: 'mxn',
-          product_data: {
+         product_data: {
             name: 'Acceso SkillsCert EC0301',
-D            description: 'Sistema completo - 90 días de acceso'
+            description: 'Sistema completo - 90 días de acceso' // <--- LÍNEA CORREGIDA
           },
-          unit_amount: 99900 // 999.00 MXN
+          unit_amount: 199900 // 1999.00 MXN
         },
         quantity: 1
       }],

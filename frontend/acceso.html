@@ -65,48 +65,51 @@
     </style>
 </head>
 <body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h1>Plataforma EC0301</h1>
+        </div>
+        <button id="logoutButton" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
+        </button>
+    </header>
 
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-graduation-cap"></i>
-            <h1>Plataforma EC0301</h1>
-        </div>
-        <button id="logoutButton" class="btn-logout">
-            <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
-        </button>
-    </header>
+    <main class="container">
+        <h2>Bienvenido, <span id="userEmail"></span></h2>
+        <p>Aquí comenzarás a generar tus productos del Estándar de Competencia EC0301.</p>
+        
+        <hr style="margin: 2rem 0;">
 
-    <main class="container">
-        <h2>Bienvenido, <span id="userEmail"></span></h2>
-        <p>Aquí comenzarás a generar tus productos del Estándar de Competencia EC0301.</p>
-        
-            </main>
+        <a href="carta_descriptiva.html" style="font-size: 20px; font-weight: 600; color: var(--primary); text-decoration: none;">
+             <i class="fa-solid fa-file-alt"></i> Ir a crear mi Carta Descriptiva
+        </a>
+        </main>
 
-    <script>
-        // Script de la página de acceso (se ejecuta después de la guardia de seguridad)
-        document.addEventListener('DOMContentLoaded', () => {
-            // Personalizar bienvenida
-            const email = localStorage.getItem('userEmail');
-            if (email) {
-                document.getElementById('userEmail').textContent = email;
-            }
+    <script>
+        // Script de la página de acceso (se ejecuta después de la guardia de seguridad)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Personalizar bienvenida
+            const email = localStorage.getItem('userEmail');
+            if (email) {
+                document.getElementById('userEmail').textContent = email;
+            }
 
-            // Configurar botón de cerrar sesión
-            const logoutButton = document.getElementById('logoutButton');
-            logoutButton.addEventListener('click', () => {
-                // Limpiar los datos de sesión
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userEmail');
-                localStorage.removeItem('accessCode');
-                
-                // Redirigir al inicio
-                window.location.href = 'index.html';
-            });
+            // Configurar botón de cerrar sesión
+            const logoutButton = document.getElementById('logoutButton');
+            logoutButton.addEventListener('click', () => {
+                // Limpiar los datos de sesión
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('accessCode');
+                
+                // Redirigir al inicio
+                window.location.href = 'index.html';
+            });
 
-            // Aquí irá la lógica de tu aplicación (Generar carta descriptiva, etc.)
-            // ...
-        });
-    </script>
-
+            // Aquí irá la lógica de tu aplicación (Generar carta descriptiva, etc.)
+            // ...
+        });
+    </script>
 </body>
 </html>

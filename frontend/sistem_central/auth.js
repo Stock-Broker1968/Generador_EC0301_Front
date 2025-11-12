@@ -28,6 +28,7 @@ const auth = (function() {
             localStorage.removeItem(TOKEN_KEY);
             localStorage.removeItem('userEmail');
             localStorage.removeItem('accessCode');
+            
             // Limpia también el Data Manager
             if (typeof EC0301Manager !== 'undefined') {
                 EC0301Manager.clearData();
@@ -46,8 +47,7 @@ const auth = (function() {
     function isLoggedIn() {
         try {
             const token = localStorage.getItem(TOKEN_KEY);
-            // Por ahora, solo revisamos si el token existe.
-            // Una app más avanzada verificaría este token contra el backend.
+            // Simplemente revisamos si el token existe.
             return !!token; 
         } catch (e) {
             console.error('Auth: Error al verificar token.', e);

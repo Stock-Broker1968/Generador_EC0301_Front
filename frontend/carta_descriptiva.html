@@ -3,7 +3,25 @@
 <head>
     <script src="../sistema_central/auth.js" defer></script>
     <script src="../sistema_central/ec0301-data-manager.js" defer></script>
-    
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Carta Descriptiva EC0301 - Sistema Profesional</title>
+
+    <script src="../sistema_central/auth.js" defer></script>
+    <script src="../sistema_central/ec0301-data-manager.js" defer></script>
+
+    <script>
+        // Si auth.js no se ha cargado, espera
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof auth !== 'undefined' && !auth.isLoggedIn()) {
+                // Si no está logueado, expulsa al index (página de login)
+                window.location.replace('index.html');
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    </head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Carta Descriptiva EC0301 - Sistema Profesional</title>
@@ -39,9 +57,9 @@
                     Carta Descriptiva EC0301
                 </h1>
                 <div class="toolbar">
-                    <a href="index.html" class="btn btn-secondary">
-                        <i class="fa-solid fa-arrow-left"></i> Volver al Dashboard
-                    </a>
+                   <a href="acceso.html" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Dashboard
+                </a>
                     <button class="btn btn-secondary" onclick="showHelp()">
                         <i class="fa-solid fa-question-circle"></i> Ayuda
                     </button>
@@ -763,8 +781,9 @@
             Swal.fire({
                 title: '¡Completado!', text: 'La carta descriptiva ha sido marcada como completa. Serás redirigido al dashboard.',
                 icon: 'success', confirmButtonText: 'Excelente', timer: 2000, timerProgressBar: true
+           // CÓDIGO CORRECTO
             }).then(() => {
-                window.location.href = 'index.html'; // Volver al dashboard
+                window.location.href = 'acceso.html'; // Volver al dashboard
             });
         }
     }

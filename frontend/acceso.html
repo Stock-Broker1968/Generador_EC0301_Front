@@ -74,6 +74,31 @@
         .module-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
         .module-card p { font-size: 0.9rem; margin-bottom: 0; color: #64748b; }
         
+        /* --- ESTILO DE MÓDULO BLOQUEADO --- */
+        .module-card.locked {
+            background: #f1f5f9;
+            opacity: 0.7;
+            cursor: not-allowed;
+            position: relative;
+            overflow: hidden;
+        }
+        .module-card.locked::before {
+            content: '\f023'; /* Icono de candado de FontAwesome */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1rem;
+            color: var(--muted);
+        }
+        .module-card.locked:hover {
+            transform: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-color: transparent;
+        }
+        /* --- --- */
+
         /* Icon Colors */
         .module-card .fa-file-alt { color: var(--primary); }
         .module-card .fa-tasks { color: var(--success); }
@@ -94,23 +119,6 @@
         .module-card.export-card i { color: #94a3b8; }
         .module-card.export-card h3 { color: var(--white); }
         .module-card.export-card p { color: #94a3b8; }
-
-        /* Estilo de módulo bloqueado (lógica de JS) */
-        .module-card.locked {
-            background: #f1f5f9; opacity: 0.7; cursor: not-allowed;
-            position: relative; overflow: hidden;
-        }
-        .module-card.locked::before {
-            content: '\f023'; /* Icono de candado */
-            font-family: 'Font Awesome 6 Free'; font-weight: 900;
-            position: absolute; top: 1rem; right: 1rem;
-            font-size: 1rem; color: var(--muted);
-        }
-        .module-card.locked:hover {
-            transform: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border-color: transparent;
-        }
     </style>
 </head>
 <body>
@@ -180,6 +188,7 @@
     </main>
 
     <script>
+        // Script de la página de acceso (se ejecuta después de la guardia de seguridad)
         document.addEventListener('DOMContentLoaded', () => {
             
             // 1. Configurar Bienvenida y Logout
@@ -203,7 +212,8 @@
                 const cartaData = EC0301Manager.getData();
                 
                 // El "guardián": Si la carta NO tiene un nombre de curso, está incompleta.
-                const isCartaComplete = cartaData && cartaData.nombre && cartaData.nombre.trim() !== '';
+                // (Usamos 'nombre' porque es el primer campo de la carta)
+                const isCartaComplete = cartaData && cartaData.nombre && cartaData.nombre.trim() !== ''; 
 
                 if (!isCartaComplete) {
                     const lockMessage = 'Debes completar y guardar tu "Carta Descriptiva" primero.';

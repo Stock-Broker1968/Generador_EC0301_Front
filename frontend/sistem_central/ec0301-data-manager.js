@@ -44,6 +44,7 @@ const EC0301Manager = (function() {
      * @returns {object}
      */
     function getData() {
+        // Devuelve una copia profunda para evitar mutaciones accidentales
         return JSON.parse(JSON.stringify(projectData));
     }
 
@@ -56,7 +57,10 @@ const EC0301Manager = (function() {
             projectData = data;
             saveDataToStorage();
             return true;
-        } catch (e) { return false; }
+        } catch (e) { 
+            console.error('[DataManager] Error en saveData:', e);
+            return false; 
+        }
     }
 
     /**
@@ -73,7 +77,10 @@ const EC0301Manager = (function() {
             saveDataToStorage();
             console.log(`[DataManager] Producto "${productName}" guardado.`);
             return true;
-        } catch (e) { return false; }
+        } catch (e) { 
+            console.error(`[DataManager] Error en saveProduct (${productName}):`, e);
+            return false; 
+        }
     }
 
     /**
@@ -85,10 +92,14 @@ const EC0301Manager = (function() {
         try {
             if (projectData.productos && projectData.productos[productName]) {
                 console.log(`[DataManager] Producto "${productName}" cargado.`);
-                return projectData.productos[productName];
+                // Devuelve una copia profunda
+                return JSON.parse(JSON.stringify(projectData.productos[productName]));
             }
             return null;
-        } catch (e) { return null; }
+        } catch (e) { 
+            console.error(`[DataManager] Error en loadProduct (${productName}):`, e);
+            return null; 
+        }
     }
 
     /**

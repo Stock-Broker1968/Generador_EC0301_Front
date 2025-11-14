@@ -11,15 +11,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Esta guardia es MÁS ROBUSTA. Espera a que auth.js cargue.
-            if (typeof auth === 'undefined') {
-                console.error("Error crítico: auth.js no se cargó. Revisa la ruta.");
-                document.body.innerHTML = `<h1 style="color: red; padding: 2rem;">Error crítico de seguridad. No se pudo cargar el módulo de autenticación. Revisa la ruta a 'sistema_central/auth.js'.</h1>`;
-                return;
-            }
-            if (!auth.isLoggedIn()) {
-                window.location.replace('index.html');
-            }
+            // Espera un ciclo para asegurar que los scripts 'defer' se carguen
+            setTimeout(() => {
+                if (typeof auth === 'undefined') {
+                    console.error("Error crítico: auth.js no se cargó. Revisa la ruta.");
+                    document.body.innerHTML = `<h1 style="color: red; padding: 2rem;">Error crítico de seguridad. No se pudo cargar el módulo de autenticación. Revisa la ruta a 'sistema_central/auth.js'.</h1>`;
+                    return;
+                }
+                // Si el usuario NO está logueado, lo expulsa.
+                if (!auth.isLoggedIn()) {
+                    window.location.replace('index.html');
+                }
+            }, 50); // 50ms de espera
         });
     </script>
     
@@ -188,7 +191,6 @@
     </main>
 
     <script>
-        // Script de la página de acceso (se ejecuta después de la guardia de seguridad)
         document.addEventListener('DOMContentLoaded', () => {
             
             // 1. Configurar Bienvenida y Logout
@@ -207,12 +209,11 @@
                 }
             });
 
-            // 2. Lógica de Bloqueo de Módulos
+            // 2. Lógica de Bloqueo de Módulos (Tu idea)
             if (typeof EC0301Manager !== 'undefined') {
                 const cartaData = EC0301Manager.getData();
                 
                 // El "guardián": Si la carta NO tiene un nombre de curso, está incompleta.
-                // (Usamos 'nombre' porque es el primer campo de la carta)
                 const isCartaComplete = cartaData && cartaData.nombre && cartaData.nombre.trim() !== ''; 
 
                 if (!isCartaComplete) {

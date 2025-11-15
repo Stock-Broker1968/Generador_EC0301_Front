@@ -3,16 +3,31 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Instrumentos de Evaluación - EC0301</title>
+    <title>Instrumentos de Evaluación - EC0217.01</title>
 
     <script src="sistema_central/auth.js" defer></script>
     <script src="sistema_central/ec0301-data-manager.js" defer></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            if (typeof auth !== 'undefined' && !auth.isLoggedIn()) {
-                window.location.replace('index.html');
-            }
+            setTimeout(() => { // Espera 50ms a que los scripts 'defer' carguen
+                if (typeof auth === 'undefined' || typeof EC0301Manager === 'undefined') {
+                    console.error("Error crítico: Módulos de sistema no cargados.");
+                    Swal.fire({
+                        icon: 'error', title: 'Error Crítico',
+                        text: 'No se pudieron cargar los módulos del sistema (auth.js o ec0301-data-manager.js).',
+                        confirmButtonColor: '#ef4444'
+                    }).then(() => window.location.href = 'index.html');
+                    return;
+                }
+                if (!auth.isLoggedIn()) {
+                    window.location.replace('index.html');
+                }
+                
+                // Si todo está bien, inicializa la lógica de la página
+                loadInitialData();
+
+            }, 50); // 50ms de espera
         });
     </script>
 
@@ -24,6 +39,7 @@
         :root { 
             --primary: #1E3A8A; --accent: #FF6B35; --success: #22C55E; --warning: #F59E0B;
             --danger: #EF4444; --light: #F8FAFC; --border: #E5E7EB; --text: #1F2937; --muted: #6B7280;
+            --primary-light: #e0e7ff; --success-light: #f0fdf4;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -31,7 +47,6 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh; color: var(--text);
         }
-        /* Estilos generales (header, container, buttons, etc.) */
         .header { background: var(--white); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .header .container { max-width: 1200px; margin: 0 auto; padding: 1.5rem 2rem; }
         .header-content { display: flex; justify-content: space-between; align-items: center; }
@@ -40,12 +55,16 @@
         .btn { padding: 0.6rem 1rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
         .btn-secondary { background-color: var(--light); color: var(--muted); border: 1px solid var(--border); }
         .btn-secondary:hover { background-color: var(--border); }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: #1c3274; }
         .btn-success { background-color: var(--success); color: white; }
         .btn-success:hover { background-color: #1a9c4b; }
         .btn-warning { background-color: var(--warning); color: white; }
         .btn-warning:hover { background-color: #d98a0a; }
         .btn-danger { background-color: var(--danger); color: white; padding: 0.5rem; font-size: 0.8rem; }
-        
+        .btn-ai { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-ai:hover { background: linear-gradient(135deg, #5a6fde 0%, #684094 100%); }
+
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
         .section { background: var(--white); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 2rem; }
         .section-title { font-size: 1.25rem; font-weight: 700; padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem; }
@@ -53,25 +72,52 @@
         .info-box { background-color: var(--light); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
         .info-box p { font-size: 0.9rem; color: var(--muted); }
         .info-box strong { color: var(--primary); }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 2rem; }
         
-        /* Estilos para Temario */
+        .tabs { display: flex; background: var(--primary); padding: 0.5rem; border-radius: 10px; justify-content: center; margin-bottom: 2rem; }
+        .tab-button { padding: 0.75rem 1.5rem; cursor: pointer; background: none; border: none; font-size: 1.1rem; font-weight: 600; color: white; opacity: 0.7; border-radius: 8px; transition: all 0.3s ease; }
+        .tab-button:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+        .tab-button.active { background: white; color: var(--primary); opacity: 1; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .document-container { background: var(--light); padding: 2rem; border-radius: 8px; border: 1px solid var(--border); }
+        .document-header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 1rem; margin-bottom: 2rem; }
+        .document-header h2 { font-size: 1.8rem; color: var(--primary); }
+        .document-header h3 { font-size: 1.1rem; color: var(--muted); }
+        .document-info { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; background: var(--white); padding: 1rem; border-radius: 8px; margin-bottom: 2rem; }
+        .document-info span { font-weight: 600; }
+        .document-instructions { margin-bottom: 2rem; }
+        .document-instructions h5 { color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .document-instructions p, .document-instructions li { font-size: 0.95rem; color: var(--muted); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: var(--white); }
+        th, td { border: 1px solid var(--border); padding: 0.75rem; text-align: left; }
+        th { background: var(--light); font-weight: 600; }
+        td:first-child { font-weight: 600; }
+        
         .tema-list { list-style: none; margin-top: 1rem; }
         .tema-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.5rem; }
         .tema-item-name { font-weight: 600; }
         
-        /* Estilos para Banco de Preguntas */
         .pregunta-card { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.5rem; background: #fdfdff; }
         .pregunta-header { display: flex; justify-content: space-between; align-items: center; background: var(--light); padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
         .pregunta-tema { font-size: 0.9rem; font-weight: 600; color: var(--primary); }
         .pregunta-body { padding: 1rem; }
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; }
-        .form-group textarea, .form-group input { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 1rem; }
-        .form-group textarea { min-height: 80px; }
+        .form-group textarea, .form-group input[type="text"] { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 1rem; }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+        .form-group select { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 1rem; background: var(--white); }
         .opcion-group { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
         .opcion-group input[type="radio"] { width: auto; }
         .opcion-group input[type="text"] { flex: 1; }
-        .opcion-correcta { background: #e0f8e9; border: 1px solid var(--success); }
+        .opcion-correcta { background: var(--success-light); border: 1px solid var(--success); }
+        .table-responsive { overflow-x: auto; }
+        .text-center { text-align: center; }
+        .form-group-inline { display: flex; gap: 1rem; align-items: center; margin-top: 1rem; }
     </style>
 </head>
 <body>
@@ -86,18 +132,15 @@
                     <a href="acceso.html" class="btn btn-secondary">
                         <i class="fa-solid fa-arrow-left"></i> Volver al Dashboard
                     </a>
-                    <button class="btn btn-warning" onclick="saveDraft()">
-                        <i class="fa-solid fa-save"></i> Guardar Borrador
-                    </button>
-                    <button class="btn btn-success" onclick="exportarDocumentos()">
-                        <i class="fa-solid fa-file-export"></i> Exportar Todo
+                    <button class="btn btn-warning" onclick="saveAllDrafts()">
+                        <i class="fa-solid fa-save"></i> Guardar Borradores
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
+    <main class="container">
         <div class="section">
             <h2 class="section-title">
                 <i class="fa-solid fa-link"></i> 
@@ -107,91 +150,200 @@
                 <div class="info-box">
                     <p><strong>Curso:</strong> <span id="info_nombre">Cargando...</span></p>
                     <p><strong>Facilitador:</strong> <span id="info_facilitador">Cargando...</span></p>
-                    <p id="info_temario_status" style="color: var(--danger);">No se ha encontrado un temario. Por favor, completa y guarda la sección 6 (Desarrollo Cronológico) en tu Carta Descriptiva.</p>
+                    <p><strong>Lugar:</strong> <span id="info_lugar">Cargando...</span></p>
+                    <p><strong>Fecha(s):</strong> <span id="info_fechas">Cargando...</span></p>
                 </div>
             </div>
         </div>
         
-        <div class="section">
-            <h2 class="section-title">
-                <i class="fa-solid fa-brain"></i> 
-                Generador de Reactivos con IA
-            </h2>
-            <div class="section-content">
-                <p style="color: var(--muted); margin-bottom: 1rem;">Haz clic en "Generar" para crear preguntas de opción múltiple para cada tema de tu curso.</p>
-                <ul class="tema-list" id="tema-list-container">
-                    </ul>
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab(event, 'diagnostica')"><i class="fa-solid fa-lightbulb"></i> Diagnóstica</button>
+            <button class="tab-button" onclick="showTab(event, 'formativa')"><i class="fa-solid fa-clipboard-check"></i> Formativa</button>
+            <button class="tab-button" onclick="showTab(event, 'sumativa')"><i class="fa-solid fa-list-check"></i> Sumativa</button>
+            <button class="tab-button" onclick="showTab(event, 'satisfaccion')"><i class="fa-solid fa-smile"></i> Satisfacción</button>
+        </div>
+
+        <div id="diagnostica" class="tab-content active">
+            <div class="section">
+                <div class="section-content">
+                    <div class="document-container">
+                        <div class="document-header">
+                            <h2>EVALUACIÓN DIAGNÓSTICA</h2>
+                            <h3 id="diag-curso">CUESTIONARIO</h3>
+                        </div>
+                        <div class="document-instructions">
+                            <h5>Instrucciones para el Facilitador:</h5>
+                            <p>Explique a los participantes que esta evaluación es solo para conocer su nivel actual y no afecta su calificación. Indique 5 minutos para responder.</p>
+                            <h5>Instrucciones para el Participante:</h5>
+                            <p>Lea con atención y marque la opción que considere correcta. No se califica.</p>
+                        </div>
+                        <button class="btn btn-ai" onclick="generarDiagnostica()">
+                            <i class="fa-solid fa-brain"></i> Generar Cuestionario Básico con IA
+                        </button>
+                        <div id="diagnostica-content" class="mt-2">
+                            </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="section">
-            <h2 class="section-title">
-                <i class="fa-solid fa-list-check"></i> 
-                Banco de Reactivos (Evaluación Sumativa)
-            </h2>
-            <div class="section-content">
-                <p style="color: var(--muted); margin-bottom: 1rem;">Aquí puedes revisar, editar, eliminar o agregar manualmente las preguntas generadas.</p>
-                <div id="banco-de-reactivos">
+        <div id="formativa" class="tab-content">
+            <div class="section">
+                <div class="section-content">
+                    <div class="document-container">
+                        <div class="document-header">
+                            <h2>EVALUACIÓN FORMATIVA</h2>
+                            <h3 id="form-curso">GUÍA DE OBSERVACIÓN / LISTA DE COTEJO</h3>
+                        </div>
+                        <div class="document-instructions">
+                            <h5>Seleccione el Instrumento Formativo:</h5>
+                            <p>Elija el tipo de instrumento que desea generar basado en su Carta Descriptiva.</p>
+                        </div>
+                        <div class="form-group-inline">
+                            <select id="formativa-tipo" class="form-group" style="flex: 1;">
+                                <option value="guia">Guía de Observación (EC0217.01)</option>
+                                <option value="lista">Lista de Cotejo</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="generarFormativa()">
+                                <i class="fa-solid fa-file-export"></i> Generar Plantilla
+                            </button>
+                        </div>
+                        <div id="formativa-info" class="info-box mt-1">
+                            <p><strong>Guía de Observación:</strong> Mide el *desempeño* (cómo lo hace) usando escalas (Ej: 0=No lo hace, 1=Con ayuda, 2=Logrado).</p>
+                            <p><strong>Lista de Cotejo:</strong> Mide *productos* (si lo entregó) con Sí/No.</p>
+                        </div>
+                        <div id="formativa-content" class="mt-2">
+                            </div>
                     </div>
-                <button class="btn btn-secondary" onclick="addPreguntaManual()">
-                    <i class="fa-solid fa-plus"></i> Agregar Pregunta Manual
-                </button>
+                </div>
             </div>
         </div>
-    </div>
+
+        <div id="sumativa" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fa-solid fa-brain"></i> 
+                    Generador de Reactivos (Sumativa)
+                </h2>
+                <div class="section-content">
+                    <p style="color: var(--muted); margin-bottom: 1rem;">Haga clic en "Generar" para crear preguntas de opción múltiple para cada tema de su curso.</p>
+                    <ul class="tema-list" id="tema-list-container">
+                        </ul>
+                </div>
+            </div>
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fa-solid fa-list-check"></i> 
+                    Banco de Reactivos (Editable)
+                </h2>
+                <div class="section-content">
+                    <p style="color: var(--muted); margin-bottom: 1rem;">Aquí puede revisar, editar o agregar manualmente las preguntas generadas.</p>
+                    <div id="banco-de-reactivos">
+                        </div>
+                    <button class="btn btn-secondary" onclick="addPreguntaManual()">
+                        <i class="fa-solid fa-plus"></i> Agregar Pregunta Manual
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="satisfaccion" class="tab-content">
+            <div class="section">
+                <div class="section-content">
+                    <div class="document-container printable">
+                        <div class="document-header">
+                            <h2>EVALUACIÓN DE SATISFACCIÓN</h2>
+                            <h3 id="sat-curso">Encuesta de Reacción</h3>
+                        </div>
+                        <div class="document-instructions">
+                            <h5>Instrucciones para el Participante:</h5>
+                            <p>Marque con una "X" la opción que mejor refleje su opinión para cada enunciado. Su opinión es confidencial y nos ayudará a mejorar.</p>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="satisfaccion-table">
+                                <thead>
+                                    <tr>
+                                        <th>Reactivo</th>
+                                        <th class="text-center">Excelente (10)</th>
+                                        <th class="text-center">Bueno (9-8)</th>
+                                        <th class="text-center">Regular (7-6)</th>
+                                        <th class="text-center">Deficiente (5)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="5"><strong>Del contenido del curso</strong></td></tr>
+                                    <tr><td>Se cumplieron los objetivos del curso</td><td class="text-center"><input type="radio" name="sat1"></td><td class="text-center"><input type="radio" name="sat1"></td><td class="text-center"><input type="radio" name="sat1"></td><td class="text-center"><input type="radio" name="sat1"></td></tr>
+                                    <tr><td>Los temas fueron pertinentes para mi trabajo</td><td class="text-center"><input type="radio" name="sat2"></td><td class="text-center"><input type="radio" name="sat2"></td><td class="text-center"><input type="radio" name="sat2"></td><td class="text-center"><input type="radio" name="sat2"></td></tr>
+                                    <tr><td colspan="5"><strong>Del desempeño del instructor</strong></td></tr>
+                                    <tr><td>Demostró dominio del tema</td><td class="text-center"><input type="radio" name="sat3"></td><td class="text-center"><input type="radio" name="sat3"></td><td class="text-center"><input type="radio" name="sat3"></td><td class="text-center"><input type="radio" name="sat3"></td></tr>
+                                    <tr><td>Tuvo claridad en la explicación</td><td class="text-center"><input type="radio" name="sat4"></td><td class="text-center"><input type="radio" name="sat4"></td><td class="text-center"><input type="radio" name="sat4"></td><td class="text-center"><input type="radio" name="sat4"></td></tr>
+                                    <tr><td>Fomentó la participación y manejó preguntas</td><td class="text-center"><input type="radio" name="sat5"></td><td class="text-center"><input type="radio" name="sat5"></td><td class="text-center"><input type="radio" name="sat5"></td><td class="text-center"><input type="radio" name="sat5"></td></tr>
+                                    <tr><td colspan="5"><strong>Del material didáctico</strong></td></tr>
+                                    <tr><td>El manual y/o presentación tuvo claridad y fue útil</td><td class="text-center"><input type="radio" name="sat6"></td><td class="text-center"><input type="radio" name="sat6"></td><td class="text-center"><input type="radio" name="sat6"></td><td class="text-center"><input type="radio" name="sat6"></td></tr>
+                                    <tr><td colspan="5"><strong>De las instalaciones y logística</strong></td></tr>
+                                    <tr><td>El lugar y mobiliario fueron adecuados</td><td class="text-center"><input type="radio" name="sat7"></td><td class="text-center"><input type="radio" name="sat7"></td><td class="text-center"><input type="radio" name="sat7"></td><td class="text-center"><input type="radio" name="sat7"></td></tr>
+                                    <tr><td>El equipo (proyector, etc.) funcionó correctamente</td><td class="text-center"><input type="radio" name="sat8"></td><td class="text-center"><input type="radio" name="sat8"></td><td class="text-center"><input type="radio" name="sat8"></td><td class="text-center"><input type="radio" name="sat8"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label>¿Qué fue lo que más le gustó del curso?</label>
+                            <textarea id="sat_gusto" placeholder="Sus comentarios..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>¿Qué aspectos se podrían mejorar?</label>
+                            <textarea id="sat_mejora" placeholder="Sus comentarios..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
     let EC0301Manager;
     let cartaData;
     let preguntasCount = 0;
-
-    // ========== INICIALIZACIÓN Y CARGA DE DATOS ==========
-    document.addEventListener('DOMContentLoaded', () => {
-        // (AJUSTE) Verificar que los scripts globales estén cargados
-        if (typeof auth === 'undefined' || typeof EC0301Manager === 'undefined') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Crítico',
-                text: 'No se pudieron cargar los módulos de sistema (auth.js, ec0301-data-manager.js). Revisa las rutas en el HTML.',
-                confirmButtonColor: '#EF4444'
-            }).then(() => window.location.href = 'index.html');
-            return;
-        }
-
-        // Si el login es correcto, cargar el manager y la página
-        EC0301Manager = window.EC0301Manager;
-        loadCartaData();
-    });
+    
+    const $ = id => document.getElementById(id);
 
     /**
-     * Carga los datos de la Carta Descriptiva desde el EC0301Manager
-     * y puebla la interfaz.
+     * Carga todos los datos de la Carta Descriptiva y puebla los 4 documentos.
      */
-    function loadCartaData() {
+    function loadInitialData() {
         try {
             cartaData = EC0301Manager.getData();
-            if (!cartaData) {
-                $('info_temario_status').textContent = 'No se encontraron datos guardados. Completa la Carta Descriptiva.';
+            if (!cartaData || !cartaData.nombre) {
+                showMissingDataAlert();
                 return;
             }
 
             // 1. Poblar Información General
-            $('info_nombre').textContent = cartaData.nombre || 'Nombre de curso no definido';
-            $('info_facilitador').textContent = cartaData.facilitador || 'Facilitador no definido';
+            const curso = cartaData.nombre || 'Nombre de curso no definido';
+            const facilitador = cartaData.facilitador || 'Facilitador no definido';
+            const lugar = cartaData.lugar || 'Lugar no definido';
+            const fechas = cartaData.fechas || 'Fechas no definidas';
+            
+            $('info_nombre').textContent = curso;
+            $('info_facilitador').textContent = facilitador;
+            $('info_lugar').textContent = lugar;
+            $('info_fechas').textContent = fechas;
+            
+            // Poblar encabezados de los 4 documentos
+            $('diag-curso').textContent = curso;
+            $('form-curso').textContent = curso;
+            $('sat-curso').textContent = curso;
 
-            // 2. Poblar Temario
+            // 2. Poblar Temario (para Sumativa)
             const temaContainer = $('tema-list-container');
             if (cartaData.temas && cartaData.temas.length > 0) {
-                $('info_temario_status').textContent = `Se cargaron ${cartaData.temas.length} temas.`;
-                $('info_temario_status').style.color = 'var(--success)';
-                
                 let temaHtml = '';
                 cartaData.temas.forEach(tema => {
-                    if (tema.nombre) { // Solo mostrar temas con nombre
+                    if (tema.nombre) {
                         temaHtml += `
                             <li class="tema-item">
                                 <span class="tema-item-name">${tema.nombre}</span>
-                                <button class="btn btn-success" onclick="generarPreguntasIA('${tema.nombre}')">
+                                <button class="btn btn-ai" onclick="generarSumativa('${tema.nombre}')">
                                     <i class="fa-solid fa-brain"></i> Generar Preguntas
                                 </button>
                             </li>
@@ -199,14 +351,12 @@
                     }
                 });
                 temaContainer.innerHTML = temaHtml;
+            } else {
+                 temaContainer.innerHTML = '<p style="color: var(--muted);">No se encontraron temas en la Carta Descriptiva. Guarde la carta primero.</p>';
             }
             
-            // Cargar preguntas guardadas
-            const preguntasGuardadas = EC0301Manager.loadProduct('evaluacion-sumativa');
-            if (preguntasGuardadas && preguntasGuardadas.length > 0) {
-                renderPreguntas(preguntasGuardadas);
-                toast('Borrador de preguntas cargado', 'success');
-            }
+            // 3. Cargar borradores guardados
+            loadAllDrafts();
 
         } catch (error) {
             console.error('Error al cargar datos de la carta:', error);
@@ -214,27 +364,158 @@
         }
     }
 
-    // ========== GENERACIÓN DE PREGUNTAS (IA SIMULADA) ==========
+    // ========== NAVEGACIÓN DE PESTAÑAS ==========
+    function showTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+    
+    // ========== NOTIFICACIONES ==========
+    function toast(mensaje, tipo = 'success') {
+        Swal.fire({
+            toast: true, position: 'top-end', icon: tipo,
+            title: mensaje, showConfirmButton: false, timer: 3000, timerProgressBar: true
+        });
+    }
 
-    /**
-     * Simula una llamada a IA para generar preguntas basadas en un tema.
-     * @param {string} temaNombre - El nombre del tema para generar preguntas.
-     */
-    async function generarPreguntasIA(temaNombre) {
+    function showMissingDataAlert() {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Datos Incompletos',
+            html: 'No se encontraron datos. Por favor, completa y <strong>guarda</strong> primero la <strong>Carta Descriptiva</strong>.',
+            confirmButtonText: 'Ir a Carta Descriptiva',
+            confirmButtonColor: '#1E3A8A'
+        }).then(() => {
+            window.location.href = 'carta_descriptiva.html';
+        });
+    }
+
+    // ========== GENERACIÓN DE EVALUACIONES (SIMULADA) ==========
+
+    async function generarDiagnostica() {
+        Swal.fire({
+            title: 'Generando Evaluación Diagnóstica...',
+            html: `Usando IA para analizar el temario y generar preguntas básicas.`,
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Simular IA
+
+        const temas = (cartaData.temas || []).map(t => t.nombre).join(', ');
+        const fakeQuestions = [
+            { tipo: 'tf', pregunta: `¿Tiene usted experiencia previa en ${temas.split(',')[0] || 'este tema'}?`, opciones: ['Verdadero', 'Falso'], correcta: 0 },
+            { tipo: 'mc', pregunta: `¿Qué es un ${cartaData.nombre || 'tema principal'}?`, opciones: ['Definición A', 'Definición B', 'Definición C', 'No lo sé'], correcta: 3 }
+        ];
+        
+        renderCuestionario('diagnostica-content', fakeQuestions);
+        Swal.close();
+        toast('Cuestionario Diagnóstico generado', 'success');
+    }
+
+    function generarFormativa() {
+        const tipo = $('formativa-tipo').value;
+        const container = $('formativa-content');
+        
+        if (tipo === 'guia') {
+            // Generar Guía de Observación (basada en PDF)
+            container.innerHTML = `
+                <div class="document-instructions">
+                    <h5>Instrucciones de Aplicación</h5>
+                    <p>Observe el desempeño de cada participante durante la actividad práctica (Ej: ${cartaData.temas[0]?.nombre || 'Tema 1'}) y marque el nivel de logro (0=No logrado, 1=Con ayuda, 2=Logrado).</p>
+                </div>
+                <div class="table-responsive">
+                    <table contenteditable="true">
+                        <thead>
+                            <tr>
+                                <th>Reactivo (Basado en Obj. Psicomotor/Afectivo)</th>
+                                <th class="text-center">0 (No Logrado)</th>
+                                <th class="text-center">1 (Con Ayuda)</th>
+                                <th class="text-center">2 (Logrado)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${cartaData.objetivos[1]?.accion || 'Aplica el procedimiento...'}</td>
+                                <td class="text-center"><input type="radio" name="form1"></td>
+                                <td class="text-center"><input type="radio" name="form1"></td>
+                                <td class="text-center"><input type="radio" name="form1"></td>
+                            </tr>
+                            <tr>
+                                <td>${cartaData.objetivos[2]?.accion || 'Muestra actitud proactiva...'}</td>
+                                <td class="text-center"><input type="radio" name="form2"></td>
+                                <td class="text-center"><input type="radio" name="form2"></td>
+                                <td class="text-center"><input type="radio" name="form2"></td>
+                            </tr>
+                            <tr>
+                                <td>... (Agregue más criterios aquí) ...</td>
+                                <td class="text-center"><input type="radio" name="form3"></td>
+                                <td class="text-center"><input type="radio" name="form3"></td>
+                                <td class="text-center"><input type="radio" name="form3"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } else {
+            // Generar Lista de Cotejo
+            container.innerHTML = `
+                <div class="document-instructions">
+                    <h5>Instrucciones de Aplicación</h5>
+                    <p>Revise el producto entregable (Ej: ${cartaData.temas[0]?.nombre || 'Reporte del Tema 1'}) y marque si cumple o no con cada criterio.</p>
+                </div>
+                <div class="table-responsive">
+                    <table contenteditable="true">
+                        <thead>
+                            <tr>
+                                <th>Reactivo (Producto Esperado)</th>
+                                <th class="text-center">Sí</th>
+                                <th class="text-center">No</th>
+                                <th class="text-center">N/A</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>El documento incluye una portada con datos correctos.</td>
+                                <td class="text-center"><input type="radio" name="form1"></td>
+                                <td class="text-center"><input type="radio" name="form1"></td>
+                                <td class="text-center"><input type="radio" name="form1"></td>
+                            </tr>
+                            <tr>
+                                <td>Desarrolla los 3 puntos clave solicitados.</td>
+                                <td class="text-center"><input type="radio" name="form2"></td>
+                                <td class="text-center"><input type="radio" name="form2"></td>
+                                <td class="text-center"><input type="radio" name="form2"></td>
+                            </tr>
+                             <tr>
+                                <td>... (Agregue más criterios aquí) ...</td>
+                                <td class="text-center"><input type="radio" name="form3"></td>
+                                <td class="text-center"><input type="radio" name="form3"></td>
+                                <td class="text-center"><input type="radio" name="form3"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+    }
+
+    async function generarSumativa(temaNombre) {
         Swal.fire({
             title: 'Generando preguntas...',
             html: `Usando IA para crear reactivos sobre: <strong>${temaNombre}</strong>`,
             allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+            didOpen: () => Swal.showLoading()
         });
-
-        // SIMULACIÓN DE LLAMADA A IA
-        // En un futuro, aquí iría tu fetch a un endpoint de IA
+        
         await new Promise(resolve => setTimeout(resolve, 1500)); 
 
-        // Datos de ejemplo
         const fakeQuestions = [
             {
                 tema: temaNombre,
@@ -243,6 +524,7 @@
                     { texto: 'Opción A (Respuesta Correcta)', correcta: true },
                     { texto: 'Opción B', correcta: false },
                     { texto: 'Opción C', correcta: false },
+                    { texto: 'Opción D', correcta: false },
                 ]
             },
             {
@@ -256,17 +538,39 @@
                 ]
             }
         ];
-
         Swal.close();
-        renderPreguntas(fakeQuestions);
+        renderPreguntasSumativa(fakeQuestions);
         toast(`¡Se generaron ${fakeQuestions.length} preguntas!`, 'success');
+    }
+    
+    /**
+     * Helper para renderizar cuestionarios (Diagnóstica y Sumativa)
+     */
+    function renderCuestionario(containerId, questions) {
+        const container = $(containerId);
+        container.innerHTML = '';
+        questions.forEach((q, index) => {
+            let opcionesHtml = '<ul>';
+            let inciso = 'a';
+            q.opciones.forEach((opt, optIndex) => {
+                opcionesHtml += `<li>${inciso}) ${opt}</li>`;
+                inciso = String.fromCharCode(inciso.charCodeAt(0) + 1);
+            });
+            opcionesHtml += '</ul>';
+            
+            container.innerHTML += `
+                <div class="pregunta-item" style="background: var(--white); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <strong>${index + 1}. ${q.pregunta}</strong>
+                    ${opcionesHtml}
+                </div>
+            `;
+        });
     }
 
     /**
-     * Dibuja las tarjetas de preguntas en el DOM.
-     * @param {Array} questions - Array de objetos de pregunta.
+     * Dibuja las tarjetas de preguntas en el DOM (Sumativa)
      */
-    function renderPreguntas(questions) {
+    function renderPreguntasSumativa(questions) {
         const banco = $('banco-de-reactivos');
         questions.forEach(q => {
             preguntasCount++;
@@ -276,12 +580,11 @@
             q.opciones.forEach((opt, index) => {
                 opcionesHtml += `
                     <div class="opcion-group">
-                        <input type="radio" name="correcta-${preguntaId}" ${opt.correcta ? 'checked' : ''}>
-                        <input type="text" value="${opt.texto}" class="${opt.correcta ? 'opcion-correcta' : ''}">
+                        <input type="radio" name="correcta-${preguntaId}" ${opt.correcta ? 'checked' : ''} onchange="updateOpcionStyle(this)">
+                        <input type="text" value="${opt.texto}" class="${opt.correcta ? 'opcion-correcta' : ''}" oninput="updateOpcionStyle(this)">
                     </div>
                 `;
             });
-
             const card = document.createElement('div');
             card.className = 'pregunta-card';
             card.id = preguntaId;
@@ -306,30 +609,37 @@
             banco.appendChild(card);
         });
     }
+    
+    function updateOpcionStyle(input) {
+        const group = input.closest('.opcion-group');
+        const radio = group.querySelector('input[type="radio"]');
+        const text = group.querySelector('input[type="text"]');
+        if (radio.checked) {
+            text.classList.add('opcion-correcta');
+        } else {
+            text.classList.remove('opcion-correcta');
+        }
+    }
 
-    // ========== FUNCIONES DEL BANCO DE REACTIVOS ==========
-
+    // ========== FUNCIONES DEL BANCO DE REACTIVOS (SUMATIVA) ==========
     function addPreguntaManual() {
-        renderPreguntas([{
+        renderPreguntasSumativa([{
             tema: 'Manual',
             pregunta: 'Escribe tu pregunta aquí...',
             opciones: [
                 { texto: 'Opción A', correcta: true },
                 { texto: 'Opción B', correcta: false },
                 { texto: 'Opción C', correcta: false },
+                { texto: 'Opción D', correcta: false },
             ]
         }]);
     }
-
+    
     function removePregunta(preguntaId) {
         Swal.fire({
-            title: '¿Eliminar pregunta?',
-            text: 'Esta acción no se puede deshacer.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#EF4444',
-            cancelButtonColor: '#6B7280',
-            confirmButtonText: 'Sí, eliminar',
+            title: '¿Eliminar pregunta?', text: 'Esta acción no se puede deshacer.',
+            icon: 'warning', showCancelButton: true, confirmButtonColor: '#EF4444',
+            cancelButtonColor: '#6B7280', confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -339,50 +649,44 @@
         });
     }
     
-    // ========== GUARDAR Y EXPORTAR ==========
-
-    function collectData() {
-        const preguntas = [];
-        document.querySelectorAll('.pregunta-card').forEach(card => {
-            const tema = card.querySelector('.pregunta-tema').textContent.replace('Tema: ', '');
-            const pregunta = card.querySelector('textarea').value;
-            const opciones = [];
-            
-            card.querySelectorAll('.opcion-group').forEach(opt => {
-                opciones.push({
-                    texto: opt.querySelector('input[type="text"]').value,
-                    correcta: opt.querySelector('input[type="radio"]').checked
+    // ========== GUARDAR Y CARGAR BORRADORES ==========
+    
+    function saveAllDrafts() {
+        try {
+            // Recolectar datos de la Sumativa (es la única editable)
+            const sumativaData = [];
+            document.querySelectorAll('.pregunta-card').forEach(card => {
+                const tema = card.querySelector('.pregunta-tema').textContent.replace('Tema: ', '');
+                const pregunta = card.querySelector('textarea').value;
+                const opciones = [];
+                
+                card.querySelectorAll('.opcion-group').forEach(opt => {
+                    opciones.push({
+                        texto: opt.querySelector('input[type="text"]').value,
+                        correcta: opt.querySelector('input[type="radio"]').checked
+                    });
                 });
+                sumativaData.push({ tema, pregunta, opciones });
             });
 
-            preguntas.push({ tema, pregunta, opciones });
-        });
-        return preguntas;
-    }
-
-    function saveDraft() {
-        try {
-            const data = collectData();
-            EC0301Manager.saveProduct('evaluacion-sumativa', data);
-            toast('Borrador de evaluaciones guardado', 'success');
+            // (Aquí se guardarían también los datos de Diagnóstica y Formativa si fueran editables)
+            
+            EC0301Manager.saveProduct('evaluacion-sumativa', sumativaData);
+            toast('Borrador de Evaluaciones guardado', 'success');
         } catch (e) {
             toast(`Error al guardar: ${e.message}`, 'error');
         }
     }
-
-    function exportarDocumentos() {
-        Swal.fire('Función en desarrollo', 'La exportación a PDF y Word para las evaluaciones estará disponible próximamente.', 'info');
-        // Aquí iría la lógica de exportación a PDF/Word
+    
+    function loadAllDrafts() {
+         const sumativaGuardada = EC0301Manager.loadProduct('evaluacion-sumativa');
+         if (sumativaGuardada && sumativaGuardada.length > 0) {
+             renderPreguntasSumativa(sumativaGuardada);
+             toast('Borrador de Evaluación Sumativa cargado', 'success');
+         }
+         // (Aquí se cargarían los datos de Diagnóstica y Formativa)
     }
 
-    // ========== UTILIDADES ==========
-    const $ = id => document.getElementById(id);
-    function toast(mensaje, tipo = 'success') {
-        Swal.fire({
-            toast: true, position: 'top-end', icon: tipo,
-            title: mensaje, showConfirmButton: false, timer: 3000, timerProgressBar: true
-        });
-    }
     </script>
 </body>
 </html>

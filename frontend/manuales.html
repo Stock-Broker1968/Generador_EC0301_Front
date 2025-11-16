@@ -8,14 +8,6 @@
     <script src="sistema_central/auth.js" defer></script>
     <script src="sistema_central/ec0301-data-manager.js" defer></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof auth !== 'undefined' && !auth.isLoggedIn()) {
-                window.location.replace('index.html');
-            }
-        });
-    </script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -131,17 +123,6 @@
             resize: vertical; font-family: inherit; line-height: 1.6; padding: 1rem;
             display: none;
         }
-
-        .tema-item {
-            margin-bottom: 2.5rem; padding: 1.5rem; background: white; 
-            border: 1px solid var(--border); border-radius: 8px;
-        }
-        .tema-title { 
-            font-size: 1.5rem; color: var(--primary); margin-bottom: 1rem; 
-            font-weight: 600; border-bottom: 2px solid var(--accent); 
-            padding-bottom: 0.5rem;
-        }
-        .tema-content { margin-bottom: 1rem; }
         
         .instructor-note {
             background: #FFFBEB; border-left: 4px solid #FBBF24; padding: 1.5rem;
@@ -163,13 +144,6 @@
             animation: spin 1s linear infinite; margin: 0 auto 1rem;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .validation-panel {
-            background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px;
-            padding: 1.5rem; margin-top: 2rem; text-align: center;
-        }
-        .validation-panel h4 { color: #166534; margin-bottom: 1rem; }
-        .validation-panel p { color: #166534; margin-bottom: 1.5rem; }
 
         .ai-suggestions {
             background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px;
@@ -288,20 +262,27 @@
 
     // ========== INICIALIZACIÓN Y CARGA DE DATOS ==========
     document.addEventListener('DOMContentLoaded', () => {
-        // (AJUSTE) Verificar que los scripts globales estén cargados
-        if (typeof auth === 'undefined' || typeof EC0301Manager === 'undefined') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Crítico',
-                text: 'No se pudieron cargar los módulos de sistema (auth.js, ec0301-data-manager.js). Revisa las rutas en el HTML.',
-                confirmButtonColor: '#EF4444'
-            }).then(() => window.location.href = 'index.html');
-            return;
-        }
-        
-        // Si el login es correcto, cargar el manager y la página
-        EC0301Manager = window.EC0301Manager;
-        loadData();
+        // ===== CORRECCIÓN: Guardia de Seguridad Robusta =====
+        setTimeout(() => {
+            if (typeof auth === 'undefined' || typeof EC0301Manager === 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error Crítico',
+                    text: 'No se pudieron cargar los módulos de sistema (auth.js, ec0301-data-manager.js). Revisa las rutas en el HTML.',
+                    confirmButtonColor: '#EF4444'
+                }).then(() => window.location.href = 'index.html');
+                return;
+            }
+            
+            if (!auth.isLoggedIn()) {
+                 window.location.replace('index.html');
+                 return;
+            }
+            
+            // Si todo está bien, cargar el manager y la página
+            EC0301Manager = window.EC0301Manager;
+            loadData();
+        }, 50); // 50ms de espera
     });
 
     /**
@@ -339,6 +320,7 @@
      * @param {string} type - 'participante' o 'instructor'
      */
     async function generateManual(type) {
+        // Usamos cartaData.temas (de la nueva carta EC0217)
         if (!cartaData || !cartaData.temas || cartaData.temas.length === 0) {
             Swal.fire('Datos Insuficientes', 'Debes completar y guardar la sección de "Temas" en tu Carta Descriptiva antes de generar un manual.', 'warning');
             return;
@@ -364,6 +346,7 @@
 
     /**
      * Lógica de la "IA" para crear el contenido del manual
+     * (Adaptado a la nueva estructura de cartaData)
      */
     function createAIContent(type, data) {
         const esInstructor = type === 'instructor';
@@ -404,9 +387,9 @@ Este tema se enfoca en... (Contenido simulado por IA sobre ${tema.nombre}).
 - Punto Clave 3 sobre ${tema.nombre}.
 
 **Actividades de Aprendizaje:**
-(Actividad simulada por IA para ${tema.nombre})
+${tema.desc || `(Actividad simulada por IA para ${tema.nombre})`}
 1.  Revisar la presentación del Módulo ${index + 1}.
-2.  Participar en el foro de discusión: "${tema.nombre} en la práctica".
+2.  Participar en la dinámica: "${tema.tec || 'Expositiva'}".
 3.  Completar el ejercicio de autoevaluación.
 `;
             
@@ -415,9 +398,10 @@ Este tema se enfoca en... (Contenido simulado por IA sobre ${tema.nombre}).
 <div class="instructor-note">
 <strong><i class="fas fa-lightbulb"></i> Nota del Instructor:</strong>
 <ul>
-    <li>**Estrategia Didáctica:** Para este tema (${tema.nombre}), se recomienda usar una técnica expositiva (20%) seguida de un ejercicio práctico (80%).</li>
-    <li>**Punto Crítico:** Asegúrate de que los participantes comprendan la diferencia entre X e Y. Usa una analogía.</li>
-    <li>**Tiempo Estimado:** ${tema.duracion || 'N/A'} minutos. No te extiendas en la teoría.</li>
+    <li>**Estrategia Didáctica:** Para este tema (${tema.nombre}), se recomienda usar una técnica ${tema.tec || 'expositiva y práctica'}.</li>
+    <li>**Punto Crítico:** Asegúrate de que los participantes comprendan la aplicación práctica de este tema.</li>
+    <li>**Tiempo Estimado:** ${tema.duracion || 'N/A'} minutos.</li>
+    <li>**Materiales:** ${tema.mat || 'Presentación, Manual'}.</li>
 </ul>
 </div>
 `;
@@ -439,8 +423,9 @@ Hemos cubierto ${data.temas.length} temas principales, desde ${data.temas[0]?.no
 
 **Sistema de Evaluación:**
 Para acreditar el curso, se requiere:
-- **Evaluación Formativa:** ${data.ev?.form?.pct || 'N/A'}%
-- **Evaluación Sumativa:** ${data.ev?.sum?.pct || 'N/A'}%
+- **Evaluación Formativa:** ${data.ev?.form_pct || 'N/A'}%
+- **Evaluación Sumativa:** ${data.ev?.sum_pct || 'N/A'}%
+- **Evaluación de Satisfacción:** ${data.ev?.sat_pct || 'N/A'}%
 - **Calificación Mínima:** ${data.ev?.min || 'N/A'}%
 `
         });
@@ -450,17 +435,18 @@ Para acreditar el curso, se requiere:
     
     /**
      * Ayudante para buscar objetivos relacionados con un tema
+     * (Se asume que los objetivos están en orden: 1=Cog, 2=Psi, 3=Afe, 4=Rel)
      */
     function findObjetivosParaTema(temaNombre, objetivos) {
-        if (!objetivos) return "No hay objetivos particulares definidos.";
+        if (!objetivos || objetivos.length === 0) return "No hay objetivos particulares definidos.";
         
-        let found = objetivos.filter(obj => 
-            obj.temas && obj.temas.toLowerCase().includes(temaNombre.toLowerCase())
-        );
+        // Simulación simple: asigna objetivos a temas
+        const index = cartaData.temas.findIndex(t => t.nombre === temaNombre);
+        if (objetivos[index]) {
+             return `- **(${objetivos[index].dom})**: ${objetivos[index].accion}, ${objetivos[index].cond}.`;
+        }
         
-        if (found.length === 0) return "- (Este tema apoya al Objetivo General)";
-        
-        return found.map(obj => `- ${obj.accion}, ${obj.cond}.`).join('\n');
+        return "- (Este tema apoya al Objetivo General)";
     }
 
     /**

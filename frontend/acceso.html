@@ -1,255 +1,261 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma SkillsCert EC0301</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <script src="sistema_central/auth.js" defer></script>
-    <script src="sistema_central/ec0301-data-manager.js" defer></script> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma EC0301 - Panel</title>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Espera un ciclo para asegurar que los scripts 'defer' se carguen
-            setTimeout(() => {
-                if (typeof auth === 'undefined') {
-                    console.error("Error crítico: auth.js no se cargó. Revisa la ruta.");
-                    document.body.innerHTML = `<h1 style="color: red; padding: 2rem;">Error crítico de seguridad. No se pudo cargar el módulo de autenticación. Revisa la ruta a 'sistema_central/auth.js'.</h1>`;
-                    return;
-                }
-                // Si el usuario NO está logueado, lo expulsa.
-                if (!auth.isLoggedIn()) {
-                    window.location.replace('index.html');
-                }
-            }, 50); // 50ms de espera
-        });
-    </script>
-    
-    <style>
-        :root {
-            --primary: #6366f1; --primary-dark: #4f46e5; --dark: #1e293b;
-            --light: #f1f5f9; --white: #ffffff; --danger: #ef4444;
-            --success: #10b981; --accent: #FF6B35; --warning: #F59E0B;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light); color: var(--dark);
-        }
-        .header {
-            background: var(--white); padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo { display: flex; align-items: center; gap: 0.75rem; color: var(--dark); }
-        .logo i { font-size: 1.75rem; color: var(--primary); }
-        .logo h1 { font-size: 1.25rem; }
-        .user-menu { display: flex; align-items: center; gap: 1rem; }
-        .user-email { font-size: 0.9rem; color: #64748b; }
-        .btn-logout {
-            background: none; border: 1px solid var(--danger); color: var(--danger);
-            padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.9rem;
-            font-weight: 600; cursor: pointer; transition: all 0.2s;
-        }
-        .btn-logout:hover { background: var(--danger); color: var(--white); }
-        .btn-logout i { margin-right: 0.5rem; }
-        .container { max-width: 1100px; margin: 2rem auto; padding: 2rem; }
-        .container h2 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .container p { font-size: 1.1rem; color: #64748b; margin-bottom: 2rem; }
-        .modules-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        .module-card {
-            background: var(--white); border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            padding: 1.5rem; text-decoration: none; color: var(--dark);
-            transition: all 0.3s; border: 1px solid transparent;
-        }
-        .module-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.2);
-            border-color: var(--primary);
-        }
-        .module-card i { font-size: 2rem; margin-bottom: 1rem; }
-        .module-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
-        .module-card p { font-size: 0.9rem; margin-bottom: 0; color: #64748b; }
-        
-        /* --- ESTILO DE MÓDULO BLOQUEADO --- */
-        .module-card.locked {
-            background: #f1f5f9;
-            opacity: 0.7;
-            cursor: not-allowed;
-            position: relative;
-            overflow: hidden;
-        }
-        .module-card.locked::before {
-            content: '\f023'; /* Icono de candado de FontAwesome */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1rem;
-            color: var(--muted);
-        }
-        .module-card.locked:hover {
-            transform: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border-color: transparent;
-        }
-        /* --- --- */
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #6b7280;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.05);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .brand-logo {
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+    }
+    .brand h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: .9rem;
+      color: var(--muted);
+    }
+    .header-right span strong { color: var(--text); }
+    .btn-logout {
+      border: none;
+      padding: .5rem 1rem;
+      border-radius: 999px;
+      background: #f97373;
+      color: white;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-logout:hover { background: #ef4444; }
 
-        /* Icon Colors */
-        .module-card .fa-file-alt { color: var(--primary); }
-        .module-card .fa-tasks { color: var(--success); }
-        .module-card .fa-book-open { color: var(--accent); }
-        .module-card .fa-truck { color: #0ea5e9; } /* cian */
-        .module-card .fa-key { color: var(--warning); } /* amarillo */
-        .module-card .fa-shield-check { color: #8b5cf6; } /* purpura */
-        
-        /* Estilo especial para el módulo de exportación */
-        .module-card.export-card {
-            background: var(--dark);
-            border-color: var(--dark);
-        }
-        .module-card.export-card:hover {
-            box-shadow: 0 15px 30px rgba(30, 41, 59, 0.3);
-            border-color: var(--primary);
-        }
-        .module-card.export-card i { color: #94a3b8; }
-        .module-card.export-card h3 { color: var(--white); }
-        .module-card.export-card p { color: #94a3b8; }
-    </style>
+    main {
+      flex: 1;
+      padding: 2.5rem 2rem 3rem;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    h2 {
+      font-size: 1.9rem;
+      margin-bottom: .25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: .95rem;
+      margin-bottom: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.5rem 1.4rem;
+      box-shadow: 0 10px 30px rgba(148, 163, 184, 0.25);
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(148, 163, 184, 0.35);
+    }
+    .card-icon {
+      width: 42px; height: 42px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      background: #eef2ff;
+      color: var(--primary-dark);
+      margin-bottom: .25rem;
+    }
+    .card h3 { font-size: 1rem; }
+    .card p {
+      color: var(--muted);
+      font-size: .9rem;
+      flex: 1;
+    }
+    .card-footer {
+      margin-top: .5rem;
+      font-size: .8rem;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      header { padding: .75rem 1rem; }
+      main { padding: 1.75rem 1rem 2.5rem; }
+    }
+  </style>
 </head>
 <body>
+<header>
+  <div class="brand">
+    <div class="brand-logo"><i class="fas fa-graduation-cap"></i></div>
+    <div>
+      <h1>Plataforma EC0301</h1>
+      <div style="font-size: .75rem; color: var(--muted);">
+        Generador profesional de documentos
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span>Hola, <strong id="user-email">cargando…</strong></span>
+    <button class="btn-logout" onclick="handleLogout()">
+      <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+    </button>
+  </div>
+</header>
 
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-graduation-cap"></i>
-            <h1>Plataforma EC0301</h1>
-        </div>
-        <div class="user-menu">
-            <span id="userEmail" class="user-email">Cargando...</span>
-            <button id="logoutButton" class="btn-logout">
-                <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
-            </button>
-        </div>
-    </header>
+<main>
+  <h2>Bienvenido a tu Plataforma</h2>
+  <p class="subtitle">
+    Selecciona un módulo para comenzar a generar tus productos alineados al estándar EC0301.
+  </p>
 
-    <main class="container">
-        <h2>Bienvenido a tu Plataforma</h2>
-        <p>Selecciona un módulo para comenzar a generar tus productos.</p>
-        
-        <div class="modules-grid">
-            
-            <a href="carta_descriptiva.html" class="module-card" id="carta-card">
-                <i class="fas fa-file-alt"></i>
-                <h3>Carta Descriptiva</h3>
-                <p>Genera el guion instruccional completo para tu curso en línea.</p>
-            </a>
+  <div class="grid">
+    <a class="card" href="carta_descriptiva.html">
+      <div class="card-icon"><i class="far fa-file-alt"></i></div>
+      <h3>Carta Descriptiva</h3>
+      <p>Genera el guion instruccional completo para tu curso de capacitación.</p>
+      <div class="card-footer">
+        Abrir módulo <i class="fas fa-arrow-right"></i>
+      </div>
+    </a>
 
-            <a href="evaluaciones.html" class="module-card" id="evaluaciones-card">
-                <i class="fas fa-tasks"></i>
-                <h3>Instrumentos de Evaluación</h3>
-                <p>Crea las rúbricas, listas de cotejo y guías de observación.</p>
-            </a>
-            
-            <a href="manuales.html" class="module-card" id="manuales-card">
-                <i class="fas fa-book-open"></i>
-                <h3>Manuales del Curso</h3>
-                <p>Desarrolla los manuales del participante y del facilitador.</p>
-            </a>
-            
-            <a href="logistica.html" class="module-card" id="logistica-card">
-                <i class="fas fa-truck"></i>
-                <h3>Logística y Formatos</h3>
-                <p>Genera la lista de asistencia, contrato y lista de requerimientos.</p>
-            </a>
-            
-            <a href="respuestas.html" class="module-card" id="respuestas-card">
-                <i class="fas fa-key"></i>
-                <h3>Hoja de Respuestas</h3>
-                <p>Genera la clave de respuestas de la evaluación sumativa.</p>
-            </a>
-            
-            <a href="auditoria.html" class="module-card" id="auditoria-card">
-                <i class="fas fa-shield-check"></i>
-                <h3>Auditoría EC0301</h3>
-                <p>Valida tu portafolio de productos contra el estándar.</p>
-            </a>
-            
-            <a href="exportar.html" class="module-card export-card" id="exportar-card">
-                <i class="fas fa-file-zipper"></i>
-                <h3>Exportar Portafolio</h3>
-                <p>Genera tu portafolio final en PDF o .ZIP para la auditoría.</p>
-            </a>
-            
-        </div>
-    </main>
+    <a class="card" href="evaluaciones.html">
+      <div class="card-icon"><i class="fas fa-clipboard-check"></i></div>
+      <h3>Instrumentos de Evaluación</h3>
+      <p>Crea rúbricas, listas de cotejo y guías de observación alineadas al estándar.</p>
+      <div class="card-footer">
+        Abrir módulo <i class="fas fa-arrow-right"></i>
+      </div>
+    </a>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // 1. Configurar Bienvenida y Logout
-            const email = localStorage.getItem('userEmail');
-            if (email) {
-                document.getElementById('userEmail').textContent = email;
-            }
+    <a class="card" href="exportar.html">
+      <div class="card-icon"><i class="fas fa-book-open"></i></div>
+      <h3>Manuales del Curso</h3>
+      <p>Desarrolla los manuales del participante y del facilitador.</p>
+      <div class="card-footer">
+        Abrir módulo <i class="fas fa-arrow-right"></i>
+      </div>
+    </a>
 
-            const logoutButton = document.getElementById('logoutButton');
-            logoutButton.addEventListener('click', () => {
-                if (typeof auth !== 'undefined') {
-                    auth.logout(); // Llama a la función de logout en auth.js
-                } else {
-                    localStorage.clear(); // Fallback
-                    window.location.href = 'index.html';
-                }
-            });
+    <a class="card" href="exportar.html">
+      <div class="card-icon"><i class="fas fa-truck-loading"></i></div>
+      <h3>Logística y Formatos</h3>
+      <p>Genera listas de asistencia, contratos y formatos de requerimientos.</p>
+      <div class="card-footer">
+        Abrir módulo <i class="fas fa-arrow-right"></i>
+      </div>
+    </a>
 
-            // 2. Lógica de Bloqueo de Módulos (Tu idea)
-            if (typeof EC0301Manager !== 'undefined') {
-                const cartaData = EC0301Manager.getData();
-                
-                // El "guardián": Si la carta NO tiene un nombre de curso, está incompleta.
-                const isCartaComplete = cartaData && cartaData.nombre && cartaData.nombre.trim() !== ''; 
+    <a class="card" href="exportar.html">
+      <div class="card-icon"><i class="fas fa-key"></i></div>
+      <h3>Hoja de Respuestas</h3>
+      <p>Crea la clave de respuestas para tus instrumentos de evaluación.</p>
+      <div class="card-footer">
+        Abrir módulo <i class="fas fa-arrow-right"></i>
+      </div>
+    </a>
 
-                if (!isCartaComplete) {
-                    const lockMessage = 'Debes completar y guardar tu "Carta Descriptiva" primero.';
-                    lockModule('evaluaciones-card', lockMessage);
-                    lockModule('manuales-card', lockMessage);
-                    lockModule('logistica-card', lockMessage);
-                    lockModule('respuestas-card', lockMessage);
-                    lockModule('auditoria-card', lockMessage);
-                    lockModule('exportar-card', lockMessage);
-                }
-            } else {
-                console.error("Error crítico: EC0301-data-manager.js no se cargó.");
-            }
-        });
+    <a class="card" href="auditoria.html">
+      <div class="card-icon"><i class="fas fa-search"></i></div>
+      <h3>Auditoría EC0301</h3>
+      <p>Valida tu portafolio de evidencias contra los requisitos del estándar.</p>
+      <div class="card-footer">
+        Abrir módulo <i class="fas fa-arrow-right"></i>
+      </div>
+    </a>
+  </div>
+</main>
 
-        /**
-         * Función para bloquear un módulo
-         */
-        function lockModule(cardId, message) {
-            const card = document.getElementById(cardId);
-            if (card) {
-                card.classList.add('locked');
-                card.href = '#'; // Quita el enlace
-                card.onclick = (e) => {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: 'Módulo Bloqueado', 
-                        text: message, 
-                        icon: 'info',
-                        confirmButtonColor: 'var(--primary)'
-                    });
-                };
-            }
-        }
-    </script>
+<script src="sistema_central/auth.js"></script>
+<script src="sistema_central/ec0301-data-manager.js"></script>
+<script>
+  // Guardia de sesión para acceso.html
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('[ACCESO] Página cargada');
 
+    if (typeof auth === 'undefined') {
+      console.error('[ACCESO] auth.js no está disponible. No puedo validar la sesión.');
+      return;
+    }
+
+    if (!auth.isLoggedIn()) {
+      console.warn('[ACCESO] No hay sesión activa. Redirigiendo a index.html');
+      window.location.href = 'index.html';
+      return;
+    }
+
+    const userEmail = localStorage.getItem('userEmail') || 'usuario';
+    const emailSpan = document.getElementById('user-email');
+    if (emailSpan) {
+      emailSpan.textContent = userEmail;
+    }
+
+    console.log('[ACCESO] Sesión válida para:', userEmail);
+  });
+
+  function handleLogout() {
+    if (typeof auth !== 'undefined') {
+      auth.logout();
+    } else {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+  }
+
+  window.handleLogout = handleLogout;
+</script>
 </body>
 </html>

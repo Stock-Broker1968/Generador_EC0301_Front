@@ -6,7 +6,7 @@ const auth = (function () {
 
   const TOKEN_KEY = 'authToken';
 
-  // Decodificar el token base64 que genera el backend
+  // Decodifica el token base64 que genera el backend
   function decodeToken(token) {
     if (!token) return null;
     try {

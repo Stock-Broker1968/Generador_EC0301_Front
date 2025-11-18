@@ -1,261 +1,657 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plataforma EC0301 - Panel</title>
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plataforma EC0301 – Acceso a módulos</title>
+
+  <!-- Tipografía -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --primary: #6366f1;
-      --primary-dark: #4f46e5;
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #6b7280;
+      --bg-gradient: linear-gradient(135deg, #4f46e5, #7c3aed);
+      --bg-surface: #f3f4f6;
+      --primary: #4f46e5;
+      --primary-soft: #eef2ff;
+      --accent: #f97316;
+      --danger: #ef4444;
+      --text-main: #0f172a;
+      --text-soft: #6b7280;
+      --radius-xl: 1.25rem;
+      --shadow-lg: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
     }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: var(--bg-gradient);
       min-height: 100vh;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1200px;
+      background: #ffffff;
+      border-radius: 1.75rem;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
       display: flex;
       flex-direction: column;
     }
-    header {
-      background: #ffffff;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 1rem 2rem;
+
+    /* Header superior */
+    .app-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 2px 8px rgba(15,23,42,0.05);
+      padding: 20px 28px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #ffffff;
     }
+
     .brand {
       display: flex;
       align-items: center;
-      gap: .75rem;
+      gap: 12px;
     }
-    .brand-logo {
-      width: 36px; height: 36px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      display: flex; align-items: center; justify-content: center;
-      color: white;
-    }
-    .brand h1 {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-    .header-right {
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: var(--primary-soft);
       display: flex;
       align-items: center;
-      gap: 1rem;
-      font-size: .9rem;
-      color: var(--muted);
+      justify-content: center;
+      font-size: 22px;
+      color: var(--primary);
     }
-    .header-right span strong { color: var(--text); }
+
+    .brand-text-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .brand-text-sub {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+    }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .user-email {
+      color: var(--text-soft);
+    }
+
+    .badge-active {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #16a34a;
+      font-weight: 500;
+    }
+
     .btn-logout {
       border: none;
-      padding: .5rem 1rem;
       border-radius: 999px;
-      background: #f97373;
-      color: white;
-      font-size: .85rem;
+      padding: 6px 14px;
+      background: #fee2e2;
+      color: var(--danger);
       font-weight: 600;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      transition: background 0.15s ease, transform 0.1s ease;
     }
-    .btn-logout:hover { background: #ef4444; }
 
-    main {
+    .btn-logout:hover {
+      background: #fecaca;
+      transform: translateY(-1px);
+    }
+
+    /* Contenido principal */
+    .app-main {
+      padding: 28px;
+      background: var(--bg-surface);
       flex: 1;
-      padding: 2.5rem 2rem 3rem;
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto;
-    }
-    h2 {
-      font-size: 1.9rem;
-      margin-bottom: .25rem;
-    }
-    .subtitle {
-      color: var(--muted);
-      font-size: .95rem;
-      margin-bottom: 2rem;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
+    .page-header {
+      margin-bottom: 20px;
     }
-    .card {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 1.5rem 1.4rem;
-      box-shadow: 0 10px 30px rgba(148, 163, 184, 0.25);
-      cursor: pointer;
-      transition: transform .15s ease, box-shadow .15s ease;
+
+    .page-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .page-subtitle {
+      font-size: 0.92rem;
+      color: var(--text-soft);
+      max-width: 620px;
+    }
+
+    .modules-grid {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .mod-card {
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      padding: 18px 18px 16px;
+      position: relative;
+      box-shadow: 0 10px 30px -18px rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.2);
       display: flex;
       flex-direction: column;
-      gap: .6rem;
-    }
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 16px 40px rgba(148, 163, 184, 0.35);
-    }
-    .card-icon {
-      width: 42px; height: 42px;
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      background: #eef2ff;
-      color: var(--primary-dark);
-      margin-bottom: .25rem;
-    }
-    .card h3 { font-size: 1rem; }
-    .card p {
-      color: var(--muted);
-      font-size: .9rem;
-      flex: 1;
-    }
-    .card-footer {
-      margin-top: .5rem;
-      font-size: .8rem;
-      color: var(--primary-dark);
-      display: flex;
-      align-items: center;
-      gap: .25rem;
-      font-weight: 600;
+      gap: 10px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease,
+        border-color 0.1s ease, opacity 0.1s ease;
     }
 
-    @media (max-width: 640px) {
-      header { padding: .75rem 1rem; }
-      main { padding: 1.75rem 1rem 2.5rem; }
+    .mod-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 45px -20px rgba(15, 23, 42, 0.45);
+      border-color: rgba(79, 70, 229, 0.3);
+    }
+
+    .mod-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .mod-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .mod-desc {
+      font-size: 0.83rem;
+      color: var(--text-soft);
+      line-height: 1.35;
+    }
+
+    .mod-chip {
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--primary-soft);
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .mod-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .mod-progress-label {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+    }
+
+    .mod-progress-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .mod-status-pill {
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #4b5563;
+      font-weight: 500;
+    }
+
+    .mod-status-pill.completed {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .mod-status-pill.locked-pill {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .mod-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .mod-card__action {
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 7px 14px;
+      background: var(--primary);
+      color: #ffffff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, transform 0.1s ease,
+        box-shadow 0.1s ease;
+      box-shadow: 0 8px 18px -10px rgba(79, 70, 229, 0.8);
+    }
+
+    .mod-card__action:hover {
+      background: #4338ca;
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px -12px rgba(79, 70, 229, 0.95);
+    }
+
+    .mod-card__action span.icon {
+      font-size: 1rem;
+    }
+
+    /* Candado */
+    .mod-card.locked {
+      opacity: 0.55;
+      cursor: default;
+    }
+
+    .mod-card.locked:hover {
+      transform: none;
+      box-shadow: 0 10px 30px -18px rgba(15, 23, 42, 0.45);
+      border-color: rgba(148, 163, 184, 0.2);
+    }
+
+    .mod-card.locked::after {
+      content: "🔒 Módulo bloqueado";
+      position: absolute;
+      bottom: 10px;
+      right: 14px;
+      font-size: 0.8rem;
+      background: rgba(15, 23, 42, 0.9);
+      color: #ffffff;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    /* Responsive pequeño */
+    @media (max-width: 720px) {
+      body {
+        padding: 12px;
+      }
+
+      .app-shell {
+        border-radius: 1.25rem;
+      }
+
+      .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .app-main {
+        padding: 20px;
+      }
+
+      .page-title {
+        font-size: 1.45rem;
+      }
     }
   </style>
 </head>
 <body>
-<header>
-  <div class="brand">
-    <div class="brand-logo"><i class="fas fa-graduation-cap"></i></div>
-    <div>
-      <h1>Plataforma EC0301</h1>
-      <div style="font-size: .75rem; color: var(--muted);">
-        Generador profesional de documentos
+<div class="app-shell">
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">🎓</div>
+      <div>
+        <div class="brand-text-title">Plataforma EC0301</div>
+        <div class="brand-text-sub">Generador profesional de documentos</div>
       </div>
     </div>
-  </div>
-  <div class="header-right">
-    <span>Hola, <strong id="user-email">cargando…</strong></span>
-    <button class="btn-logout" onclick="handleLogout()">
-      <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-    </button>
-  </div>
-</header>
 
-<main>
-  <h2>Bienvenido a tu Plataforma</h2>
-  <p class="subtitle">
-    Selecciona un módulo para comenzar a generar tus productos alineados al estándar EC0301.
-  </p>
+    <div class="user-area">
+      <span class="badge-active">Acceso activo</span>
+      <span class="user-email" id="userEmail">Cargando...</span>
+      <button class="btn-logout" id="logoutBtn">
+        <span>⏏</span> <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </header>
 
-  <div class="grid">
-    <a class="card" href="carta_descriptiva.html">
-      <div class="card-icon"><i class="far fa-file-alt"></i></div>
-      <h3>Carta Descriptiva</h3>
-      <p>Genera el guion instruccional completo para tu curso de capacitación.</p>
-      <div class="card-footer">
-        Abrir módulo <i class="fas fa-arrow-right"></i>
-      </div>
-    </a>
+  <!-- MAIN -->
+  <main class="app-main">
+    <section class="page-header">
+      <h1 class="page-title">Bienvenido a tu Plataforma</h1>
+      <p class="page-subtitle">
+        Completa cada módulo en orden para generar tu portafolio alineado al estándar
+        EC0301. Los módulos se irán desbloqueando conforme marques como completada
+        cada etapa.
+      </p>
+    </section>
 
-    <a class="card" href="evaluaciones.html">
-      <div class="card-icon"><i class="fas fa-clipboard-check"></i></div>
-      <h3>Instrumentos de Evaluación</h3>
-      <p>Crea rúbricas, listas de cotejo y guías de observación alineadas al estándar.</p>
-      <div class="card-footer">
-        Abrir módulo <i class="fas fa-arrow-right"></i>
-      </div>
-    </a>
+    <section class="modules-grid">
 
-    <a class="card" href="exportar.html">
-      <div class="card-icon"><i class="fas fa-book-open"></i></div>
-      <h3>Manuales del Curso</h3>
-      <p>Desarrolla los manuales del participante y del facilitador.</p>
-      <div class="card-footer">
-        Abrir módulo <i class="fas fa-arrow-right"></i>
-      </div>
-    </a>
+      <!-- 1. Carta Descriptiva -->
+      <article class="mod-card" data-module="carta">
+        <div class="mod-header">
+          <div>
+            <h2 class="mod-title">Carta Descriptiva</h2>
+            <p class="mod-desc">
+              Genera el guion instruccional completo de tu curso de capacitación.
+            </p>
+          </div>
+          <span class="mod-chip">Paso 1 de 6</span>
+        </div>
+        <div class="mod-body">
+          <div>
+            <div class="mod-progress-label">Avance</div>
+            <div class="mod-progress-value js-progress">0%</div>
+          </div>
+          <span class="mod-status-pill js-status">En progreso</span>
+        </div>
+        <div class="mod-footer">
+          <a href="carta_descriptiva.html" class="mod-card__action">
+            <span>Abrir módulo</span>
+            <span class="icon">→</span>
+          </a>
+        </div>
+      </article>
 
-    <a class="card" href="exportar.html">
-      <div class="card-icon"><i class="fas fa-truck-loading"></i></div>
-      <h3>Logística y Formatos</h3>
-      <p>Genera listas de asistencia, contratos y formatos de requerimientos.</p>
-      <div class="card-footer">
-        Abrir módulo <i class="fas fa-arrow-right"></i>
-      </div>
-    </a>
+      <!-- 2. Logística y Formatos -->
+      <article class="mod-card" data-module="logistica">
+        <div class="mod-header">
+          <div>
+            <h2 class="mod-title">Logística y Formatos</h2>
+            <p class="mod-desc">
+              Genera listas de asistencia, contratos y formatos de requerimientos.
+            </p>
+          </div>
+          <span class="mod-chip">Paso 2 de 6</span>
+        </div>
+        <div class="mod-body">
+          <div>
+            <div class="mod-progress-label">Avance</div>
+            <div class="mod-progress-value js-progress">0%</div>
+          </div>
+          <span class="mod-status-pill js-status">Bloqueado</span>
+        </div>
+        <div class="mod-footer">
+          <a href="logistica.html" class="mod-card__action">
+            <span>Abrir módulo</span>
+            <span class="icon">→</span>
+          </a>
+        </div>
+      </article>
 
-    <a class="card" href="exportar.html">
-      <div class="card-icon"><i class="fas fa-key"></i></div>
-      <h3>Hoja de Respuestas</h3>
-      <p>Crea la clave de respuestas para tus instrumentos de evaluación.</p>
-      <div class="card-footer">
-        Abrir módulo <i class="fas fa-arrow-right"></i>
-      </div>
-    </a>
+      <!-- 3. Instrumentos de Evaluación -->
+      <article class="mod-card" data-module="evaluaciones">
+        <div class="mod-header">
+          <div>
+            <h2 class="mod-title">Instrumentos de Evaluación</h2>
+            <p class="mod-desc">
+              Diseña rúbricas, listas de cotejo y guías de observación alineadas al estándar.
+            </p>
+          </div>
+          <span class="mod-chip">Paso 3 de 6</span>
+        </div>
+        <div class="mod-body">
+          <div>
+            <div class="mod-progress-label">Avance</div>
+            <div class="mod-progress-value js-progress">0%</div>
+          </div>
+          <span class="mod-status-pill js-status">Bloqueado</span>
+        </div>
+        <div class="mod-footer">
+          <a href="evaluaciones.html" class="mod-card__action">
+            <span>Abrir módulo</span>
+            <span class="icon">→</span>
+          </a>
+        </div>
+      </article>
 
-    <a class="card" href="auditoria.html">
-      <div class="card-icon"><i class="fas fa-search"></i></div>
-      <h3>Auditoría EC0301</h3>
-      <p>Valida tu portafolio de evidencias contra los requisitos del estándar.</p>
-      <div class="card-footer">
-        Abrir módulo <i class="fas fa-arrow-right"></i>
-      </div>
-    </a>
-  </div>
-</main>
+      <!-- 4. Manuales del Curso -->
+      <article class="mod-card" data-module="manuales">
+        <div class="mod-header">
+          <div>
+            <h2 class="mod-title">Manuales del Curso</h2>
+            <p class="mod-desc">
+              Desarrolla los manuales del participante y del facilitador.
+            </p>
+          </div>
+          <span class="mod-chip">Paso 4 de 6</span>
+        </div>
+        <div class="mod-body">
+          <div>
+            <div class="mod-progress-label">Avance</div>
+            <div class="mod-progress-value js-progress">0%</div>
+          </div>
+          <span class="mod-status-pill js-status">Bloqueado</span>
+        </div>
+        <div class="mod-footer">
+          <a href="manuales.html" class="mod-card__action">
+            <span>Abrir módulo</span>
+            <span class="icon">→</span>
+          </a>
+        </div>
+      </article>
 
-<script src="sistema_central/auth.js"></script>
-<script src="sistema_central/ec0301-data-manager.js"></script>
+      <!-- 5. Hoja de Respuestas -->
+      <article class="mod-card" data-module="respuestas">
+        <div class="mod-header">
+          <div>
+            <h2 class="mod-title">Hoja de Respuestas</h2>
+            <p class="mod-desc">
+              Crea la clave de respuestas para tus instrumentos de evaluación.
+            </p>
+          </div>
+          <span class="mod-chip">Paso 5 de 6</span>
+        </div>
+        <div class="mod-body">
+          <div>
+            <div class="mod-progress-label">Avance</div>
+            <div class="mod-progress-value js-progress">0%</div>
+          </div>
+          <span class="mod-status-pill js-status">Bloqueado</span>
+        </div>
+        <div class="mod-footer">
+          <a href="respuestas.html" class="mod-card__action">
+            <span>Abrir módulo</span>
+            <span class="icon">→</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- 6. Auditoría EC0301 -->
+      <article class="mod-card" data-module="auditoria">
+        <div class="mod-header">
+          <div>
+            <h2 class="mod-title">Auditoría EC0301</h2>
+            <p class="mod-desc">
+              Valida tu portafolio de evidencias contra los requisitos del estándar.
+            </p>
+          </div>
+          <span class="mod-chip">Paso 6 de 6</span>
+        </div>
+        <div class="mod-body">
+          <div>
+            <div class="mod-progress-label">Avance</div>
+            <div class="mod-progress-value js-progress">0%</div>
+          </div>
+          <span class="mod-status-pill js-status">Bloqueado</span>
+        </div>
+        <div class="mod-footer">
+          <a href="auditoria.html" class="mod-card__action">
+            <span>Abrir módulo</span>
+            <span class="icon">→</span>
+          </a>
+        </div>
+      </article>
+
+    </section>
+  </main>
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Módulos centrales -->
+<script src="auth.js"></script>
+<script src="ec0301-data-manager.js"></script>
+
 <script>
-  // Guardia de sesión para acceso.html
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('[ACCESO] Página cargada');
-
-    if (typeof auth === 'undefined') {
-      console.error('[ACCESO] auth.js no está disponible. No puedo validar la sesión.');
+    // Verificar disponibilidad de módulos
+    if (typeof Swal === 'undefined') {
+      alert('Error al cargar SweetAlert2. Revisa tu conexión.');
       return;
     }
 
+    if (typeof auth === 'undefined' || typeof EC0301Manager === 'undefined') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error crítico del sistema',
+        html: '<p>No se pudieron cargar los módulos de sistema <b>auth.js</b> o <b>ec0301-data-manager.js</b>.</p>',
+        confirmButtonColor: '#ef4444',
+        allowOutsideClick: false
+      }).then(() => {
+        window.location.href = 'index.html';
+      });
+      return;
+    }
+
+    // Validar sesión
     if (!auth.isLoggedIn()) {
-      console.warn('[ACCESO] No hay sesión activa. Redirigiendo a index.html');
-      window.location.href = 'index.html';
+      Swal.fire({
+        icon: 'warning',
+        title: 'Sesión requerida',
+        text: 'Debes iniciar sesión para acceder a la plataforma.',
+        confirmButtonColor: '#6366f1'
+      }).then(() => {
+        window.location.href = 'index.html';
+      });
       return;
     }
 
-    const userEmail = localStorage.getItem('userEmail') || 'usuario';
-    const emailSpan = document.getElementById('user-email');
-    if (emailSpan) {
-      emailSpan.textContent = userEmail;
+    // Mostrar correo del usuario
+    const userFromToken = auth.getUser();
+    const emailFromLS = localStorage.getItem('userEmail');
+    const email =
+      emailFromLS ||
+      (userFromToken && userFromToken.email) ||
+      'Usuario EC0301';
+
+    const userEmailSpan = document.getElementById('userEmail');
+    if (userEmailSpan) userEmailSpan.textContent = email;
+
+    // Botón de logout
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        Swal.fire({
+          title: 'Cerrar sesión',
+          text: '¿Seguro que quieres cerrar tu sesión en la plataforma?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, cerrar sesión',
+          cancelButtonText: 'Cancelar',
+          confirmButtonColor: '#ef4444'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            auth.logout();
+          }
+        });
+      });
     }
 
-    console.log('[ACCESO] Sesión válida para:', userEmail);
+    // Aplicar estado de módulos (candados y progreso)
+    const status = EC0301Manager.getModulesStatus();
+    const cards = document.querySelectorAll('.mod-card[data-module]');
+
+    cards.forEach((card) => {
+      const moduleKey = card.dataset.module;
+      const info = status[moduleKey] || {};
+      const link = card.querySelector('.mod-card__action');
+      const progressSpan = card.querySelector('.js-progress');
+      const statusPill = card.querySelector('.js-status');
+
+      const unlocked = !!info.desbloqueado;
+      const pct = typeof info.porcentaje === 'number' ? info.porcentaje : 0;
+      const completed = !!info.completado;
+
+      if (!unlocked) {
+        card.classList.add('locked');
+      } else {
+        card.classList.remove('locked');
+      }
+
+      if (progressSpan) {
+        progressSpan.textContent = pct + '%';
+      }
+
+      if (statusPill) {
+        if (!unlocked) {
+          statusPill.textContent = 'Bloqueado';
+          statusPill.classList.add('locked-pill');
+        } else if (completed) {
+          statusPill.textContent = 'Completado';
+          statusPill.classList.add('completed');
+          statusPill.classList.remove('locked-pill');
+        } else {
+          statusPill.textContent = 'En progreso';
+          statusPill.classList.remove('completed', 'locked-pill');
+        }
+      }
+
+      if (!unlocked && link) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          Swal.fire(
+            'Módulo bloqueado',
+            'Completa primero el módulo anterior para desbloquear este paso.',
+            'info'
+          );
+        });
+      }
+    });
   });
-
-  function handleLogout() {
-    if (typeof auth !== 'undefined') {
-      auth.logout();
-    } else {
-      localStorage.clear();
-      window.location.href = 'index.html';
-    }
-  }
-
-  window.handleLogout = handleLogout;
 </script>
 </body>
 </html>

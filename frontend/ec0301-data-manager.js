@@ -1,6 +1,7 @@
-// ec0301-data-manager.js
-// EC0301 Data Manager - v2.0
-const EC0301Manager = (function() {
+// Interfaz/ec0301-data-manager.js
+// Gestor de datos del proyecto EC0301 basado en localStorage
+
+const EC0301Manager = (function () {
   'use strict';
 
   const DATA_KEY = 'EC0301_ProyectoData';
@@ -8,8 +9,11 @@ const EC0301Manager = (function() {
 
   function loadDataFromStorage() {
     try {
-      const storedData = localStorage.getItem(DATA_KEY);
-      projectData = storedData ? JSON.parse(storedData) : {};
+      const stored = localStorage.getItem(DATA_KEY);
+      projectData = stored ? JSON.parse(stored) : {};
+      if (typeof projectData !== 'object' || projectData === null) {
+        projectData = {};
+      }
       console.log('[DataManager] Datos cargados.');
     } catch (e) {
       console.error('[DataManager] Error al cargar datos:', e);
@@ -20,13 +24,13 @@ const EC0301Manager = (function() {
   function saveDataToStorage() {
     try {
       localStorage.setItem(DATA_KEY, JSON.stringify(projectData));
+      // console.log('[DataManager] Datos guardados.');
     } catch (e) {
       console.error('[DataManager] Error al guardar datos:', e);
     }
   }
 
   function getData() {
-    // Devolver copia para evitar mutaciones externas
     return JSON.parse(JSON.stringify(projectData));
   }
 
@@ -41,28 +45,65 @@ const EC0301Manager = (function() {
     }
   }
 
+  // --- API antigua "productos" (compatibilidad) ---
+
+  function ensureProductos() {
+    if (!projectData.productos) projectData.productos = {};
+  }
+
   function saveProduct(productName, data) {
     try {
-      if (!projectData.productos) {
-        projectData.productos = {};
-      }
+      ensureProductos();
       projectData.productos[productName] = data;
       saveDataToStorage();
       return true;
     } catch (e) {
-      console.error('[DataManager] Error en saveProduct:', e);
+      console.error('[DataManager] Error al guardar producto:', e);
       return false;
     }
   }
 
   function loadProduct(productName) {
     try {
-      if (projectData.productos && projectData.productos[productName]) {
-        return JSON.parse(JSON.stringify(projectData.productos[productName]));
-      }
-      return null;
+      ensureProductos();
+      const prod = projectData.productos[productName];
+      return prod ? JSON.parse(JSON.stringify(prod)) : null;
     } catch (e) {
-      console.error('[DataManager] Error en loadProduct:', e);
+      console.error('[DataManager] Error al cargar producto:', e);
+      return null;
+    }
+  }
+
+  // --- API nueva "módulos" (para control de avance y candados) ---
+
+  function ensureModulos() {
+    if (!projectData.modulos) projectData.modulos = {};
+  }
+
+  function setModuleData(moduleKey, data) {
+    try {
+      ensureModulos();
+      const current = projectData.modulos[moduleKey] || {};
+      projectData.modulos[moduleKey] = {
+        ...current,
+        ...data,
+        lastUpdate: new Date().toISOString()
+      };
+      saveDataToStorage();
+      return true;
+    } catch (e) {
+      console.error('[DataManager] Error al guardar módulo', moduleKey, e);
+      return false;
+    }
+  }
+
+  function getModuleData(moduleKey) {
+    try {
+      ensureModulos();
+      const mod = projectData.modulos[moduleKey];
+      return mod ? JSON.parse(JSON.stringify(mod)) : null;
+    } catch (e) {
+      console.error('[DataManager] Error al obtener módulo', moduleKey, e);
       return null;
     }
   }
@@ -73,17 +114,18 @@ const EC0301Manager = (function() {
     console.log('[DataManager] Datos borrados.');
   }
 
-  // Carga inicial al importar el módulo
   loadDataFromStorage();
 
   return {
     getData,
     saveData,
-    loadProduct,
     saveProduct,
-    clearData
+    loadProduct,
+    clearData,
+    // Nueva API
+    setModuleData,
+    getModuleData
   };
-
 })();
 
 window.EC0301Manager = EC0301Manager;

@@ -1,417 +1,178 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Plataforma EC0301 - Acceso</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      * {
-        box-sizing: border-box;
-      }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma EC0301 - Dashboard</title>
 
-      body {
-        margin: 0;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-          sans-serif;
-        background: radial-gradient(circle at top left, #6366f1, #4f46e5, #312e81);
-        min-height: 100vh;
-        color: #111827;
-      }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-      header {
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(8px);
-        border-bottom: 1px solid #e5e7eb;
-        padding: 16px 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 600;
-      }
-
-      .brand-badge {
-        width: 40px;
-        height: 40px;
-        border-radius: 999px;
-        background: conic-gradient(
-          from 180deg at 50% 50%,
-          #4f46e5,
-          #6366f1,
-          #a855f7,
-          #f97316
-        );
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 20px;
-      }
-
-      .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 14px;
-      }
-
-      .pill {
-        border-radius: 999px;
-        padding: 4px 10px;
-        font-size: 12px;
-        font-weight: 500;
-      }
-
-      .pill-success {
-        background: #ecfdf3;
-        color: #15803d;
-        border: 1px solid #bbf7d0;
-      }
-
-      .pill-danger {
-        background: #fef2f2;
-        color: #b91c1c;
-        border: 1px solid #fecaca;
-      }
-
-      .btn {
-        border-radius: 999px;
-        border: none;
-        padding: 8px 14px;
-        font-size: 14px;
-        cursor: pointer;
-        font-weight: 500;
-      }
-
-      .btn-outline {
-        background: transparent;
-        border: 1px solid #e5e7eb;
-        color: #374151;
-      }
-
-      .btn-outline:hover {
-        background: #f3f4f6;
-      }
-
-      main {
-        max-width: 1120px;
-        margin: 32px auto 40px;
-        padding: 0 16px 32px;
-      }
-
-      .panel {
-        background: rgba(255, 255, 255, 0.98);
-        border-radius: 24px;
-        padding: 32px 24px 32px;
-        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
-      }
-
-      h1 {
-        font-size: 26px;
-        margin: 0 0 8px;
-      }
-
-      .subtitle {
-        font-size: 14px;
-        color: #6b7280;
-        margin-bottom: 24px;
-      }
-
-      .grid-modulos {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 18px;
-      }
-
-      .mod-card {
-        border-radius: 20px;
-        padding: 18px 18px 16px;
-        border: 1px solid #e5e7eb;
-        background: linear-gradient(
-          135deg,
-          rgba(249, 250, 251, 0.9),
-          rgba(255, 255, 255, 1)
-        );
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .mod-card::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(
-          circle at top right,
-          rgba(129, 140, 248, 0.35),
-          transparent 55%
-        );
-        opacity: 0.7;
-      }
-
-      .mod-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        gap: 8px;
-        position: relative;
-        z-index: 1;
-      }
-
-      .mod-title {
-        font-size: 16px;
-        font-weight: 600;
-      }
-
-      .mod-step {
-        font-size: 11px;
-        padding: 2px 8px;
-        border-radius: 999px;
-        background: #eef2ff;
-        color: #4338ca;
-        font-weight: 500;
-      }
-
-      .mod-desc {
-        font-size: 13px;
-        color: #6b7280;
-        margin: 4px 0 8px;
-        position: relative;
-        z-index: 1;
-      }
-
-      .mod-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 8px;
-        position: relative;
-        z-index: 1;
-      }
-
-      .mod-status {
-        font-size: 12px;
-        padding: 3px 8px;
-        border-radius: 999px;
-        background: #f3f4f6;
-        color: #374151;
-      }
-
-      .mod-button {
-        font-size: 13px;
-        text-decoration: none;
-        border-radius: 999px;
-        padding: 7px 14px;
-        background: #4f46e5;
-        color: white;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        border: none;
-      }
-
-      .mod-button:hover {
-        background: #4338ca;
-      }
-
-      .mod-card.card--locked {
-        opacity: 0.6;
-      }
-
-      .mod-card.card--locked .mod-button {
-        background: #9ca3af;
-        cursor: not-allowed;
-        pointer-events: none;
-      }
-
-      .mod-card.card--locked .mod-status {
-        background: #fee2e2;
-        color: #b91c1c;
-      }
-
-      @media (max-width: 640px) {
-        header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 12px;
-        }
-        .panel {
-          padding: 24px 16px 24px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <div class="brand">
-        <div class="brand-badge">🎓</div>
-        <div>
-          <div>Plataforma EC0301</div>
-          <div style="font-size: 12px; color: #6b7280">
-            Generador profesional de documentos
-          </div>
-        </div>
-      </div>
-
-      <div class="header-actions">
-        <span id="badge-estado" class="pill pill-success">Acceso activo</span>
-        <span id="badge-email" style="font-size: 13px; color: #4b5563"
-          >Cargando…</span
-        >
-        <button id="btn-logout" class="btn btn-outline">Cerrar sesión</button>
-      </div>
-    </header>
-
-    <main>
-      <div class="panel">
-        <h1>Bienvenido a tu Plataforma</h1>
-        <p class="subtitle">
-          Completa cada módulo en orden para generar tu portafolio alineado al
-          estándar EC0301. Los módulos se irán desbloqueando conforme termines
-          el anterior.
-        </p>
-
-        <div class="grid-modulos">
-          <!-- 1. Carta Descriptiva -->
-          <article id="mod-carta" class="mod-card">
-            <div class="mod-top">
-              <div class="mod-title">Carta Descriptiva</div>
-              <div class="mod-step">Paso 1 de 6</div>
-            </div>
-            <p class="mod-desc">
-              Genera el guion instruccional completo para tu curso de
-              capacitación.
-            </p>
-            <div class="mod-footer">
-              <span class="mod-status" data-role="status">Pendiente</span>
-              <a
-                href="carta_descriptiva.html"
-                class="mod-button"
-                data-role="open-module"
-                >Abrir módulo →</a
-              >
-            </div>
-          </article>
-
-          <!-- 2. Logística y Formatos -->
-          <article id="mod-logistica" class="mod-card card--locked">
-            <div class="mod-top">
-              <div class="mod-title">Logística y Formatos</div>
-              <div class="mod-step">Paso 2 de 6</div>
-            </div>
-            <p class="mod-desc">
-              Genera listas de asistencia, contratos y formatos de
-              requerimientos.
-            </p>
-            <div class="mod-footer">
-              <span class="mod-status" data-role="status">Bloqueado</span>
-              <a
-                href="logistica.html"
-                class="mod-button"
-                data-role="open-module"
-                >Abrir módulo →</a
-              >
-            </div>
-          </article>
-
-          <!-- 3. Instrumentos de Evaluación -->
-          <article id="mod-evaluaciones" class="mod-card card--locked">
-            <div class="mod-top">
-              <div class="mod-title">Instrumentos de Evaluación</div>
-              <div class="mod-step">Paso 3 de 6</div>
-            </div>
-            <p class="mod-desc">
-              Crea rúbricas, listas de cotejo y guías de observación alineadas
-              al estándar.
-            </p>
-            <div class="mod-footer">
-              <span class="mod-status" data-role="status">Bloqueado</span>
-              <a
-                href="evaluaciones.html"
-                class="mod-button"
-                data-role="open-module"
-                >Abrir módulo →</a
-              >
-            </div>
-          </article>
-
-          <!-- 4. Manuales del Curso -->
-          <article id="mod-manuales" class="mod-card card--locked">
-            <div class="mod-top">
-              <div class="mod-title">Manuales del Curso</div>
-              <div class="mod-step">Paso 4 de 6</div>
-            </div>
-            <p class="mod-desc">
-              Desarrolla los manuales del participante y del facilitador.
-            </p>
-            <div class="mod-footer">
-              <span class="mod-status" data-role="status">Bloqueado</span>
-              <a
-                href="manuales.html"
-                class="mod-button"
-                data-role="open-module"
-                >Abrir módulo →</a
-              >
-            </div>
-          </article>
-
-          <!-- 5. Hoja de Respuestas -->
-          <article id="mod-respuestas" class="mod-card card--locked">
-            <div class="mod-top">
-              <div class="mod-title">Hoja de Respuestas</div>
-              <div class="mod-step">Paso 5 de 6</div>
-            </div>
-            <p class="mod-desc">
-              Crea la clave de respuestas para tus instrumentos de evaluación.
-            </p>
-            <div class="mod-footer">
-              <span class="mod-status" data-role="status">Bloqueado</span>
-              <a
-                href="respuestas.html"
-                class="mod-button"
-                data-role="open-module"
-                >Abrir módulo →</a
-              >
-            </div>
-          </article>
-
-          <!-- 6. Auditoría EC0301 -->
-          <article id="mod-auditoria" class="mod-card card--locked">
-            <div class="mod-top">
-              <div class="mod-title">Auditoría EC0301</div>
-              <div class="mod-step">Paso 6 de 6</div>
-            </div>
-            <p class="mod-desc">
-              Valida tu portafolio de evidencias contra los requisitos del
-              estándar.
-            </p>
-            <div class="mod-footer">
-              <span class="mod-status" data-role="status">Bloqueado</span>
-              <a
-                href="auditoria.html"
-                class="mod-button"
-                data-role="open-module"
-                >Abrir módulo →</a
-              >
-            </div>
-          </article>
-        </div>
-      </div>
-    </main>
-
-    <!-- Módulos de sistema -->
     <script src="sistema_central/auth.js" defer></script>
     <script src="sistema_central/ec0301-data-manager.js" defer></script>
-    <script src="js/dashboard.js" defer></script> ```
 
-  </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Esperamos un poco para asegurar que auth.js se cargó
+            setTimeout(() => {
+                if (typeof auth === 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de Carga',
+                        text: 'No se pudo cargar el módulo de autenticación. Revisa tu conexión o recarga la página.',
+                        confirmButtonColor: '#ef4444'
+                    });
+                    return;
+                }
+
+                // Verificar sesión
+                if (!auth.isLoggedIn()) {
+                    window.location.href = 'index.html';
+                } else {
+                    // Inicializar Dashboard
+                    initDashboard();
+                }
+            }, 100);
+        });
+
+        function initDashboard() {
+            const user = localStorage.getItem('ec0301_token'); // O decodificar si usas JWT
+            // Aquí puedes agregar lógica para mostrar el nombre del usuario si lo tienes guardado
+            
+            // Desbloqueo de módulos (Lógica de candados)
+            const cartaData = EC0301Manager.getData();
+            const cartaCompleta = cartaData && cartaData.nombre; // Lógica simple: si tiene nombre, avanza
+
+            if (cartaCompleta) {
+                document.querySelectorAll('.module-card').forEach(card => {
+                    card.classList.remove('locked');
+                    const btn = card.querySelector('.btn-action');
+                    if(btn) {
+                        btn.disabled = false;
+                        btn.classList.remove('btn-disabled');
+                        btn.classList.add('btn-primary');
+                        btn.innerHTML = 'Acceder <i class="fas fa-arrow-right"></i>';
+                    }
+                });
+            }
+        }
+
+        function logout() {
+            auth.logout();
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        body { font-family: sans-serif; background: var(--light); margin: 0; }
+        .navbar { background: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .welcome-banner { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 15px; margin-bottom: 2rem; }
+        
+        .grid-modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .module-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; border: 1px solid #e2e8f0; position: relative; }
+        .module-card:hover { transform: translateY(-5px); }
+        
+        /* Estilo Bloqueado */
+        .module-card.locked { opacity: 0.7; background: #f1f5f9; }
+        .module-card.locked::after { content: "\f023"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: #94a3b8; }
+        
+        .icon-box { width: 50px; height: 50px; background: #e0e7ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem; }
+        h3 { margin: 0 0 0.5rem 0; color: var(--dark); }
+        p { color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        
+        .btn-action { width: 100%; padding: 0.8rem; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #4f46e5; }
+        .btn-disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo"><i class="fas fa-graduation-cap"></i> Plataforma EC0301</div>
+        <button onclick="logout()" style="background:none; border:1px solid #e2e8f0; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-banner">
+            <h1>Bienvenido a tu Plataforma</h1>
+            <p>Selecciona un módulo para comenzar a generar tus productos.</p>
+        </div>
+
+        <div class="grid-modules">
+            <div class="module-card">
+                <div class="icon-box"><i class="fas fa-file-contract"></i></div>
+                <h3>Carta Descriptiva</h3>
+                <p>Genera el guion instruccional completo para tu curso en línea.</p>
+                <button class="btn-action btn-primary" onclick="window.location.href='carta_descriptiva.html'">
+                    Acceder <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="module-card locked">
+                <div class="icon-box"><i class="fas fa-tasks"></i></div>
+                <h3>Instrumentos de Evaluación</h3>
+                <p>Crea las rúbricas, listas de cotejo y guías de observación.</p>
+                <button class="btn-action btn-disabled" onclick="window.location.href='evaluaciones.html'" disabled>
+                    Bloqueado <i class="fas fa-lock"></i>
+                </button>
+            </div>
+
+            <div class="module-card locked">
+                <div class="icon-box"><i class="fas fa-book-open"></i></div>
+                <h3>Manuales del Curso</h3>
+                <p>Desarrolla los manuales del participante y del facilitador.</p>
+                <button class="btn-action btn-disabled" onclick="window.location.href='manuales.html'" disabled>
+                    Bloqueado <i class="fas fa-lock"></i>
+                </button>
+            </div>
+
+            <div class="module-card locked">
+                <div class="icon-box"><i class="fas fa-truck"></i></div>
+                <h3>Logística y Formatos</h3>
+                <p>Genera la lista de asistencia, contrato y lista de requerimientos.</p>
+                <button class="btn-action btn-disabled" onclick="window.location.href='logistica.html'" disabled>
+                    Bloqueado <i class="fas fa-lock"></i>
+                </button>
+            </div>
+
+            <div class="module-card locked">
+                <div class="icon-box"><i class="fas fa-key"></i></div>
+                <h3>Hoja de Respuestas</h3>
+                <p>Genera la clave de respuestas de la evaluación sumativa.</p>
+                <button class="btn-action btn-disabled" onclick="window.location.href='respuestas.html'" disabled>
+                    Bloqueado <i class="fas fa-lock"></i>
+                </button>
+            </div>
+
+            <div class="module-card locked">
+                <div class="icon-box"><i class="fas fa-shield-alt"></i></div>
+                <h3>Auditoría EC0301</h3>
+                <p>Valida tu portafolio de productos contra el estándar.</p>
+                <button class="btn-action btn-disabled" onclick="window.location.href='auditoria.html'" disabled>
+                    Bloqueado <i class="fas fa-lock"></i>
+                </button>
+            </div>
+
+             <div class="module-card locked" style="background-color: #475569; color: white; border: none;">
+                <div class="icon-box" style="background: rgba(255,255,255,0.2); color: white;"><i class="fas fa-file-archive"></i></div>
+                <h3 style="color: white;">Exportar Portafolio</h3>
+                <p style="color: #cbd5e1;">Genera tu portafolio final en PDF o .ZIP para la auditoría.</p>
+                <button class="btn-action btn-disabled" onclick="window.location.href='exportar.html'" disabled style="background: rgba(255,255,255,0.1); color: white;">
+                    Bloqueado <i class="fas fa-lock"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</body>
 </html>

@@ -1,17 +1,17 @@
-require('dotenv').config(); // Cargar las variables de entorno
+require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const fetch = require('node-fetch');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Stripe API
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const mysql = require('mysql2/promise');
-const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ============================================
-// CORS - Asegúrate de que el frontend se conecta correctamente
+// 1. CONFIGURACIÓN DE CORS
 // ============================================
-const allowedOrigin = 'https://ec0301-globalskillscert.onrender.com'; // URL del frontend
+const allowedOrigin = 'https://ec0301-globalskillscert.onrender.com';
 app.use(cors({
   origin: allowedOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -19,8 +19,17 @@ app.use(cors({
   credentials: true
 }));
 
+// Middleware para JSON (excepto webhook)
+app.use((req, res, next) => {
+  if (req.originalUrl === '/webhook/stripe') {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
+
 // ============================================
-// MYSQL POOL - Conexión a la base de datos
+// 2. CONEXIÓN BASE DE DATOS
 // ============================================
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -47,17 +56,27 @@ async function checkDatabaseConnection() {
 }
 
 // ============================================
-// Enviar mensaje de WhatsApp usando Meta API
+// 3. FUNCIONES DE ENVÍO (Tus funciones)
 // ============================================
 async function sendWhatsAppMessage(phone, code) {
+  if (!phone) return;
   const body = {
     messaging_product: "whatsapp",
-    to: phone, // El teléfono del usuario
-    text: { body: `Tu código de acceso para SkillsCert EC0301 es: ${code}` }
+    to: phone,
+    type: "template",
+    template: {
+        name: "envio_codigo_acceso", // Asegúrate de tener esta plantilla en Meta
+        language: { code: "es_MX" },
+        components: [{
+            type: "body",
+            parameters: [{ type: "text", text: code }]
+        }]
+    }
   };
 
   try {
-    const response = await fetch(`https://graph.facebook.com/v13.0/${process.env.PHONE_NUMBER_ID}/messages`, {
+    // Intento con plantilla (Recomendado)
+    await fetch(`https://graph.facebook.com/v17.0/${process.env.PHONE_NUMBER_ID}/messages`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.WHATSAPP_API_KEY}`,
@@ -65,54 +84,40 @@ async function sendWhatsAppMessage(phone, code) {
       },
       body: JSON.stringify(body),
     });
-
-    const data = await response.json();
-    if (data.error) {
-      console.error('Error al enviar el mensaje de WhatsApp:', data.error);
-    } else {
-      console.log('Mensaje de WhatsApp enviado correctamente:', data);
-    }
+    console.log('📱 WhatsApp enviado a:', phone);
   } catch (error) {
-    console.error('Error al enviar mensaje por WhatsApp:', error);
+    console.error('Error WhatsApp:', error);
   }
 }
 
-// ============================================
-// Enviar correo usando Postmark
-// ============================================
 async function sendEmailCode(email, code) {
   const body = {
-    From: 'info@skillscert.com', // Dirección de correo del remitente
-    To: email, // Dirección de correo del destinatario
+    From: 'info@skillscert.com', // Tu remitente verificado
+    To: email,
     Subject: 'Tu Código de Acceso a SkillsCert EC0301',
-    TextBody: `Tu código de acceso para SkillsCert EC0301 es: ${code}`,
-    HtmlBody: `<p>Tu código de acceso para SkillsCert EC0301 es: <strong>${code}</strong></p>`
+    HtmlBody: `
+      <h1>¡Gracias por tu compra!</h1>
+      <p>Tu código de acceso es: <strong style="font-size: 20px; color: #6366f1;">${code}</strong></p>
+      <p>Ingresa en: <a href="${allowedOrigin}">${allowedOrigin}</a></p>
+    `,
+    TextBody: `Tu código de acceso es: ${code}`
   };
 
   try {
-    const response = await fetch('https://api.postmarkapp.com/email', {
+    await fetch('https://api.postmarkapp.com/email', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.POSTMARK_API_KEY}`,
+        'X-Postmark-Server-Token': process.env.POSTMARK_API_KEY,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
     });
-
-    const data = await response.json();
-    if (data.ErrorCode) {
-      console.error('Error al enviar el correo:', data.Message);
-    } else {
-      console.log('Correo enviado correctamente:', data);
-    }
+    console.log('📧 Correo enviado a:', email);
   } catch (error) {
-    console.error('Error al enviar el correo:', error);
+    console.error('Error Email:', error);
   }
 }
 
-// ============================================
-// Generar código de acceso
-// ============================================
 function generarCodigoAcceso() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
@@ -123,27 +128,22 @@ function generarCodigoAcceso() {
 }
 
 // ============================================
-// Guardar usuario y código en base de datos
+// 4. LÓGICA DE NEGOCIO (Guardar y Procesar)
 // ============================================
 async function guardarUsuarioYCodigo(email, nombre, telefono, codigo, stripeSessionId, monto, ipAddress) {
   const conn = await pool.getConnection();
   try {
+    // 1. Guardar en tabla usuarios
     const [existing] = await conn.execute('SELECT id FROM usuarios WHERE email = ?', [email]);
-
     let usuarioId;
+
     if (existing.length > 0) {
       usuarioId = existing[0].id;
       await conn.execute(
         `UPDATE usuarios 
-         SET codigo_acceso = ?,
-             nombre = COALESCE(?, nombre),
-             telefono = COALESCE(?, telefono),
-             stripe_session_id = ?,
-             payment_status = 'paid',
-             monto_pagado = monto_pagado + ?,
-             fecha_pago = NOW(),
-             fecha_expiracion = DATE_ADD(NOW(), INTERVAL 90 DAY),
-             activo = 1
+         SET codigo_acceso = ?, nombre = ?, telefono = ?, stripe_session_id = ?, 
+             payment_status = 'paid', monto_pagado = monto_pagado + ?, fecha_pago = NOW(), 
+             fecha_expiracion = DATE_ADD(NOW(), INTERVAL 90 DAY), activo = 1 
          WHERE id = ?`,
         [codigo, nombre, telefono, stripeSessionId, monto, usuarioId]
       );
@@ -157,142 +157,146 @@ async function guardarUsuarioYCodigo(email, nombre, telefono, codigo, stripeSess
       usuarioId = result.insertId;
     }
 
-    // Registrar el código en histórico
-    await conn.execute(
-      'INSERT INTO codigos_acceso_historico (usuario_id, email, codigo, usado, fecha_generacion, fecha_primer_uso, origen, ip_generacion, activo) VALUES (?, ?, ?, 1, NOW(), NOW(), ?, ?, 1)',
-      [usuarioId, email, codigo, 'stripe_payment', ipAddress]
-    );
-
     return usuarioId;
   } finally {
     conn.release();
   }
 }
 
-// ============================================
-// Procesar pago completado desde webhook de Stripe
-// ============================================
 async function procesarPagoCompletado(session, ip) {
   const email = session.customer_details.email;
   const nombre = session.metadata?.nombre || session.customer_details.name || 'Usuario';
   const telefono = session.metadata?.telefono || session.customer_details.phone;
-  const codigo = generarCodigoAcceso();
-  const monto = session.amount_total / 100; // Convertir de centavos a pesos
+  
+  // Generar código AQUÍ, solo cuando se confirma el pago
+  const codigo = generarCodigoAcceso(); 
+  const monto = session.amount_total / 100;
 
-  console.log('Procesando pago para:', email);
+  console.log(`💰 Procesando pago confirmado para: ${email}`);
 
-  const usuarioId = await guardarUsuarioYCodigo(email, nombre, telefono, codigo, session.id, monto, ip);
+  await guardarUsuarioYCodigo(email, nombre, telefono, codigo, session.id, monto, ip);
 
-  await logActividad(usuarioId, email, 'pago', `Pago completado: ${session.id}`, ip);
+  // Enviar notificaciones AHORA (Seguro)
+  await sendEmailCode(email, codigo);
+  if(telefono) await sendWhatsAppMessage(telefono, codigo);
 
-  await sendEmailCode(email, codigo); // Enviar código por email
-  await sendWhatsAppMessage(telefono, codigo); // Enviar código por WhatsApp
-
-  console.log('✅ Pago procesado. Código:', codigo);
-  return { usuarioId, email, codigo };
+  return { email, codigo };
 }
 
 // ============================================
-// Webhook de Stripe
+// 5. ENDPOINTS (Rutas)
 // ============================================
+
+// A) Crear sesión de pago (SOLO devuelve URL)
+app.post('/create-checkout-session', async (req, res) => {
+  const { email, nombre, telefono } = req.body;
+  
+  if (!email) return res.status(400).json({ error: "Email requerido" });
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card', 'oxxo'],
+      line_items: [{
+        price_data: {
+          currency: 'mxn',
+          product_data: { 
+            name: 'Acceso SkillsCert EC0301',
+            images: ['https://ec0301-globalskillscert.onrender.com/logo.png']
+          },
+          unit_amount: 99900,
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      customer_email: email,
+      success_url: `${allowedOrigin}/index.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${allowedOrigin}/index.html`,
+      metadata: { email, nombre, telefono }
+    });
+
+    // ⚠️ CORRECCIÓN DE SEGURIDAD:
+    // Eliminé las llamadas a sendEmailCode y sendWhatsAppMessage aquí.
+    // Solo devolvemos la URL para que el usuario pague.
+    res.json({ success: true, url: session.url, id: session.id });
+
+  } catch (error) {
+    console.error('Stripe Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// B) Webhook (Automático)
 app.post('/webhook/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
   let event;
+
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    console.log('✅ Webhook verificado:', event.type);
   } catch (err) {
-    console.error('❌ Error verificando webhook:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    console.log('💳 Pago completado (webhook):', session.id);
     try {
-      await procesarPagoCompletado(session, req.ip);
-    } catch (error) {
-      console.error('Error procesando pago (webhook):', error.message);
+        await procesarPagoCompletado(session, 'webhook-ip');
+    } catch (e) {
+        console.error('Error procesando webhook:', e);
     }
   }
-
   res.json({ received: true });
 });
 
-// ============================================
-// Crear sesión de pago
-// ============================================
-app.post('/create-checkout-session', async (req, res) => {
-  const { email, name, phone } = req.body;
-  const code = generarCodigoAcceso(); // Generar código de acceso para el usuario
-
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [{
-        price_data: {
-          currency: 'mxn',
-          product_data: { name: 'Acceso SkillsCert EC0301' },
-          unit_amount: 99900
-        },
-        quantity: 1
-      }],
-      mode: 'payment',
-      success_url: `${process.env.FRONTEND_URL}/?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL}/?canceled=true`,
-      customer_email: email,
-      metadata: { email, nombre: name, telefono: phone }
-    });
-
-    // Enviar el código por correo y WhatsApp antes de completar el pago
-    await sendEmailCode(email, code); // Enviar el código por correo
-    await sendWhatsAppMessage(phone, code); // Enviar el código por WhatsApp
-
-    res.json({ success: true, id: session.id });
-  } catch (error) {
-    console.error('Error al crear sesión:', error);
-    res.status(500).json({ success: false, error: 'No se pudo crear la sesión de pago' });
-  }
-});
-
-// ============================================
-// Verificar pago después de completar el pago
-// ============================================
+// C) Verificar Pago (Manual desde frontend)
 app.post('/verify-payment', async (req, res) => {
-  const { sessionId } = req.body;
-
-  if (!sessionId) {
-    return res.status(400).json({ success: false, error: 'Session ID requerido' });
-  }
-
-  try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-    if (session.payment_status !== 'paid') {
-      return res.json({ success: false, error: 'Pago no completado' });
+    const { sessionId } = req.body;
+    if (!sessionId) return res.status(400).json({ error: 'Falta Session ID' });
+  
+    try {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      if (session.payment_status === 'paid') {
+          // Verificar si ya existe para no duplicar
+          const [rows] = await pool.execute('SELECT codigo_acceso, email FROM usuarios WHERE stripe_session_id = ?', [sessionId]);
+          
+          if (rows.length > 0) {
+              return res.json({ success: true, accessCode: rows[0].codigo_acceso, email: rows[0].email });
+          } else {
+              const result = await procesarPagoCompletado(session, req.ip);
+              return res.json({ success: true, accessCode: result.codigo, email: result.email });
+          }
+      } else {
+          res.json({ success: false, error: 'Pago no completado' });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error verificando pago' });
     }
+  });
 
-    const result = await procesarPagoCompletado(session, req.ip);
-    res.json({
-      success: true,
-      email: result.email,
-      accessCode: result.codigo,
-      expirationDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString()
-    });
-  } catch (error) {
-    console.error('Error al verificar pago:', error);
-    res.status(500).json({ success: false, error: 'Error al verificar el pago' });
-  }
+// D) Login
+app.post('/login', async (req, res) => {
+    const { code } = req.body;
+    try {
+        const [rows] = await pool.execute('SELECT * FROM usuarios WHERE codigo_acceso = ? AND activo = 1', [code]);
+        
+        if (rows.length > 0) {
+            const user = rows[0];
+            // Validar expiración (90 días)
+            if (new Date() > new Date(user.fecha_expiracion)) {
+                 return res.status(401).json({ success: false, message: 'El código ha expirado.' });
+            }
+            res.json({ success: true, token: code, user: { nombre: user.nombre, email: user.email } });
+        } else {
+            res.status(401).json({ success: false, message: 'Código inválido.' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error de servidor' });
+    }
 });
 
-// ============================================
-// Inicio del servidor
-// ============================================
+// Iniciar Servidor
 app.listen(PORT, async () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-  const dbConnected = await checkDatabaseConnection();
-  console.log(dbConnected ? '✅ Base de datos conectada' : '❌ Error de conexión');
+  console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);
+  await checkDatabaseConnection();
 });
-

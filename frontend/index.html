@@ -306,6 +306,13 @@
                         </label>
                         <input type="email" id="regEmail" placeholder="tu@email.com" required>
                     </div>
+                    <div class="form-group">
+                        <label for="regWhatsapp">
+                            <i class="fab fa-whatsapp"></i> WhatsApp (opcional)
+                        </label>
+                        <input type="tel" id="regWhatsapp" placeholder="+52 55 1234 5678">
+                        <small style="color: #94a3b8; font-size: 0.8rem;">Para enviarte tu código de acceso</small>
+                    </div>
                     <button type="submit" class="btn btn-primary" id="btnRegister">
                         <i class="fas fa-credit-card"></i>
                         Proceder al Pago
@@ -509,36 +516,46 @@
             
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
+            const whatsapp = document.getElementById('regWhatsapp').value.trim();
             
             if (!name || !email) {
-                showAlert('error', 'Por favor completa todos los campos.');
+                showAlert('error', 'Por favor completa nombre y correo electrónico.');
+                return;
+            }
+            
+            // Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('error', 'Por favor ingresa un correo electrónico válido.');
                 return;
             }
             
             // Mostrar loading
             btnRegister.disabled = true;
-            btnRegister.innerHTML = '<span class="spinner"></span> Procesando...';
+            btnRegister.innerHTML = '<span class="spinner"></span> Conectando con Stripe...';
             
             try {
                 const response = await fetch(`${API_URL}/create-checkout`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email })
+                    body: JSON.stringify({ name, email, whatsapp })
                 });
                 
                 const data = await response.json();
                 
                 if (response.ok && data.url) {
                     // Redirigir a Stripe Checkout
-                    showAlert('success', 'Redirigiendo a la página de pago...');
-                    window.location.href = data.url;
+                    showAlert('success', 'Redirigiendo a la página de pago seguro...');
+                    setTimeout(() => {
+                        window.location.href = data.url;
+                    }, 500);
                 } else {
                     showAlert('error', data.message || 'Error al crear la sesión de pago.');
                     resetRegisterButton();
                 }
             } catch (error) {
                 console.error('Error en registro:', error);
-                showAlert('error', 'Error de conexión. Intenta de nuevo.');
+                showAlert('error', 'Error de conexión con el servidor. Verifica tu conexión e intenta de nuevo.');
                 resetRegisterButton();
             }
         });

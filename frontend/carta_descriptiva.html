@@ -3,617 +3,616 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carta Descriptiva EC0301 - SkillsCert</title>
+    <title>Carta Descriptiva - SkillsCert Professional</title>
+
+    <script src="sistema_central/auth.js" defer></script>
+    <script src="sistema_central/ec0301-data-manager.js" defer></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --dark: #1e293b;
-            --light: #f1f5f9;
-            --white: #ffffff;
-            --border: #e2e8f0;
+            --primary: #6366f1; --primary-dark: #4f46e5; --accent: #FF6B35;
+            --success: #10b981; --warning: #F59E0B; --danger: #ef4444;
+            --dark: #1e293b; --light: #f1f5f9; --white: #ffffff; --border: #e2e8f0;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--dark);
-        }
-        .header {
-            background: var(--white);
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .logo { display: flex; align-items: center; gap: 1rem; }
-        .logo i { font-size: 2rem; color: var(--primary); }
-        .logo h1 { font-size: 1.4rem; color: var(--dark); }
-        .logo span { display: block; font-size: 0.8rem; color: #64748b; }
-        .toolbar { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .btn {
-            padding: 0.65rem 1.25rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-        .btn-primary { background: var(--primary); color: var(--white); }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
-        .btn-success { background: var(--success); color: var(--white); }
-        .btn-success:hover { background: #059669; }
-        .btn-secondary { background: #64748b; color: var(--white); }
-        .btn-secondary:hover { background: #475569; }
-        .btn-warning { background: var(--warning); color: var(--white); }
-        .btn-warning:hover { background: #d97706; }
-        .progress-bar {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 2rem 0;
-        }
-        .progress-track {
-            background: #e2e8f0;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #8b5cf6);
-            border-radius: 4px;
-            transition: width 0.5s;
-        }
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-top: 0.5rem;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 2rem 2rem;
-        }
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            background: var(--white);
-            padding: 0.75rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        .tab {
-            padding: 0.75rem 1.25rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            background: var(--light);
-            color: #64748b;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .tab:hover { background: #e2e8f0; }
-        .tab.active { background: var(--primary); color: var(--white); }
-        .section {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            display: none;
-        }
-        .section.active { display: block; }
-        .section-title {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 3px solid var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: #F1F5F9; color: var(--dark); line-height: 1.6; padding-bottom: 4rem; }
+        
+        .header { background: var(--white); position: sticky; top: 0; z-index: 1000; border-bottom: 3px solid var(--accent); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .header-title h1 { font-size: 1.5rem; margin: 0; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+        
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        
+        .section { background: var(--white); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .section-title { color: var(--primary); font-size: 1.4rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--light); display: flex; align-items: center; gap: 0.5rem; }
+        
+        .box { background: var(--light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+        .box h3 { margin-bottom: 1rem; font-size: 1.1rem; color: var(--dark); display: flex; justify-content: space-between; align-items: center; }
+        
         .form-group { margin-bottom: 1.25rem; }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
-        .form-group label .req { color: var(--danger); }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.85rem 1rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.3s;
-        }
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
-        }
-        .form-group textarea { min-height: 120px; resize: vertical; }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.25rem;
-        }
-        .card {
-            background: var(--light);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-        }
-        .card h3 {
-            color: var(--dark);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .card h3 i { color: var(--primary); }
-        .dimension-card {
-            border-left: 4px solid var(--primary);
-            margin-bottom: 1.5rem;
-        }
-        .dimension-card.cognitivo { border-left-color: #3b82f6; }
-        .dimension-card.psicomotor { border-left-color: #10b981; }
-        .dimension-card.afectivo { border-left-color: #f59e0b; }
-        .dimension-card.relacional { border-left-color: #8b5cf6; }
-        .dimension-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        .dimension-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: white;
-        }
-        .dimension-badge.cognitivo { background: #3b82f6; }
-        .dimension-badge.psicomotor { background: #10b981; }
-        .dimension-badge.afectivo { background: #f59e0b; }
-        .dimension-badge.relacional { background: #8b5cf6; }
-        .etapa-card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .etapa-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .etapa-num {
-            width: 32px;
-            height: 32px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-        .tema-card {
-            background: linear-gradient(135deg, #e0e7ff 0%, #f0f5ff 100%);
-            border: 2px solid #c7d2fe;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .tema-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        .btn-add {
-            background: var(--success);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-        }
-        .btn-add:hover { background: #059669; transform: translateY(-2px); }
-        .btn-remove {
-            background: var(--danger);
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-        .btn-remove:hover { background: #dc2626; }
-        .time-badge {
-            background: var(--primary);
-            color: white;
-            padding: 0.35rem 0.85rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .summary-card {
-            background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-        }
-        .summary-card h4 { font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem; }
-        .summary-card .value { font-size: 2rem; font-weight: 700; }
-        .summary-card .status { font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.9; }
-        .eval-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        .eval-table th, .eval-table td {
-            padding: 1rem;
-            text-align: left;
-            border: 1px solid var(--border);
-        }
-        .eval-table th {
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-        }
-        .eval-table tr:nth-child(even) { background: var(--light); }
-        .eval-table input, .eval-table select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-        }
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: rgba(255,255,255,0.8);
-        }
-        @media (max-width: 768px) {
-            .header-content { flex-direction: column; }
-            .toolbar { width: 100%; justify-content: center; }
-            .tabs { flex-direction: column; }
-            .tab { width: 100%; justify-content: center; }
-        }
+        label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--dark); }
+        .required { color: var(--danger); }
+        input, select, textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; transition: border-color 0.3s; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+        textarea { min-height: 100px; resize: vertical; }
+        
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        
+        .btn { padding: 0.6rem 1.2rem; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; } .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { background: white; color: var(--dark); border: 1px solid var(--border); } .btn-secondary:hover { background: var(--light); }
+        .btn-success { background: var(--success); color: white; } .btn-success:hover { background: #059669; }
+        .btn-danger { background: var(--danger); color: white; padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+        
+        .time-badge { background: var(--primary); color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; margin-left: 0.5rem; }
+        .progress-bar { height: 4px; background: var(--light); margin-top: 0; width: 100%; }
+        .progress-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s; }
+        
+        .doms { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .dom { padding: 0.4rem 0.8rem; background: white; border: 1px solid var(--border); border-radius: 20px; font-size: 0.85rem; cursor: pointer; }
+        .dom.active { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        .validation-indicator { position: fixed; bottom: 2rem; right: 2rem; background: white; padding: 1rem 1.5rem; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 0.8rem; font-weight: 600; z-index: 100; border: 2px solid var(--border); }
+        .validation-indicator.valid { border-color: var(--success); color: var(--success); }
     </style>
 </head>
 <body>
+
     <header class="header">
         <div class="header-content">
-            <div class="logo">
+            <div class="header-title">
                 <i class="fas fa-file-contract"></i>
-                <div>
-                    <h1>Carta Descriptiva EC0301</h1>
-                    <span>Sistema de Diseño Instruccional Presencial</span>
-                </div>
+                <h1>Carta Descriptiva <span style="font-size: 0.9rem; font-weight: 400; color: #64748b; margin-left: 0.5rem;">(EC0217.01 / EC0301)</span></h1>
             </div>
-            <div class="toolbar">
-                <a href="dashboard.html" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Dashboard
-                </a>
-                <button class="btn btn-primary" onclick="guardarDatos()">
-                    <i class="fas fa-save"></i> Guardar
-                </button>
-                <button class="btn btn-success" onclick="exportarPDF()">
-                    <i class="fas fa-file-pdf"></i> Exportar PDF
-                </button>
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="acceso.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+                <button class="btn btn-secondary" onclick="showHelp()"><i class="fas fa-question-circle"></i> Ayuda</button>
+                <button class="btn btn-primary" onclick="saveDraft()"><i class="fas fa-save"></i> Guardar</button>
+                <button class="btn btn-success" onclick="markComplete()"><i class="fas fa-check-circle"></i> Completar</button>
             </div>
         </div>
-        <div class="progress-bar">
-            <div class="progress-track">
-                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-            </div>
-            <div class="progress-info">
-                <span id="tiempoActual">Tiempo: 0 min</span>
-                <span id="tiempoObjetivo">Objetivo: 120 min</span>
-            </div>
-        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
     </header>
 
     <main class="container">
-        <!-- TABS DE NAVEGACIÓN -->
-        <div class="tabs">
-            <button class="tab active" onclick="showSection('info-general')">
-                <i class="fas fa-info-circle"></i> 1. Info General
-            </button>
-            <button class="tab" onclick="showSection('objetivo-general')">
-                <i class="fas fa-bullseye"></i> 2. Objetivo General
-            </button>
-            <button class="tab" onclick="showSection('objetivos-particulares')">
-                <i class="fas fa-tasks"></i> 3. Obj. Particulares
-            </button>
-            <button class="tab" onclick="showSection('requerimientos')">
-                <i class="fas fa-clipboard-list"></i> 4. Requerimientos
-            </button>
-            <button class="tab" onclick="showSection('evaluacion')">
-                <i class="fas fa-chart-pie"></i> 5. Evaluación
-            </button>
-            <button class="tab" onclick="showSection('desarrollo')">
-                <i class="fas fa-layer-group"></i> 6. Desarrollo
-            </button>
-        </div>
 
-        <!-- SECCIÓN 1: INFORMACIÓN GENERAL -->
-        <div class="section active" id="section-info-general">
-            <h2 class="section-title">
-                <i class="fas fa-info-circle"></i>
-                1. Información General del Curso
-            </h2>
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-info-circle"></i> 1. Información General</h2>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>Nombre del Curso <span class="required">*</span></label>
+                    <input id="cd_nombre" placeholder="Ej: Curso de Inducción en PLD/FT">
+                </div>
+                <div class="form-group">
+                    <label>Nombre del Facilitador <span class="required">*</span></label>
+                    <input id="cd_facilitador" placeholder="Nombre completo">
+                </div>
+                <div class="form-group">
+                    <label>Lugar de Instrucción</label>
+                    <input id="cd_lugar" placeholder="Ej: Sala de Capacitación A">
+                </div>
+            </div>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>Duración (horas) <span class="required">*</span></label>
+                    <input type="number" id="cd_duracion" placeholder="Ej: 5" min="1" onchange="recalcTimes()">
+                </div>
+                <div class="form-group">
+                    <label>Fecha(s)</label>
+                    <input id="cd_fecha" placeholder="Ej: 15 y 16 de Octubre">
+                </div>
+                <div class="form-group">
+                    <label>Modalidad <span class="required">*</span></label>
+                    <select id="cd_modalidad">
+                        <option value="presencial">Presencial (EC0217.01)</option>
+                        <option value="mixto">Mixto (Línea y Presencial)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Nombre del Diseñador <span class="required">*</span></label>
+                <input id="cd_diseñador">
+            </div>
+            <div class="form-group">
+                <label>Propósito/Beneficio del Curso <span class="required">*</span></label>
+                <textarea id="cd_proposito" placeholder="El participante obtendrá..."></textarea>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-users"></i> 2. Perfil del Participante</h2>
             <div class="grid-2">
                 <div class="form-group">
-                    <label>Nombre del Curso-Taller <span class="req">*</span></label>
-                    <input type="text" id="nombreCurso" placeholder="Ej: Curso de Inducción en PLD y FT">
+                    <label>Perfil de Ingreso (Conocimientos/Habilidades) <span class="required">*</span></label>
+                    <textarea id="cd_perfil" placeholder="Conocimientos previos, nivel académico..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Nombre del Facilitador/Instructor <span class="req">*</span></label>
-                    <input type="text" id="facilitador" placeholder="Nombre completo">
+                    <label>Conocimientos Previos Requeridos</label>
+                    <textarea id="cd_conoc" placeholder="¿Qué debe saber antes?"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Duración (horas) <span class="req">*</span></label>
-                    <input type="number" id="duracionHoras" value="2" min="1" onchange="actualizarTiempos()">
+                    <label>Habilidades Tecnológicas</label>
+                    <textarea id="cd_hab" placeholder="Uso de PC, Internet..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Fecha(s) <span class="req">*</span></label>
-                    <input type="text" id="fechas" placeholder="Ej: 17 julio 2025">
+                    <label>Actitudes Deseables</label>
+                    <textarea id="cd_actitudes" placeholder="Participación, apertura..."></textarea>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Número de Participantes <span class="required">*</span></label>
+                    <input type="number" id="cd_num" placeholder="Ej: 15">
                 </div>
                 <div class="form-group">
-                    <label>Número de Participantes <span class="req">*</span></label>
-                    <input type="number" id="numParticipantes" value="4" min="1">
+                    <label>Tipo de Grupo</label>
+                    <select id="cd_tipo">
+                        <option value="homogeneo">Homogéneo</option>
+                        <option value="heterogeneo">Heterogéneo</option>
+                    </select>
                 </div>
             </div>
-            <div class="form-group">
-                <label>Lugar de Instrucción <span class="req">*</span></label>
-                <textarea id="lugarInstruccion" placeholder="Salón, Hotel, Dirección completa..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Perfil del Participante <span class="req">*</span></label>
-                <textarea id="perfilParticipante" placeholder="Nivel educativo, experiencia previa, conocimientos, actitudes..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Propósito/Beneficio del Curso <span class="req">*</span></label>
-                <textarea id="proposito" placeholder="Describa el propósito y beneficios del curso..."></textarea>
-            </div>
-        </div>
+        </section>
 
-        <!-- SECCIÓN 2: OBJETIVO GENERAL -->
-        <div class="section" id="section-objetivo-general">
-            <h2 class="section-title">
-                <i class="fas fa-bullseye"></i>
-                2. Objetivo General (4 Dimensiones Integradas)
-            </h2>
-            <div class="card">
-                <p style="background: #dbeafe; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #3b82f6;">
-                    <strong>📘 Estructura:</strong> Al finalizar el curso, el participante [Cognitivo] + [Psicomotor] + [Afectivo] + [Relacional], [Condición]
-                </p>
-                <div class="form-group">
-                    <label>🧠 Dimensión Cognitiva <span class="req">*</span></label>
-                    <input type="text" id="ogCognitivo" placeholder="identificará y describirá las principales normativas..." onkeyup="generarObjetivoGeneral()">
-                </div>
-                <div class="form-group">
-                    <label>✋ Dimensión Psicomotora <span class="req">*</span></label>
-                    <input type="text" id="ogPsicomotor" placeholder="aplicará correctamente los procedimientos..." onkeyup="generarObjetivoGeneral()">
-                </div>
-                <div class="form-group">
-                    <label>❤️ Dimensión Afectiva <span class="req">*</span></label>
-                    <input type="text" id="ogAfectivo" placeholder="asumirá una actitud proactiva y ética..." onkeyup="generarObjetivoGeneral()">
-                </div>
-                <div class="form-group">
-                    <label>🤝 Dimensión Relacional <span class="req">*</span></label>
-                    <input type="text" id="ogRelacional" placeholder="colaborará en equipo para identificar riesgos..." onkeyup="generarObjetivoGeneral()">
-                </div>
-                <div class="form-group">
-                    <label>📋 Condición de Operación <span class="req">*</span></label>
-                    <textarea id="ogCondicion" placeholder="aplicando estos conocimientos a casos prácticos, con el propósito de..." onkeyup="generarObjetivoGeneral()"></textarea>
-                </div>
-                <div style="background: linear-gradient(135deg, #e0e7ff 0%, #f5f3ff 100%); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--primary); margin-top: 1.5rem;">
-                    <strong style="color: var(--primary);">✨ OBJETIVO GENERAL GENERADO:</strong>
-                    <p id="objetivoGeneralPreview" style="margin-top: 0.75rem; font-style: italic; color: var(--dark); line-height: 1.6;">
-                        Complete los campos anteriores para generar el objetivo general...
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN 3: OBJETIVOS PARTICULARES -->
-        <div class="section" id="section-objetivos-particulares">
-            <h2 class="section-title">
-                <i class="fas fa-tasks"></i>
-                3. Objetivos Particulares (4 Dimensiones)
-            </h2>
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-bullseye"></i> 3. Objetivos de Aprendizaje</h2>
             
-            <!-- COGNITIVO -->
-            <div class="card dimension-card cognitivo">
-                <div class="dimension-header">
-                    <span class="dimension-badge cognitivo">1. COGNITIVO</span>
+            <div class="box">
+                <h3>Objetivo General</h3>
+                <div class="form-group">
+                    <label>Sujeto (El participante...)</label>
+                    <input value="Al finalizar el curso, el participante..." disabled style="background: #e2e8f0;">
                 </div>
                 <div class="form-group">
-                    <label>Sujeto</label>
-                    <input type="text" value="El Participante" disabled style="background: #f1f5f9;">
+                    <label>Acción/Comportamiento (Verbo en futuro) <span class="required">*</span></label>
+                    <textarea id="og_accion" placeholder="Ej: identificará los principios de..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Acción o comportamiento <span class="req">*</span></label>
-                    <textarea id="opCognitivoAccion" placeholder="Al finalizar el curso, identificará y explicará las principales normativas..."></textarea>
+                    <label>Condición de Operación <span class="required">*</span></label>
+                    <textarea id="og_cond" placeholder="Ej: a través del análisis de casos..."></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Condición de operación <span class="req">*</span></label>
-                    <textarea id="opCognitivoCondicion" placeholder="A través del análisis de materiales normativos, exposiciones y ejercicios de comprensión, con la finalidad de..."></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Temas <span class="req">*</span></label>
-                    <textarea id="opCognitivoTemas" placeholder="- Definiciones&#10;- Marco normativo nacional e internacional&#10;- Obligaciones de las entidades"></textarea>
-                </div>
-            </div>
 
-            <!-- PSICOMOTOR -->
-            <div class="card dimension-card psicomotor">
-                <div class="dimension-header">
-                    <span class="dimension-badge psicomotor">2. PSICOMOTOR</span>
-                </div>
-                <div class="form-group">
-                    <label>Sujeto</label>
-                    <input type="text" value="El Participante" disabled style="background: #f1f5f9;">
-                </div>
-                <div class="form-group">
-                    <label>Acción o comportamiento <span class="req">*</span></label>
-                    <textarea id="opPsicomotorAccion" placeholder="Al finalizar el curso, aplicará correctamente los procedimientos internos..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Condición de operación <span class="req">*</span></label>
-                    <textarea id="opPsicomotorCondicion" placeholder="Por medio de la resolución de casos prácticos y simulaciones..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Temas <span class="req">*</span></label>
-                    <textarea id="opPsicomotorTemas" placeholder="- Procedimiento interno de reporte&#10;- Uso de formatos y sistemas&#10;- Ejercicios prácticos"></textarea>
-                </div>
-            </div>
+            <div id="objetivosParticulares"></div>
+            </section>
 
-            <!-- AFECTIVO -->
-            <div class="card dimension-card afectivo">
-                <div class="dimension-header">
-                    <span class="dimension-badge afectivo">3. AFECTIVO</span>
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-clipboard-list"></i> 4. Requerimientos del Curso</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Instalaciones, mobiliario y distribución <span class="required">*</span></label>
+                    <textarea id="rq_instalaciones" placeholder="Salón con iluminación, mesas en herradura..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Sujeto</label>
-                    <input type="text" value="El Participante" disabled style="background: #f1f5f9;">
+                    <label>Equipo de apoyo <span class="required">*</span></label>
+                    <textarea id="rq_equipo" placeholder="Laptop, proyector, pantalla, bocinas..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Acción o comportamiento <span class="req">*</span></label>
-                    <textarea id="opAfectivoAccion" placeholder="Al finalizar el curso, asumirá una actitud proactiva y ética..."></textarea>
+                    <label>Materiales de apoyo (didácticos) <span class="required">*</span></label>
+                    <textarea id="rq_materiales" placeholder="Manuales, bolígrafos, hojas, evaluaciones..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Condición de operación <span class="req">*</span></label>
-                    <textarea id="opAfectivoCondicion" placeholder="A través de la reflexión sobre casos reales y debate grupal..."></textarea>
+                    <label>Humanos</label>
+                    <textarea id="rq_humanos" placeholder="Instructor, asistente..."></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Temas <span class="req">*</span></label>
-                    <textarea id="opAfectivoTemas" placeholder="- Cultura de cumplimiento&#10;- Responsabilidad individual&#10;- Consecuencias del incumplimiento"></textarea>
-                </div>
-            </div>
-
-            <!-- RELACIONAL -->
-            <div class="card dimension-card relacional">
-                <div class="dimension-header">
-                    <span class="dimension-badge relacional">4. RELACIONAL/SOCIALES</span>
-                </div>
-                <div class="form-group">
-                    <label>Sujeto</label>
-                    <input type="text" value="El Participante" disabled style="background: #f1f5f9;">
-                </div>
-                <div class="form-group">
-                    <label>Acción o comportamiento <span class="req">*</span></label>
-                    <textarea id="opRelacionalAccion" placeholder="Durante el curso, colaborará en equipo para identificar señales de alerta..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Condición de operación <span class="req">*</span></label>
-                    <textarea id="opRelacionalCondicion" placeholder="Mediante el análisis colaborativo de casos y discusiones en subgrupos..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Temas <span class="req">*</span></label>
-                    <textarea id="opRelacionalTemas" placeholder="- Trabajo colaborativo&#10;- Comunicación efectiva&#10;- Resolución de dilemas éticos"></textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN 4: REQUERIMIENTOS -->
-        <div class="section" id="section-requerimientos">
-            <h2 class="section-title">
-                <i class="fas fa-clipboard-list"></i>
-                4. Requerimientos (Estructura EC0301)
-            </h2>
-            <div class="form-group">
-                <label>Requerimientos en instalaciones, mobiliario y su distribución <span class="req">*</span></label>
-                <textarea id="reqInstalaciones" placeholder="Salón para X personas, mesas, sillas, ventilación, iluminación, distribución en U..."></textarea>
             </div>
             <div class="form-group">
-                <label>Requerimientos en equipo de apoyo y su distribución <span class="req">*</span></label>
-                <textarea id="reqEquipo" placeholder="Laptop, proyector, pantalla, bocina, pizarrón, marcadores, extensión..."></textarea>
+                <label>Material de seguridad / higiene / protección civil <span class="required">*</span></label>
+                <textarea id="rq_seguridad" placeholder="Rutas de evacuación, extintor, botiquín..."></textarea>
             </div>
-            <div class="form-group">
-                <label>Requerimientos en materiales de apoyo <span class="req">*</span></label>
-                <textarea id="reqMateriales" placeholder="Formatos de evaluación, manuales, contratos, lista de asistencia..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Requerimientos humanos <span class="req">*</span></label>
-                <textarea id="reqHumanos" placeholder="Instructor certificado, personal de apoyo logístico..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Material y equipo para las medidas de salud/seguridad/higiene/protección civil <span class="req">*</span></label>
-                <textarea id="reqSeguridad" placeholder="Gel antibacterial, aerosol desinfectante, botiquín, señalización, extintor..."></textarea>
-            </div>
-        </div>
+        </section>
 
-        <!-- SECCIÓN 5: EVALUACIÓN -->
-        <div class="section" id="section-evaluacion">
-            <h2 class="section-title">
-                <i class="fas fa-chart-pie"></i>
-                5. Sistema de Evaluación
-            </h2>
-            <div class="card" style="background: #fef3c7; border-left: 4px solid #f59e0b;">
-                <p><strong>⚠️ La suma de todos los porcentajes debe ser exactamente 100%</strong></p>
-                <p style="margin-top: 0.5rem;">Si el participante cumple con al menos el <strong id="minAprobatorio">70</strong>% de la calificación total, se considerará aprobado.</p>
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-check-double"></i> 5. Sistema de Evaluación</h2>
+            <div class="grid-4">
+                <div class="box">
+                    <h4>Diagnóstica</h4>
+                    <div class="form-group"><label>Porcentaje (%)</label><input type="number" id="ev_diag_pct" value="10" onchange="sumarPorcentajes()"></div>
+                    <div class="form-group"><label>Instrumento</label><input id="ev_diag_ins" value="Cuestionario"></div>
+                </div>
+                <div class="box">
+                    <h4>Formativa</h4>
+                    <div class="form-group"><label>Porcentaje (%)</label><input type="number" id="ev_form_pct" value="50" onchange="sumarPorcentajes()"></div>
+                    <div class="form-group"><label>Instrumento</label><input id="ev_form_ins" value="Guía de observación"></div>
+                </div>
+                <div class="box">
+                    <h4>Sumativa</h4>
+                    <div class="form-group"><label>Porcentaje (%)</label><input type="number" id="ev_sum_pct" value="40" onchange="sumarPorcentajes()"></div>
+                    <div class="form-group"><label>Instrumento</label><input id="ev_sum_ins" value="Cuestionario"></div>
+                </div>
+                <div class="box">
+                    <h4>Satisfacción</h4>
+                    <div class="form-group"><label>Porcentaje (%)</label><input type="number" id="ev_sat_pct" value="0" disabled style="background: #e2e8f0;"></div>
+                    <div class="form-group"><label>Instrumento</label><input id="ev_sat_ins" value="Cuestionario" disabled></div>
+                </div>
             </div>
-            <table class="eval-table">
-                <thead>
-                    <tr>
-                        <th>Aspecto por evaluar</th>
-                        <th style="width: 100px;">Porcentaje</th>
-                        <th>Instrumento de evaluación</th>
-                        <th>
+            <p style="text-align: right; font-weight: bold;">Suma Total: <span id="ev_total_pct">100%</span></p>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-list-ol"></i> 6. Desarrollo Cronológico</h2>
+
+            <div class="box" style="border-left: 4px solid var(--warning);">
+                <h3>6.1 Comprobación de Recursos (Previo) <span class="time-badge">30 min</span></h3>
+                <div class="form-group">
+                    <label>Actividades de Verificación:</label>
+                    <textarea id="dc_verificacion" rows="4">1. Verificar mobiliario y distribución.&#10;2. Probar equipo de cómputo y proyección.&#10;3. Verificar material didáctico.&#10;4. Verificar condiciones de seguridad.</textarea>
+                </div>
+                <div class="form-group"><label>Tiempo (min)</label><input type="number" id="dc_precurso_t" value="30" onchange="recalcTimes()"></div>
+            </div>
+
+            <div class="box">
+                <h3>6.2 Apertura o Encuadre <span class="time-badge">22 min</span></h3>
+                <div class="form-group"><label>1. Presentación del instructor y participantes (Técnica Rompehielo)</label><textarea id="enc_1_presentacion" rows="2"></textarea></div>
+                <div class="form-group"><label>2. Presentación del curso (Objetivos, Temario, Beneficios)</label><textarea id="enc_2_curso" rows="2"></textarea></div>
+                <div class="form-group"><label>3. Momentos e instrumentos de evaluación</label><textarea id="enc_3_evaluacion" rows="2"></textarea></div>
+                <div class="form-group"><label>4. Acuerdos y compromisos (Reglas)</label><textarea id="enc_4_acuerdos" rows="2"></textarea></div>
+                <div class="form-group"><label>5. Evaluación diagnóstica</label><textarea id="enc_5_diagnostico" rows="2"></textarea></div>
+                <div class="form-group"><label>Tiempo Encuadre (min)</label><input type="number" id="dc_encuadre_t" value="22" onchange="recalcTimes()"></div>
+            </div>
+
+            <div class="box">
+                <h3>6.3 Desarrollo (Temario) <span class="time-badge" id="desarrolloTime">0 min</span></h3>
+                <div id="temasContainer"></div>
+                <button class="btn btn-primary" onclick="addTema()">+ Agregar Tema</button>
+            </div>
+
+            <div class="box">
+                <h3>6.4 Cierre <span class="time-badge">10 min</span></h3>
+                <div class="form-group"><label>1. Conclusiones y resumen</label><textarea id="cierre_1_resumen" rows="2"></textarea></div>
+                <div class="form-group"><label>2. Logro de expectativas y objetivos</label><textarea id="cierre_2_logro" rows="2"></textarea></div>
+                <div class="form-group"><label>3. Sugerencias de continuidad</label><textarea id="cierre_3_sugerencias" rows="2"></textarea></div>
+                <div class="form-group"><label>4. Evaluación de satisfacción</label><textarea id="cierre_4_satisfaccion" rows="2"></textarea></div>
+                <div class="form-group"><label>5. Despedida</label><textarea id="cierre_5_despedida" rows="2"></textarea></div>
+                <div class="form-group"><label>Tiempo Cierre (min)</label><input type="number" id="dc_cierre_t" value="10" onchange="recalcTimes()"></div>
+            </div>
+
+            <div class="box" style="background: #e0e7ff; text-align: right;">
+                <h3>Tiempo Total: <span id="sum_total">0 min</span></h3>
+                <small id="time_warning" style="color: var(--danger); display:none;">No coincide con la duración total.</small>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="validation-indicator invalid" id="validationIndicator">0%</div>
+
+    <script>
+        let objetivosCount = 0;
+        let temasCount = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (typeof auth === 'undefined' || typeof EC0301Manager === 'undefined') {
+                    Swal.fire('Error', 'No se cargaron los módulos del sistema.', 'error');
+                    return;
+                }
+                if (!auth.isLoggedIn()) window.location.href = 'index.html';
+
+                initForm();
+            }, 50);
+        });
+
+        function initForm() {
+            // Crear los 4 objetivos fijos si no existen
+            if (objetivosCount === 0) {
+                addObjetivoParticular('Cognitivo');
+                addObjetivoParticular('Psicomotriz');
+                addObjetivoParticular('Afectivo');
+                addObjetivoParticular('Relacional');
+            }
+            loadDraft();
+            if (temasCount === 0) addTema();
+            
+            recalcTimes();
+            sumarPorcentajes();
+            updateProgress();
+            
+            // Listener global para inputs
+            document.querySelectorAll('input, textarea, select').forEach(el => {
+                el.addEventListener('input', updateProgress);
+                el.addEventListener('change', () => { updateProgress(); recalcTimes(); });
+            });
+
+            setInterval(() => { if (updateProgress() > 5) saveDraft(true); }, 30000);
+        }
+
+        function addObjetivoParticular(dom) {
+            objetivosCount++;
+            const container = document.getElementById('objetivosParticulares');
+            const div = document.createElement('div');
+            div.className = 'box';
+            div.setAttribute('data-op', objetivosCount);
+            div.innerHTML = `
+                <h3>Objetivo Particular ${objetivosCount}: <span style="color:var(--primary)">${dom}</span></h3>
+                <div class="grid-2">
+                    <div class="form-group"><label>Verbo + Acción</label><input id="op${objetivosCount}_accion"></div>
+                    <div class="form-group"><label>Condición</label><textarea id="op${objetivosCount}_cond"></textarea></div>
+                </div>
+                <div class="form-group"><label>Temas Relacionados</label><textarea id="op${objetivosCount}_temas"></textarea></div>
+            `;
+            container.appendChild(div);
+        }
+
+        function addTema() {
+            temasCount++;
+            const container = document.getElementById('temasContainer');
+            const div = document.createElement('div');
+            div.className = 'box';
+            div.setAttribute('data-tema', temasCount);
+            div.innerHTML = `
+                <h3>Tema ${temasCount} <button class="btn btn-danger" onclick="this.closest('.box').remove(); recalcTimes();">X</button></h3>
+                <div class="grid-2">
+                    <div class="form-group"><label>Nombre</label><input id="tema${temasCount}_nombre"></div>
+                    <div class="form-group"><label>Duración (min)</label><input type="number" id="tema${temasCount}_duracion" value="0" onchange="recalcTimes()"></div>
+                </div>
+                <div class="form-group"><label>Actividades</label><textarea id="tema${temasCount}_actividades"></textarea></div>
+                <div class="grid-2">
+                    <div class="form-group"><label>Técnicas</label><input id="tema${temasCount}_tecnicas"></div>
+                    <div class="form-group"><label>Material</label><input id="tema${temasCount}_material"></div>
+                </div>
+            `;
+            container.appendChild(div);
+            // Re-adjuntar listeners a nuevos elementos
+            div.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', updateProgress));
+        }
+
+        function recalcTimes() {
+            let desarrollo = 0;
+            document.querySelectorAll('[id^="tema"][id$="_duracion"]').forEach(el => desarrollo += parseInt(el.value) || 0);
+            const encuadre = parseInt(document.getElementById('dc_encuadre_t').value) || 0;
+            const cierre = parseInt(document.getElementById('dc_cierre_t').value) || 0;
+            
+            const total = encuadre + desarrollo + cierre;
+            document.getElementById('desarrolloTime').innerText = `${desarrollo} min`;
+            document.getElementById('sum_total').innerText = `${total} min (${(total/60).toFixed(1)} hrs)`;
+            
+            // Validar
+            const duracionObj = (parseInt(document.getElementById('cd_duracion').value) || 0) * 60;
+            const warning = document.getElementById('time_warning');
+            if(duracionObj > 0 && Math.abs(duracionObj - total) > 5) warning.style.display = 'block';
+            else warning.style.display = 'none';
+        }
+
+        function sumarPorcentajes() {
+            const total = (parseInt(document.getElementById('ev_diag_pct').value)||0) + 
+                          (parseInt(document.getElementById('ev_form_pct').value)||0) + 
+                          (parseInt(document.getElementById('ev_sum_pct').value)||0);
+            const el = document.getElementById('ev_total_pct');
+            el.innerText = total + '%';
+            el.style.color = total === 100 ? 'var(--success)' : 'var(--danger)';
+        }
+
+        function updateProgress() {
+            const ids = ['cd_nombre', 'cd_facilitador', 'cd_duracion', 'og_accion', 'rq_instalaciones', 'ev_min', 'enc_1_presentacion'];
+            let filled = 0;
+            ids.forEach(id => { if(document.getElementById(id)?.value) filled++; });
+            if(document.getElementById('tema1_nombre')?.value) filled++;
+            
+            const pct = Math.round((filled / (ids.length + 1)) * 100);
+            document.getElementById('progressBar').style.width = pct + '%';
+            
+            const ind = document.getElementById('validationIndicator');
+            if(pct >= 80) {
+                ind.className = 'validation-indicator valid';
+                ind.innerHTML = `<i class="fas fa-check-circle"></i> ${pct}% Completo`;
+            } else {
+                ind.className = 'validation-indicator invalid';
+                ind.innerHTML = `${pct}%`;
+            }
+            return pct;
+        }
+
+        function collectData() {
+            const data = {
+                nombre: document.getElementById('cd_nombre').value,
+                facilitador: document.getElementById('cd_facilitador').value,
+                duracion: document.getElementById('cd_duracion').value,
+                lugar: document.getElementById('cd_lugar').value,
+                fecha: document.getElementById('cd_fecha').value,
+                modalidad: document.getElementById('cd_modalidad').value,
+                proposito: document.getElementById('cd_proposito').value,
+                perfil: document.getElementById('cd_perfil').value,
+                conoc: document.getElementById('cd_conoc').value,
+                hab: document.getElementById('cd_hab').value,
+                actitudes: document.getElementById('cd_actitudes').value,
+                num: document.getElementById('cd_num').value,
+                tipo: document.getElementById('cd_tipo').value,
+                diseñador: document.getElementById('cd_diseñador').value,
+                og: {
+                    accion: document.getElementById('og_accion').value,
+                    cond: document.getElementById('og_cond').value
+                },
+                rq: {
+                    instalaciones: document.getElementById('rq_instalaciones').value,
+                    equipo: document.getElementById('rq_equipo').value,
+                    materiales: document.getElementById('rq_materiales').value,
+                    humanos: document.getElementById('rq_humanos').value,
+                    seguridad: document.getElementById('rq_seguridad').value
+                },
+                ev: {
+                    diag_pct: document.getElementById('ev_diag_pct').value,
+                    diag_ins: document.getElementById('ev_diag_ins').value,
+                    form_pct: document.getElementById('ev_form_pct').value,
+                    form_ins: document.getElementById('ev_form_ins').value,
+                    sum_pct: document.getElementById('ev_sum_pct').value,
+                    sum_ins: document.getElementById('ev_sum_ins').value
+                },
+                dev: {
+                    verificacion: document.getElementById('dc_verificacion').value,
+                    precurso_t: document.getElementById('dc_precurso_t').value,
+                    enc_1: document.getElementById('enc_1_presentacion').value,
+                    enc_2: document.getElementById('enc_2_curso').value,
+                    enc_3: document.getElementById('enc_3_evaluacion').value,
+                    enc_4: document.getElementById('enc_4_acuerdos').value,
+                    enc_5: document.getElementById('enc_5_diagnostico').value,
+                    encuadre_t: document.getElementById('dc_encuadre_t').value,
+                    cierre_1: document.getElementById('cierre_1_resumen').value,
+                    cierre_2: document.getElementById('cierre_2_logro').value,
+                    cierre_3: document.getElementById('cierre_3_sugerencias').value,
+                    cierre_4: document.getElementById('cierre_4_satisfaccion').value,
+                    cierre_5: document.getElementById('cierre_5_despedida').value,
+                    cierre_t: document.getElementById('dc_cierre_t').value
+                },
+                objetivos: [],
+                temas: []
+            };
+
+            // Objetivos
+            for(let i=1; i<=4; i++) {
+                if(document.getElementById(`op${i}_accion`)) {
+                    data.objetivos.push({
+                        num: i,
+                        accion: document.getElementById(`op${i}_accion`).value,
+                        cond: document.getElementById(`op${i}_cond`).value,
+                        temas: document.getElementById(`op${i}_temas`).value
+                    });
+                }
+            }
+
+            // Temas
+            document.querySelectorAll('[data-tema]').forEach(el => {
+                const id = el.getAttribute('data-tema');
+                data.temas.push({
+                    nombre: document.getElementById(`tema${id}_nombre`).value,
+                    duracion: document.getElementById(`tema${id}_duracion`).value,
+                    actividades: document.getElementById(`tema${id}_actividades`).value,
+                    tecnicas: document.getElementById(`tema${id}_tecnicas`).value,
+                    material: document.getElementById(`tema${id}_material`).value
+                });
+            });
+
+            return data;
+        }
+
+        function saveDraft(silent) {
+            try {
+                const data = collectData();
+                EC0301Manager.saveData(data);
+                if (!silent) Swal.fire('Guardado', 'Datos guardados.', 'success');
+            } catch (e) { console.error(e); }
+        }
+
+        function loadDraft() {
+            const data = EC0301Manager.getData();
+            if (!data || !data.nombre) return;
+
+            // Función helper
+            const setVal = (id, val) => { if(document.getElementById(id)) document.getElementById(id).value = val || ''; };
+
+            // Carga General
+            setVal('cd_nombre', data.nombre);
+            setVal('cd_duracion', data.duracion);
+            setVal('cd_facilitador', data.facilitador);
+            setVal('cd_lugar', data.lugar);
+            setVal('cd_fecha', data.fecha);
+            setVal('cd_modalidad', data.modalidad);
+            setVal('cd_diseñador', data.diseñador);
+            setVal('cd_proposito', data.proposito);
+            
+            // Perfil
+            setVal('cd_perfil', data.perfil);
+            setVal('cd_conoc', data.conoc);
+            setVal('cd_hab', data.hab);
+            setVal('cd_actitudes', data.actitudes);
+            setVal('cd_num', data.num);
+            setVal('cd_tipo', data.tipo);
+
+            // OG
+            if(data.og) {
+                setVal('og_accion', data.og.accion);
+                setVal('og_cond', data.og.cond);
+            }
+
+            // RQ
+            if(data.rq) {
+                setVal('rq_instalaciones', data.rq.instalaciones);
+                setVal('rq_equipo', data.rq.equipo);
+                setVal('rq_materiales', data.rq.materiales);
+                setVal('rq_humanos', data.rq.humanos);
+                setVal('rq_seguridad', data.rq.seguridad);
+            }
+
+            // EV
+            if(data.ev) {
+                setVal('ev_min', data.ev.min);
+                setVal('ev_escala', data.ev.escala);
+                setVal('ev_cert', data.ev.cert);
+                setVal('ev_diag_pct', data.ev.diag_pct);
+                setVal('ev_diag_ins', data.ev.diag_ins);
+                setVal('ev_form_pct', data.ev.form_pct);
+                setVal('ev_form_ins', data.ev.form_ins);
+                setVal('ev_sum_pct', data.ev.sum_pct);
+                setVal('ev_sum_ins', data.ev.sum_ins);
+            }
+
+            // DEV
+            if(data.dev) {
+                setVal('dc_verificacion', data.dev.verificacion);
+                setVal('dc_precurso_t', data.dev.precurso_t);
+                setVal('enc_1_presentacion', data.dev.enc_1);
+                setVal('enc_2_curso', data.dev.enc_2);
+                setVal('enc_3_evaluacion', data.dev.enc_3);
+                setVal('enc_4_acuerdos', data.dev.enc_4);
+                setVal('enc_5_diagnostico', data.dev.enc_5);
+                setVal('dc_encuadre_t', data.dev.encuadre_t);
+                setVal('cierre_1_resumen', data.dev.cierre_1);
+                setVal('cierre_2_logro', data.dev.cierre_2);
+                setVal('cierre_3_sugerencias', data.dev.cierre_3);
+                setVal('cierre_4_satisfaccion', data.dev.cierre_4);
+                setVal('cierre_5_despedida', data.dev.cierre_5);
+                setVal('dc_cierre_t', data.dev.cierre_t);
+            }
+
+            // Objetivos
+            if (data.objetivos) {
+                data.objetivos.forEach(obj => {
+                    setVal(`op${obj.num}_accion`, obj.accion);
+                    setVal(`op${obj.num}_cond`, obj.cond);
+                    setVal(`op${obj.num}_temas`, obj.temas);
+                });
+            }
+
+            // Temas
+            if (data.temas) {
+                document.getElementById('temasContainer').innerHTML = '';
+                temasCount = 0;
+                data.temas.forEach(t => {
+                    addTema();
+                    setVal(`tema${temasCount}_nombre`, t.nombre);
+                    setVal(`tema${temasCount}_duracion`, t.duracion);
+                    setVal(`tema${temasCount}_actividades`, t.actividades);
+                    setVal(`tema${temasCount}_tecnicas`, t.tecnicas);
+                    setVal(`tema${temasCount}_material`, t.material);
+                });
+            }
+        }
+
+        function showHelp() {
+            Swal.fire({
+                title: 'Guía Rápida',
+                html: '<div style="text-align:left"><p>Esta carta descriptiva sigue el estándar EC0217.01 para cursos presenciales.</p><ul><li><strong>Encuadre:</strong> Inicio del curso (reglas, objetivos).</li><li><strong>Desarrollo:</strong> Temas y actividades principales.</li><li><strong>Cierre:</strong> Conclusiones y evaluación final.</li></ul></div>'
+            });
+        }
+
+        function markComplete() {
+            if (updateProgress() < 80) {
+                Swal.fire('Incompleto', 'Completa al menos el 80% para continuar.', 'warning');
+                return;
+            }
+            saveDraft(true);
+            EC0301Manager.markModuleProgress('carta', 100);
+            Swal.fire('¡Felicidades!', 'Módulo completado.', 'success').then(() => window.location.href = 'acceso.html');
+        }
+    </script>
+</body>
+</html>

@@ -1,47 +1,47 @@
-const auth = (function () {
-  'use strict';
+// sistema_central/auth.js (VERSIÓN FRONTEND)
 
-  const TOKEN_KEY = 'authToken';
+const AUTH_API_URL = 'https://ec0301-globalskillscert-backend.onrender.com';
 
-  function login(token) {
-    try {
-      localStorage.setItem(TOKEN_KEY, token);
-      console.log('Auth: Sesión iniciada.');
-    } catch (e) {
-      console.error('Auth: Error al guardar el token.', e);
+const auth = {
+    // Verificar si hay sesión guardada
+    isLoggedIn: () => {
+        return !!localStorage.getItem('ec0301_token');
+    },
+
+    // Función de Login
+    login: async (accessCode) => {
+        try {
+            const response = await fetch(`${AUTH_API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: accessCode })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // Guardar sesión
+                localStorage.setItem('ec0301_token', data.token || accessCode);
+                if (data.user) {
+                    localStorage.setItem('ec0301_user', JSON.stringify(data.user));
+                }
+                return { success: true };
+            } else {
+                return { success: false, message: data.message || 'Código incorrecto' };
+            }
+        } catch (error) {
+            console.error('Error en auth.js:', error);
+            return { success: false, message: 'Error de conexión con el servidor.' };
+        }
+    },
+
+    // Cerrar sesión
+    logout: () => {
+        localStorage.removeItem('ec0301_token');
+        localStorage.removeItem('ec0301_user');
+        window.location.href = 'index.html';
     }
-  }
+};
 
-  function logout() {
-    try {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem('userEmail');
-      console.log('Auth: Sesión cerrada.');
-      window.location.href = 'index.html'; // Redirige a la página de inicio
-    } catch (e) {
-      console.error('Auth: Error al cerrar sesión.', e);
-    }
-  }
-
-  function isLoggedIn() {
-    try {
-      const token = localStorage.getItem(TOKEN_KEY);
-      return !!token;
-    } catch (e) {
-      console.error('Auth: Error al verificar token.', e);
-      return false;
-    }
-  }
-
-  function getToken() {
-    try {
-      return localStorage.getItem(TOKEN_KEY);
-    } catch {
-      return null;
-    }
-  }
-
-  return { login, logout, isLoggedIn, getToken };
-})();
-
+// Exponer al navegador
 window.auth = auth;

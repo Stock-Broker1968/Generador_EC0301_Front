@@ -3,533 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillsCert EC0301 - Acceso</title>
+    <title>Sistema EC0301 - GlobalSkillsCert</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --accent: #FF6B35;
+            --success: #10b981;
+            --warning: #F59E0B;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            color: var(--dark);
         }
+        
         .header {
-            background: rgba(255,255,255,0.95);
-            padding: 1rem 2rem;
+            background: var(--white);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        .logo { display: flex; align-items: center; gap: 1rem; }
-        .logo i { font-size: 2rem; color: #6366f1; }
-        .logo h1 { font-size: 1.4rem; color: #1e293b; }
-        .logo span { display: block; font-size: 0.8rem; color: #64748b; }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .header-logo h1 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .header-logo span {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info span {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 0.95rem;
             font-weight: 600;
-            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-        }
-        .btn-primary { background: #6366f1; color: white; }
-        .btn-primary:hover { background: #4f46e5; transform: translateY(-2px); }
-        .btn-success { background: #10b981; color: white; }
-        .btn-success:hover { background: #059669; }
-        .btn-secondary { background: #64748b; color: white; }
-        .btn-secondary:hover { background: #475569; }
-        .btn-orange { background: #f59e0b; color: white; }
-        .btn-orange:hover { background: #d97706; }
-        .main-content {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
-        .card {
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
-        }
-        .card-title {
-            text-align: center;
-            font-size: 1.8rem;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-            font-style: italic;
-        }
-        .card-subtitle {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 2rem;
-        }
-        .form-section {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #e2e8f0;
-        }
-        .form-section h3 {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.1rem;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-        }
-        .form-section p {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 1rem;
-        }
-        .input-group { margin-bottom: 1rem; }
-        .input-group input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 1rem;
             transition: all 0.3s;
+            text-decoration: none;
         }
-        .input-group input:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
         }
-        .input-group input.error { border-color: #ef4444; }
-        .input-group input.success { border-color: #10b981; }
-        .error-msg {
-            color: #ef4444;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
         }
-        .success-msg {
-            color: #10b981;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
         }
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1rem;
+        
+        .welcome-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
-        .divider {
-            text-align: center;
-            margin: 1.5rem 0;
-            color: #94a3b8;
-            position: relative;
+        
+        .welcome-section h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
         }
-        .divider::before, .divider::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background: #e2e8f0;
+        
+        .welcome-section p {
+            color: #64748b;
+            font-size: 1.1rem;
         }
-        .divider::before { left: 0; }
-        .divider::after { right: 0; }
-        .hidden { display: none !important; }
-        .footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9rem;
+        
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
         }
-        /* Modal de éxito */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+        
+        .module-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 3rem;
-            text-align: center;
-            max-width: 400px;
-            animation: modalIn 0.3s ease;
+        
+        .module-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.2);
         }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        
+        .module-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
-        .modal-icon {
+        
+        .module-card.disabled:hover {
+            transform: none;
+            border-color: transparent;
+        }
+        
+        .module-icon {
             width: 80px;
             height: 80px;
-            background: #10b981;
-            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.5rem;
-        }
-        .modal-icon i { font-size: 2.5rem; color: white; }
-        .modal-title { font-size: 1.8rem; color: #1e293b; margin-bottom: 1rem; }
-        .modal-text { color: #64748b; margin-bottom: 1.5rem; }
-        .code-display {
-            background: #f1f5f9;
-            padding: 1.5rem;
-            border-radius: 12px;
-            font-size: 2rem;
-            font-weight: bold;
-            letter-spacing: 0.3rem;
-            color: #6366f1;
             margin-bottom: 1.5rem;
-            font-family: monospace;
         }
-        /* Códigos válidos de prueba */
-        .test-codes {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
+        
+        .module-icon i {
+            font-size: 2.5rem;
+            color: var(--white);
+        }
+        
+        .module-icon.green {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        }
+        
+        .module-icon.orange {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+        }
+        
+        .module-icon.red {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+        }
+        
+        .module-icon.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        
+        .module-card h3 {
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+        
+        .module-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .module-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
             font-size: 0.85rem;
+            font-weight: 600;
         }
-        .test-codes strong { color: #92400e; }
+        
+        .status-available {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-coming {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--white);
+        }
+        
+        .footer p {
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <header class="header">
-        <div class="logo">
+        <div class="header-logo">
             <i class="fas fa-graduation-cap"></i>
             <div>
-                <h1>SkillsCert EC0301</h1>
-                <span>Sistema Integral de Diseño de Cursos</span>
+                <h1>GlobalSkillsCert</h1>
+                <span>Sistema EC0301 - Diseño Instruccional</span>
             </div>
         </div>
-        <button class="btn btn-primary" id="btnHeaderLogin">
-            <i class="fas fa-key"></i>
-            Iniciar Sesión
-        </button>
-    </header>
-
-    <main class="main-content">
-        <div class="card">
-            <h2 class="card-title">Bienvenido a SkillsCert</h2>
-            <p class="card-subtitle">Sistema profesional de diseño de cursos EC0301</p>
-
-            <!-- SECCIÓN 1: INGRESAR CÓDIGO -->
-            <div class="form-section" id="sectionCode">
-                <h3>
-                    <i class="fas fa-lock" style="color: #f59e0b;"></i>
-                    Ingresa tu código de acceso
-                </h3>
-                <p>Código de 8 caracteres que recibiste por email/WhatsApp</p>
-                <div class="input-group">
-                    <input type="text" id="inputCode" placeholder="Ej: VJW8P2GB" maxlength="8" style="text-transform: uppercase; letter-spacing: 0.2rem; font-weight: bold;">
-                    <div class="error-msg hidden" id="errorCode">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <span>El código no es válido</span>
-                    </div>
-                    <div class="success-msg hidden" id="successCode">
-                        <i class="fas fa-check-circle"></i>
-                        <span>¡Código válido!</span>
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="btnValidateCode">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Iniciar Sesión
-                    </button>
-                    <button class="btn btn-secondary" id="btnCancelCode">
-                        Cancelar
-                    </button>
-                </div>
-                
-                <!-- Códigos de prueba para desarrollo -->
-                <div class="test-codes">
-                    <strong>🔧 Códigos de prueba válidos:</strong><br>
-                    VJW8P2GB • TEST1234 • DEMO2025 • EC030101
-                </div>
-            </div>
-
-            <div class="divider">o</div>
-
-            <!-- SECCIÓN 2: PAGAR ACCESO -->
-            <button class="btn btn-orange" style="width: 100%; justify-content: center; padding: 1rem;" id="btnPayAccess">
-                <i class="fas fa-credit-card"></i>
-                Pagar Acceso (2500 MXN)
+        <div class="user-info">
+            <span id="userName">Bienvenido, Usuario</span>
+            <button class="btn btn-danger" id="btnLogout">
+                <i class="fas fa-sign-out-alt"></i>
+                Cerrar Sesión
             </button>
-
-            <!-- SECCIÓN OCULTA: REGISTRO PARA PAGO -->
-            <div class="form-section hidden" id="sectionRegister">
-                <h3>
-                    <i class="fas fa-envelope" style="color: #6366f1;"></i>
-                    Ingresa tu correo electrónico
-                </h3>
-                <p>Recibirás tu código de acceso aquí</p>
-                <div class="input-group">
-                    <input type="email" id="inputEmail" placeholder="correo@ejemplo.com">
-                    <div class="error-msg hidden" id="errorEmail">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <span>Ingresa un correo válido</span>
-                    </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section class="welcome-section">
+            <h2>Panel de Control EC0301</h2>
+            <p>Selecciona un módulo para comenzar a diseñar tus cursos de capacitación presencial según el estándar EC0301</p>
+        </section>
+        
+        <div class="modules-grid">
+            <!-- Carta Descriptiva -->
+            <a href="carta-descriptiva.html" class="module-card">
+                <div class="module-icon">
+                    <i class="fas fa-file-contract"></i>
                 </div>
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="btnContinue">Continuar</button>
-                    <button class="btn btn-secondary" id="btnCancelRegister">Cancelar</button>
+                <h3>Carta Descriptiva</h3>
+                <p>Diseña el documento central que articula todos los componentes del curso: objetivos, tiempos, técnicas, evaluaciones y requerimientos.</p>
+                <span class="module-status status-available">
+                    <i class="fas fa-check-circle"></i>
+                    Disponible
+                </span>
+            </a>
+            
+            <!-- Manual del Instructor -->
+            <a href="manual-instructor.html" class="module-card disabled">
+                <div class="module-icon green">
+                    <i class="fas fa-chalkboard-teacher"></i>
                 </div>
-            </div>
-
-            <!-- SECCIÓN OCULTA: WHATSAPP -->
-            <div class="form-section hidden" id="sectionWhatsapp">
-                <h3>
-                    <i class="fab fa-whatsapp" style="color: #25d366;"></i>
-                    Número de WhatsApp (opcional)
-                </h3>
-                <p>Para recibir tu código también por WhatsApp</p>
-                <div class="input-group">
-                    <input type="tel" id="inputWhatsapp" placeholder="+52 55 1234 5678">
+                <h3>Manual del Instructor</h3>
+                <p>Genera automáticamente la guía de conducción del curso con estrategias didácticas, materiales y recomendaciones metodológicas.</p>
+                <span class="module-status status-coming">
+                    <i class="fas fa-clock"></i>
+                    Próximamente
+                </span>
+            </a>
+            
+            <!-- Manual del Participante -->
+            <a href="manual-participante.html" class="module-card disabled">
+                <div class="module-icon orange">
+                    <i class="fas fa-user-graduate"></i>
                 </div>
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="btnProceedPayment">Proceder al pago</button>
-                    <button class="btn btn-secondary" id="btnSkipWhatsapp">Omitir</button>
+                <h3>Manual del Participante</h3>
+                <p>Crea la versión pedagógica para los asistentes con ejercicios, glosario y espacios para notas y reflexiones.</p>
+                <span class="module-status status-coming">
+                    <i class="fas fa-clock"></i>
+                    Próximamente
+                </span>
+            </a>
+            
+            <!-- Evaluaciones -->
+            <a href="evaluaciones.html" class="module-card disabled">
+                <div class="module-icon red">
+                    <i class="fas fa-clipboard-check"></i>
                 </div>
-            </div>
+                <h3>Instrumentos de Evaluación</h3>
+                <p>Genera evaluaciones diagnóstica, formativa, sumativa y de satisfacción basadas en los objetivos del curso.</p>
+                <span class="module-status status-coming">
+                    <i class="fas fa-clock"></i>
+                    Próximamente
+                </span>
+            </a>
+            
+            <!-- Contrato de Aprendizaje -->
+            <a href="contrato.html" class="module-card disabled">
+                <div class="module-icon purple">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Contrato de Aprendizaje</h3>
+                <p>Formaliza los compromisos entre participante e instructor con derechos, responsabilidades y acuerdos de confidencialidad.</p>
+                <span class="module-status status-coming">
+                    <i class="fas fa-clock"></i>
+                    Próximamente
+                </span>
+            </a>
+            
+            <!-- Lista de Asistencia -->
+            <a href="asistencia.html" class="module-card disabled">
+                <div class="module-icon">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <h3>Lista de Asistencia</h3>
+                <p>Genera el formato de asistencia con firmas, horarios y observaciones de desempeño para evidenciar participación.</p>
+                <span class="module-status status-coming">
+                    <i class="fas fa-clock"></i>
+                    Próximamente
+                </span>
+            </a>
+            
+            <!-- Lista de Verificación -->
+            <a href="verificacion.html" class="module-card disabled">
+                <div class="module-icon green">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3>Lista de Verificación</h3>
+                <p>Verifica disponibilidad de equipo, materiales y espacio antes del inicio del curso según los requerimientos.</p>
+                <span class="module-status status-coming">
+                    <i class="fas fa-clock"></i>
+                    Próximamente
+                </span>
+            </a>
+            
+            <!-- Portafolio de Evidencias -->
+            <a href="portafolio.html" class="module-card disabled">
+                <div class="module-icon orange">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3>Portafolio de Evidencias</h3>
+                <p>Integra todos los productos generados en un portafolio listo para presentar ante el Evaluador Certificado EC0301.</p>
+                <span class="module-status status-coming">
+                    <i class="fas fa-clock"></i>
+                    Próximamente
+                </span>
+            </a>
         </div>
     </main>
-
-    <!-- MODAL DE ÉXITO -->
-    <div class="modal-overlay hidden" id="modalSuccess">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-check"></i>
-            </div>
-            <h3 class="modal-title">¡Acceso Concedido!</h3>
-            <p class="modal-text">Bienvenido al Sistema EC0301</p>
-            <button class="btn btn-success" style="width: 100%; justify-content: center;" id="btnGoToDashboard">
-                <i class="fas fa-arrow-right"></i>
-                Ir al Panel de Control
-            </button>
-        </div>
-    </div>
-
+    
     <footer class="footer">
-        © 2024 SkillsCert EC0301. Sistema profesional de diseño de cursos de capacitación.
+        <p>&copy; 2025 GlobalSkillsCert - Sistema EC0301 de Diseño Instruccional</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+            Desarrollado bajo los estándares del CONOCER para certificación de competencias
+        </p>
     </footer>
-
+    
     <script>
-        // ============================================
-        // CÓDIGOS VÁLIDOS (En producción, esto vendría del servidor)
-        // ============================================
-        const VALID_CODES = [
-            'VJW8P2GB',
-            'TEST1234',
-            'DEMO2025',
-            'EC030101',
-            'ADMIN123',
-            'PRUEBA01'
-        ];
-
-        // ============================================
-        // ELEMENTOS DEL DOM
-        // ============================================
-        const $ = id => document.getElementById(id);
-        
-        const inputCode = $('inputCode');
-        const btnValidateCode = $('btnValidateCode');
-        const btnCancelCode = $('btnCancelCode');
-        const errorCode = $('errorCode');
-        const successCode = $('successCode');
-        
-        const btnPayAccess = $('btnPayAccess');
-        const sectionRegister = $('sectionRegister');
-        const sectionWhatsapp = $('sectionWhatsapp');
-        const sectionCode = $('sectionCode');
-        
-        const inputEmail = $('inputEmail');
-        const btnContinue = $('btnContinue');
-        const btnCancelRegister = $('btnCancelRegister');
-        const errorEmail = $('errorEmail');
-        
-        const inputWhatsapp = $('inputWhatsapp');
-        const btnProceedPayment = $('btnProceedPayment');
-        const btnSkipWhatsapp = $('btnSkipWhatsapp');
-        
-        const modalSuccess = $('modalSuccess');
-        const btnGoToDashboard = $('btnGoToDashboard');
-        
-        const btnHeaderLogin = $('btnHeaderLogin');
-
-        // ============================================
-        // FUNCIONES
-        // ============================================
-        
-        function validateCode() {
-            const code = inputCode.value.trim().toUpperCase();
+        // Verificar autenticación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simular verificación de usuario
+            const user = localStorage.getItem('ec0301_user');
             
-            if (code.length < 6) {
-                inputCode.classList.add('error');
-                inputCode.classList.remove('success');
-                errorCode.classList.remove('hidden');
-                errorCode.querySelector('span').textContent = 'El código debe tener al menos 6 caracteres';
-                successCode.classList.add('hidden');
-                return;
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    document.getElementById('userName').textContent = 'Bienvenido, ' + (userData.nombre || 'Usuario');
+                } catch(e) {
+                    document.getElementById('userName').textContent = 'Bienvenido, Usuario';
+                }
             }
             
-            if (VALID_CODES.includes(code)) {
-                // Código válido
-                inputCode.classList.remove('error');
-                inputCode.classList.add('success');
-                errorCode.classList.add('hidden');
-                successCode.classList.remove('hidden');
-                
-                // Guardar sesión
-                localStorage.setItem('ec0301_auth', 'true');
-                localStorage.setItem('ec0301_user', JSON.stringify({
-                    code: code,
-                    loginTime: new Date().toISOString(),
-                    nombre: 'Usuario EC0301'
-                }));
-                
-                // Mostrar modal de éxito
-                setTimeout(() => {
-                    modalSuccess.classList.remove('hidden');
-                }, 500);
-            } else {
-                // Código inválido
-                inputCode.classList.add('error');
-                inputCode.classList.remove('success');
-                errorCode.classList.remove('hidden');
-                errorCode.querySelector('span').textContent = 'Código no válido. Verifica e intenta de nuevo.';
-                successCode.classList.add('hidden');
-            }
-        }
-        
-        function showRegisterSection() {
-            sectionCode.classList.add('hidden');
-            btnPayAccess.classList.add('hidden');
-            sectionRegister.classList.remove('hidden');
-            document.querySelector('.divider').classList.add('hidden');
-        }
-        
-        function showWhatsappSection() {
-            const email = inputEmail.value.trim();
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            if (!emailRegex.test(email)) {
-                errorEmail.classList.remove('hidden');
-                inputEmail.classList.add('error');
-                return;
-            }
-            
-            errorEmail.classList.add('hidden');
-            inputEmail.classList.remove('error');
-            
-            sectionRegister.classList.add('hidden');
-            sectionWhatsapp.classList.remove('hidden');
-        }
-        
-        function proceedToPayment() {
-            const email = inputEmail.value.trim();
-            const whatsapp = inputWhatsapp.value.trim();
-            
-            // Guardar datos temporalmente
-            localStorage.setItem('ec0301_pending', JSON.stringify({
-                email: email,
-                whatsapp: whatsapp
-            }));
-            
-            // Simular pago exitoso (en producción, redirigir a Stripe)
-            alert('🔧 Modo de desarrollo:\n\nEn producción, esto redirigirá a Stripe.\n\nPor ahora, usa uno de los códigos de prueba para acceder.');
-            
-            // Restaurar vista
-            resetView();
-        }
-        
-        function resetView() {
-            sectionCode.classList.remove('hidden');
-            btnPayAccess.classList.remove('hidden');
-            sectionRegister.classList.add('hidden');
-            sectionWhatsapp.classList.add('hidden');
-            document.querySelector('.divider').classList.remove('hidden');
-            
-            inputCode.value = '';
-            inputEmail.value = '';
-            inputWhatsapp.value = '';
-            inputCode.classList.remove('error', 'success');
-            errorCode.classList.add('hidden');
-            successCode.classList.add('hidden');
-        }
-        
-        function goToDashboard() {
-            window.location.href = 'dashboard.html';
-        }
-
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
-        
-        btnValidateCode.addEventListener('click', validateCode);
-        
-        inputCode.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') validateCode();
+            // Prevenir clic en módulos deshabilitados
+            document.querySelectorAll('.module-card.disabled').forEach(function(card) {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('🔒 Este módulo estará disponible próximamente.\n\nPor ahora, utiliza la Carta Descriptiva para comenzar tu diseño instruccional.');
+                });
+            });
         });
         
-        inputCode.addEventListener('input', () => {
-            inputCode.value = inputCode.value.toUpperCase();
-            errorCode.classList.add('hidden');
-            successCode.classList.add('hidden');
-            inputCode.classList.remove('error', 'success');
-        });
-        
-        btnCancelCode.addEventListener('click', () => {
-            inputCode.value = '';
-            errorCode.classList.add('hidden');
-            successCode.classList.add('hidden');
-            inputCode.classList.remove('error', 'success');
-        });
-        
-        btnPayAccess.addEventListener('click', showRegisterSection);
-        
-        btnContinue.addEventListener('click', showWhatsappSection);
-        
-        btnCancelRegister.addEventListener('click', resetView);
-        
-        btnProceedPayment.addEventListener('click', proceedToPayment);
-        
-        btnSkipWhatsapp.addEventListener('click', proceedToPayment);
-        
-        btnGoToDashboard.addEventListener('click', goToDashboard);
-        
-        btnHeaderLogin.addEventListener('click', () => {
-            inputCode.focus();
-        });
-
-        // ============================================
-        // VERIFICAR SI YA ESTÁ AUTENTICADO
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            const isAuth = localStorage.getItem('ec0301_auth');
-            if (isAuth === 'true') {
-                // Ya está autenticado, redirigir al dashboard
-                window.location.href = 'dashboard.html';
+        // Cerrar sesión
+        document.getElementById('btnLogout').addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                localStorage.removeItem('ec0301_user');
+                localStorage.removeItem('ec0301_auth');
+                window.location.href = 'index.html';
             }
         });
     </script>

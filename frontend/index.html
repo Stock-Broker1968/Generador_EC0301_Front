@@ -7,210 +7,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            gap: 4rem;
-            flex-wrap: wrap;
-        }
-        .hero {
-            max-width: 500px;
-            color: white;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .logo i {
-            font-size: 3rem;
-            background: rgba(255,255,255,0.2);
-            padding: 1rem;
-            border-radius: 16px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; flex-direction: column; }
+        .container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; gap: 4rem; flex-wrap: wrap; }
+        .hero { max-width: 500px; color: white; }
+        .logo { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+        .logo i { font-size: 3rem; background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 16px; }
         .logo h1 { font-size: 2rem; }
         .logo span { display: block; font-size: 0.9rem; opacity: 0.9; }
-        .hero h2 {
-            font-size: 2.5rem;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-        }
-        .hero p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        .features {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .feature {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: rgba(255,255,255,0.1);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-        }
-        .feature i {
-            font-size: 1.5rem;
-            width: 40px;
-            text-align: center;
-        }
-        .login-card {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-        }
-        .tabs {
-            display: flex;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        .tab {
-            flex: 1;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            color: #64748b;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
-        }
+        .hero h2 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 1.5rem; }
+        .hero p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; line-height: 1.6; }
+        .features { display: flex; flex-direction: column; gap: 1rem; }
+        .feature { display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.1); padding: 1rem 1.5rem; border-radius: 12px; backdrop-filter: blur(10px); }
+        .feature i { font-size: 1.5rem; width: 40px; text-align: center; }
+        .login-card { background: white; border-radius: 24px; padding: 2.5rem; width: 100%; max-width: 420px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
+        .tabs { display: flex; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0; }
+        .tab { flex: 1; padding: 1rem; text-align: center; cursor: pointer; font-weight: 600; color: #64748b; transition: all 0.3s; border-bottom: 3px solid transparent; margin-bottom: -2px; }
         .tab:hover { color: #6366f1; }
-        .tab.active {
-            color: #6366f1;
-            border-bottom-color: #6366f1;
-        }
+        .tab.active { color: #6366f1; border-bottom-color: #6366f1; }
         .tab i { margin-right: 0.5rem; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #1e293b;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 4px rgba(99,102,241,0.1);
-        }
-        .btn {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99,102,241,0.3);
-        }
-        .btn-primary:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .divider {
-            text-align: center;
-            margin: 1.5rem 0;
-            color: #94a3b8;
-            font-size: 0.9rem;
-        }
-        .register-link {
-            text-align: center;
-            margin-top: 1rem;
-            color: #64748b;
-        }
-        .register-link a {
-            color: #6366f1;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .register-link a:hover { text-decoration: underline; }
-        .alert {
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            display: none;
-        }
-        .alert-success {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #86efac;
-        }
-        .alert-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
-        }
-        .alert-info {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #93c5fd;
-        }
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1e293b; }
+        .form-group input { width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; transition: all 0.3s; }
+        .form-group input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.1); }
+        .form-group small { display: block; margin-top: 0.4rem; color: #94a3b8; font-size: 0.8rem; }
+        .btn { width: 100%; padding: 1rem; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99,102,241,0.3); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .register-link { text-align: center; margin-top: 1rem; color: #64748b; }
+        .register-link a { color: #6366f1; text-decoration: none; font-weight: 600; }
+        .alert { padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: none; }
+        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .alert-info { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9rem;
-        }
-        @media (max-width: 900px) {
-            .container { flex-direction: column; gap: 2rem; }
-            .hero { text-align: center; }
-            .hero h2 { font-size: 2rem; }
-        }
+        .footer { text-align: center; padding: 1.5rem; color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+        @media (max-width: 900px) { .container { flex-direction: column; gap: 2rem; } .hero { text-align: center; } .hero h2 { font-size: 2rem; } }
     </style>
 </head>
 <body>
@@ -218,163 +53,99 @@
         <div class="hero">
             <div class="logo">
                 <i class="fas fa-graduation-cap"></i>
-                <div>
-                    <h1>SkillsCert</h1>
-                    <span>EC0301 Profesional</span>
-                </div>
+                <div><h1>SkillsCert</h1><span>EC0301 Profesional</span></div>
             </div>
             <h2>Genera tus Documentos EC0301 en Minutos</h2>
             <p>Sistema inteligente para diseñar cursos de capacitación profesionales con IA y cumplimiento total del estándar CONOCER.</p>
             <div class="features">
-                <div class="feature">
-                    <i class="fas fa-robot"></i>
-                    <span>Asistente IA para objetivos y contenido</span>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Generación automática de formatos</span>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>Exportación a PDF y Word</span>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-check-circle"></i>
-                    <span>100% alineado al estándar EC0301</span>
-                </div>
+                <div class="feature"><i class="fas fa-robot"></i><span>Asistente IA para objetivos y contenido</span></div>
+                <div class="feature"><i class="fas fa-file-alt"></i><span>Generación automática de formatos</span></div>
+                <div class="feature"><i class="fas fa-file-pdf"></i><span>Exportación a PDF y Word</span></div>
+                <div class="feature"><i class="fas fa-check-circle"></i><span>100% alineado al estándar EC0301</span></div>
             </div>
         </div>
 
         <div class="login-card">
             <div class="tabs">
-                <div class="tab active" data-tab="login">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Iniciar Sesión
-                </div>
-                <div class="tab" data-tab="register">
-                    <i class="fas fa-user-plus"></i>
-                    Registrarse
-                </div>
+                <div class="tab active" data-tab="login"><i class="fas fa-sign-in-alt"></i>Iniciar Sesión</div>
+                <div class="tab" data-tab="register"><i class="fas fa-user-plus"></i>Registrarse</div>
             </div>
 
-            <!-- Alertas -->
             <div class="alert alert-success" id="alertSuccess"></div>
             <div class="alert alert-error" id="alertError"></div>
             <div class="alert alert-info" id="alertInfo"></div>
 
-            <!-- Tab Login -->
             <div class="tab-content active" id="tab-login">
                 <form id="loginForm">
                     <div class="form-group">
-                        <label for="loginEmail">
-                            <i class="fas fa-envelope"></i> Correo Electrónico
-                        </label>
+                        <label><i class="fas fa-envelope"></i> Correo Electrónico</label>
                         <input type="email" id="loginEmail" placeholder="tu@email.com" required>
                     </div>
                     <div class="form-group">
-                        <label for="loginCode">
-                            <i class="fas fa-key"></i> Código de Acceso
-                        </label>
+                        <label><i class="fas fa-key"></i> Código de Acceso</label>
                         <input type="text" id="loginCode" placeholder="Tu código de 8 dígitos" maxlength="8" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="btnLogin">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Acceder al Sistema
-                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnLogin"><i class="fas fa-sign-in-alt"></i>Acceder al Sistema</button>
                 </form>
-                <div class="register-link">
-                    ¿No tienes código? <a href="#" id="linkToRegister">Regístrate aquí</a>
-                </div>
+                <div class="register-link">¿No tienes código? <a href="#" id="linkToRegister">Regístrate aquí</a></div>
             </div>
 
-            <!-- Tab Registro -->
             <div class="tab-content" id="tab-register">
-                <p style="text-align: center; color: #64748b; margin-bottom: 1.5rem;">
-                    Adquiere tu acceso por <strong style="color: #6366f1;">MXN $999.00</strong><br>
-                    <small>Sistema completo - 90 días de acceso</small>
-                </p>
+                <p style="text-align:center;color:#64748b;margin-bottom:1.5rem;">Adquiere tu acceso por <strong style="color:#6366f1;">MXN $999.00</strong><br><small>Sistema completo - 90 días de acceso</small></p>
                 <form id="registerForm">
                     <div class="form-group">
-                        <label for="regName">
-                            <i class="fas fa-user"></i> Nombre Completo
-                        </label>
+                        <label><i class="fas fa-user"></i> Nombre Completo</label>
                         <input type="text" id="regName" placeholder="Tu nombre completo" required>
                     </div>
                     <div class="form-group">
-                        <label for="regEmail">
-                            <i class="fas fa-envelope"></i> Correo Electrónico
-                        </label>
+                        <label><i class="fas fa-envelope"></i> Correo Electrónico</label>
                         <input type="email" id="regEmail" placeholder="tu@email.com" required>
                     </div>
                     <div class="form-group">
-                        <label for="regWhatsapp">
-                            <i class="fab fa-whatsapp"></i> WhatsApp (opcional)
-                        </label>
+                        <label><i class="fab fa-whatsapp"></i> WhatsApp (opcional)</label>
                         <input type="tel" id="regWhatsapp" placeholder="+52 55 1234 5678">
-                        <small style="color: #94a3b8; font-size: 0.8rem;">Para enviarte tu código de acceso</small>
+                        <small>Para enviarte tu código de acceso</small>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="btnRegister">
-                        <i class="fas fa-credit-card"></i>
-                        Proceder al Pago
-                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnRegister"><i class="fas fa-credit-card"></i>Proceder al Pago</button>
                 </form>
-                <div class="register-link">
-                    ¿Ya tienes código? <a href="#" id="linkToLogin">Inicia sesión aquí</a>
-                </div>
+                <div class="register-link">¿Ya tienes código? <a href="#" id="linkToLogin">Inicia sesión aquí</a></div>
             </div>
         </div>
     </div>
 
-    <footer class="footer">
-        <p>© 2024 GlobalSkillsCert - Sistema profesional de diseño de cursos EC0301</p>
-    </footer>
+    <footer class="footer"><p>© 2024 GlobalSkillsCert - Sistema profesional de diseño de cursos EC0301</p></footer>
 
     <script>
-        // =====================================================
-        // CONFIGURACIÓN
-        // =====================================================
         const API_URL = 'https://ec0301-globalskillscert-backend.onrender.com';
-        
-        // =====================================================
-        // ELEMENTOS DEL DOM
-        // =====================================================
-        const tabs = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const btnLogin = document.getElementById('btnLogin');
-        const btnRegister = document.getElementById('btnRegister');
         const alertSuccess = document.getElementById('alertSuccess');
         const alertError = document.getElementById('alertError');
         const alertInfo = document.getElementById('alertInfo');
-        
-        // =====================================================
-        // VERIFICAR SI YA ESTÁ LOGUEADO
-        // =====================================================
+        const btnLogin = document.getElementById('btnLogin');
+        const btnRegister = document.getElementById('btnRegister');
+
+        // Verificar si ya está logueado
         document.addEventListener('DOMContentLoaded', function() {
-            // Si ya tiene token, redirigir al dashboard
             const token = localStorage.getItem('ec0301_token');
             if (token) {
-                console.log('✅ Usuario ya autenticado, redirigiendo al dashboard...');
                 window.location.href = 'dashboard.html';
                 return;
             }
             
-            // Verificar si viene de Stripe con session_id
             const urlParams = new URLSearchParams(window.location.search);
             const sessionId = urlParams.get('session_id');
+            const canceled = urlParams.get('canceled');
             
-            if (sessionId) {
-                console.log('🔄 Session ID detectado desde Stripe:', sessionId);
+            if (canceled) {
+                showAlert('error', 'Pago cancelado. Puedes intentar de nuevo cuando quieras.');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (sessionId) {
                 handleStripeCallback(sessionId);
             }
         });
-        
-        // =====================================================
-        // MANEJAR CALLBACK DE STRIPE
-        // =====================================================
+
+        // Manejar callback de Stripe
         async function handleStripeCallback(sessionId) {
-            showAlert('info', '⏳ Verificando tu pago con Stripe...');
+            showAlert('info', '⏳ Verificando tu pago...');
             btnLogin.disabled = true;
             btnRegister.disabled = true;
             
@@ -388,138 +159,64 @@
                 const data = await response.json();
                 
                 if (response.ok && data.success) {
-                    // ✅ Pago verificado - Guardar sesión
                     localStorage.setItem('ec0301_token', data.token);
+                    if (data.user) localStorage.setItem('ec0301_user', JSON.stringify(data.user));
                     
-                    if (data.user) {
-                        localStorage.setItem('ec0301_user', JSON.stringify(data.user));
-                    }
-                    
-                    // Mostrar código de acceso antes de redirigir
                     const accessCode = data.user?.accessCode || '';
-                    
-                    // Crear modal de bienvenida
-                    const modalHtml = `
-                        <div id="welcomeModal" style="
-                            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                            background: rgba(0,0,0,0.8); display: flex; justify-content: center;
-                            align-items: center; z-index: 9999;
-                        ">
-                            <div style="
-                                background: white; border-radius: 20px; padding: 40px;
-                                max-width: 450px; text-align: center; animation: fadeIn 0.5s;
-                            ">
-                                <div style="
-                                    width: 80px; height: 80px; background: #dcfce7;
-                                    border-radius: 50%; margin: 0 auto 20px;
-                                    display: flex; align-items: center; justify-content: center;
-                                ">
-                                    <i class="fas fa-check" style="font-size: 40px; color: #16a34a;"></i>
+                    document.body.insertAdjacentHTML('beforeend', `
+                        <div id="welcomeModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:9999;">
+                            <div style="background:white;border-radius:20px;padding:40px;max-width:450px;text-align:center;">
+                                <div style="width:80px;height:80px;background:#dcfce7;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fas fa-check" style="font-size:40px;color:#16a34a;"></i>
                                 </div>
-                                <h2 style="color: #1e293b; margin-bottom: 10px;">¡Pago Exitoso!</h2>
-                                <p style="color: #64748b; margin-bottom: 25px;">
-                                    Tu cuenta ha sido creada. Hemos enviado tu código de acceso a tu correo${data.user?.whatsapp ? ' y WhatsApp' : ''}.
-                                </p>
-                                <div style="
-                                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                    border-radius: 12px; padding: 25px; margin-bottom: 20px;
-                                ">
-                                    <p style="color: rgba(255,255,255,0.8); margin: 0 0 8px; font-size: 14px;">
-                                        Tu código de acceso:
-                                    </p>
-                                    <div style="
-                                        font-size: 32px; font-weight: bold; color: white;
-                                        letter-spacing: 4px; font-family: monospace;
-                                    ">${accessCode}</div>
+                                <h2 style="color:#1e293b;margin-bottom:10px;">¡Pago Exitoso!</h2>
+                                <p style="color:#64748b;margin-bottom:25px;">Tu cuenta ha sido creada. Te enviamos tu código por correo.</p>
+                                <div style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:12px;padding:25px;margin-bottom:20px;">
+                                    <p style="color:rgba(255,255,255,0.8);margin:0 0 8px;font-size:14px;">Tu código de acceso:</p>
+                                    <div style="font-size:32px;font-weight:bold;color:white;letter-spacing:4px;font-family:monospace;">${accessCode}</div>
                                 </div>
-                                <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">
-                                    📧 Guarda este código. También lo recibirás por correo electrónico.
-                                </p>
-                                <button onclick="goToDashboard()" style="
-                                    width: 100%; padding: 15px; border: none; border-radius: 12px;
-                                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                    color: white; font-size: 16px; font-weight: 600; cursor: pointer;
-                                ">
+                                <p style="color:#94a3b8;font-size:13px;margin-bottom:20px;">📧 Guarda este código. También lo recibirás por correo.</p>
+                                <button onclick="window.location.href='dashboard.html'" style="width:100%;padding:15px;border:none;border-radius:12px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-size:16px;font-weight:600;cursor:pointer;">
                                     <i class="fas fa-arrow-right"></i> Acceder al Sistema
                                 </button>
                             </div>
                         </div>
-                    `;
-                    
-                    document.body.insertAdjacentHTML('beforeend', modalHtml);
-                    
+                    `);
                 } else {
-                    showAlert('error', data.message || 'Error al verificar el pago. Intenta iniciar sesión con tu código.');
+                    showAlert('error', data.message || 'Error verificando pago.');
                     btnLogin.disabled = false;
                     btnRegister.disabled = false;
-                    // Limpiar URL
-                    window.history.replaceState({}, document.title, window.location.pathname);
                 }
             } catch (error) {
-                console.error('Error verificando pago:', error);
-                showAlert('error', 'Error de conexión. Por favor intenta iniciar sesión con tu código o contacta soporte.');
+                console.error('Error:', error);
+                showAlert('error', 'Error de conexión. Intenta iniciar sesión con tu código.');
                 btnLogin.disabled = false;
                 btnRegister.disabled = false;
-                window.history.replaceState({}, document.title, window.location.pathname);
             }
-        }
-        
-        function goToDashboard() {
             window.history.replaceState({}, document.title, window.location.pathname);
-            window.location.href = 'dashboard.html';
         }
-        
-        // =====================================================
-        // TABS
-        // =====================================================
-        tabs.forEach(tab => {
+
+        // Tabs
+        document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                const targetTab = tab.dataset.tab;
-                
-                // Actualizar tabs activos
-                tabs.forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 tab.classList.add('active');
-                
-                // Mostrar contenido correcto
-                tabContents.forEach(content => {
-                    content.classList.remove('active');
-                    if (content.id === `tab-${targetTab}`) {
-                        content.classList.add('active');
-                    }
-                });
-                
-                // Limpiar alertas
+                document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
                 hideAlerts();
             });
         });
-        
-        // Links para cambiar entre tabs
-        document.getElementById('linkToRegister').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.querySelector('[data-tab="register"]').click();
-        });
-        
-        document.getElementById('linkToLogin').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.querySelector('[data-tab="login"]').click();
-        });
-        
-        // =====================================================
-        // LOGIN
-        // =====================================================
-        loginForm.addEventListener('submit', async function(e) {
+        document.getElementById('linkToRegister').addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-tab="register"]').click(); });
+        document.getElementById('linkToLogin').addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-tab="login"]').click(); });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             hideAlerts();
-            
             const email = document.getElementById('loginEmail').value.trim();
             const code = document.getElementById('loginCode').value.trim();
+            if (!email || !code) { showAlert('error', 'Completa todos los campos.'); return; }
             
-            if (!email || !code) {
-                showAlert('error', 'Por favor completa todos los campos.');
-                return;
-            }
-            
-            // Mostrar loading
             btnLogin.disabled = true;
             btnLogin.innerHTML = '<span class="spinner"></span> Verificando...';
             
@@ -529,67 +226,34 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, code })
                 });
-                
                 const data = await response.json();
                 
                 if (response.ok && data.success) {
-                    // ✅ Login exitoso - Guardar token
-                    localStorage.setItem('ec0301_token', data.token || code);
-                    
-                    if (data.user) {
-                        localStorage.setItem('ec0301_user', JSON.stringify(data.user));
-                    } else {
-                        // Guardar al menos el email
-                        localStorage.setItem('ec0301_user', JSON.stringify({ email }));
-                    }
-                    
-                    showAlert('success', '¡Bienvenido! Acceso concedido. Redirigiendo...');
-                    
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
+                    localStorage.setItem('ec0301_token', data.token);
+                    if (data.user) localStorage.setItem('ec0301_user', JSON.stringify(data.user));
+                    showAlert('success', '¡Bienvenido! Redirigiendo...');
+                    setTimeout(() => window.location.href = 'dashboard.html', 1000);
                 } else {
-                    showAlert('error', data.message || 'Código o correo incorrecto.');
-                    resetLoginButton();
+                    showAlert('error', data.message || 'Código incorrecto.');
+                    resetLoginBtn();
                 }
             } catch (error) {
-                console.error('Error en login:', error);
-                showAlert('error', 'Error de conexión con el servidor. Intenta de nuevo.');
-                resetLoginButton();
+                showAlert('error', 'Error de conexión.');
+                resetLoginBtn();
             }
         });
-        
-        function resetLoginButton() {
-            btnLogin.disabled = false;
-            btnLogin.innerHTML = '<i class="fas fa-sign-in-alt"></i> Acceder al Sistema';
-        }
-        
-        // =====================================================
-        // REGISTRO (Redirige a Stripe)
-        // =====================================================
-        registerForm.addEventListener('submit', async function(e) {
+
+        // Registro
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             hideAlerts();
-            
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const whatsapp = document.getElementById('regWhatsapp').value.trim();
+            if (!name || !email) { showAlert('error', 'Completa nombre y correo.'); return; }
             
-            if (!name || !email) {
-                showAlert('error', 'Por favor completa nombre y correo electrónico.');
-                return;
-            }
-            
-            // Validar email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showAlert('error', 'Por favor ingresa un correo electrónico válido.');
-                return;
-            }
-            
-            // Mostrar loading
             btnRegister.disabled = true;
-            btnRegister.innerHTML = '<span class="spinner"></span> Conectando con Stripe...';
+            btnRegister.innerHTML = '<span class="spinner"></span> Conectando...';
             
             try {
                 const response = await fetch(`${API_URL}/create-checkout`, {
@@ -597,47 +261,30 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, whatsapp })
                 });
-                
                 const data = await response.json();
                 
                 if (response.ok && data.url) {
-                    // Redirigir a Stripe Checkout
-                    showAlert('success', 'Redirigiendo a la página de pago seguro...');
-                    setTimeout(() => {
-                        window.location.href = data.url;
-                    }, 500);
+                    showAlert('success', 'Redirigiendo a pago seguro...');
+                    window.location.href = data.url;
                 } else {
-                    showAlert('error', data.message || 'Error al crear la sesión de pago.');
-                    resetRegisterButton();
+                    showAlert('error', data.message || 'Error al crear sesión de pago.');
+                    resetRegisterBtn();
                 }
             } catch (error) {
-                console.error('Error en registro:', error);
-                showAlert('error', 'Error de conexión con el servidor. Verifica tu conexión e intenta de nuevo.');
-                resetRegisterButton();
+                showAlert('error', 'Error de conexión.');
+                resetRegisterBtn();
             }
         });
-        
-        function resetRegisterButton() {
-            btnRegister.disabled = false;
-            btnRegister.innerHTML = '<i class="fas fa-credit-card"></i> Proceder al Pago';
-        }
-        
-        // =====================================================
-        // ALERTAS
-        // =====================================================
-        function showAlert(type, message) {
+
+        function showAlert(type, msg) {
             hideAlerts();
-            const alert = type === 'success' ? alertSuccess : 
-                         type === 'error' ? alertError : alertInfo;
-            alert.textContent = message;
-            alert.style.display = 'block';
+            const el = type === 'success' ? alertSuccess : type === 'error' ? alertError : alertInfo;
+            el.textContent = msg;
+            el.style.display = 'block';
         }
-        
-        function hideAlerts() {
-            alertSuccess.style.display = 'none';
-            alertError.style.display = 'none';
-            alertInfo.style.display = 'none';
-        }
+        function hideAlerts() { alertSuccess.style.display = 'none'; alertError.style.display = 'none'; alertInfo.style.display = 'none'; }
+        function resetLoginBtn() { btnLogin.disabled = false; btnLogin.innerHTML = '<i class="fas fa-sign-in-alt"></i>Acceder al Sistema'; }
+        function resetRegisterBtn() { btnRegister.disabled = false; btnRegister.innerHTML = '<i class="fas fa-credit-card"></i>Proceder al Pago'; }
     </script>
 </body>
 </html>

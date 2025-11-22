@@ -3,485 +3,535 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma EC0301 - Panel</title>
-  
+    <title>SkillsCert EC0301 - Acceso</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-    <!-- Cargar scripts en el orden correcto -->
-    <script src="sistema_central/auth.js" defer></script>
-    <script src="js/login.js" defer></script> <!-- Asegúrate de que login.js esté aquí -->
-  
     <style>
-        /* Tu CSS sigue aquí */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-
         .header {
-            background: white;
-            padding: 20px 40px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.95);
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid #ff6b35;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
         }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo {
-            width: 60px;
-            height: 60px;
-            background: #1e3a8a;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-        }
-
-        .logo-text h1 {
-            color: #1e3a8a;
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .logo-text p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .btn-sesion {
-            background: #1e3a8a;
-            color: white;
-            padding: 12px 30px;
+        .logo { display: flex; align-items: center; gap: 1rem; }
+        .logo i { font-size: 2rem; color: #6366f1; }
+        .logo h1 { font-size: 1.4rem; color: #1e293b; }
+        .logo span { display: block; font-size: 0.8rem; color: #64748b; }
+        .btn {
+            padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
             cursor: pointer;
+            font-weight: 600;
             transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-
-        .btn-sesion:hover {
-            background: #152a6b;
-            transform: translateY(-2px);
-        }
-
+        .btn-primary { background: #6366f1; color: white; }
+        .btn-primary:hover { background: #4f46e5; transform: translateY(-2px); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-secondary { background: #64748b; color: white; }
+        .btn-secondary:hover { background: #475569; }
+        .btn-orange { background: #f59e0b; color: white; }
+        .btn-orange:hover { background: #d97706; }
         .main-content {
+            flex: 1;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+        }
+        .card-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+        .card-subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+        .form-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .form-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        .form-section p {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+        .input-group { margin-bottom: 1rem; }
+        .input-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        .input-group input.error { border-color: #ef4444; }
+        .input-group input.success { border-color: #10b981; }
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .success-msg {
+            color: #10b981;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #94a3b8;
+            position: relative;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e2e8f0;
+        }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+        .hidden { display: none !important; }
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+        /* Modal de éxito */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 400px;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 200px);
-            padding: 40px 20px;
-            text-align: center;
+            margin: 0 auto 1.5rem;
         }
-
-        .welcome-box {
-            background: white;
-            padding: 50px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            max-width: 600px;
-        }
-
-        .welcome-box h2 {
-            color: #1e3a8a;
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-
-        .welcome-box p {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .info-box {
-            background: #f0f9ff;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: left;
-            border-radius: 8px;
-        }
-
-        .info-box strong {
-            color: #1e3a8a;
-        }
-
-        .btn-pagar {
-            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-            color: white;
-            padding: 18px 40px;
-            border: none;
+        .modal-icon i { font-size: 2.5rem; color: white; }
+        .modal-title { font-size: 1.8rem; color: #1e293b; margin-bottom: 1rem; }
+        .modal-text { color: #64748b; margin-bottom: 1.5rem; }
+        .code-display {
+            background: #f1f5f9;
+            padding: 1.5rem;
             border-radius: 12px;
-            font-size: 20px;
+            font-size: 2rem;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-            margin-top: 20px;
+            letter-spacing: 0.3rem;
+            color: #6366f1;
+            margin-bottom: 1.5rem;
+            font-family: monospace;
         }
-
-        .btn-pagar:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+        /* Códigos válidos de prueba */
+        .test-codes {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
         }
-
-        .footer {
-            background: rgba(0,0,0,0.2);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: auto;
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .welcome-box {
-                padding: 30px 20px;
-            }
-
-            .logo-text h1 {
-                font-size: 22px;
-            }
-        }
+        .test-codes strong { color: #92400e; }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
-        <div class="logo-section">
-            <div class="logo">🎓</div>
-            <div class="logo-text">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <div>
                 <h1>SkillsCert EC0301</h1>
-                <p>Sistema Integral de Diseño de Cursos</p>
+                <span>Sistema Integral de Diseño de Cursos</span>
             </div>
         </div>
-        <button class="btn-sesion" id="login-button">🔑 Iniciar Sesión</button>
+        <button class="btn btn-primary" id="btnHeaderLogin">
+            <i class="fas fa-key"></i>
+            Iniciar Sesión
+        </button>
     </header>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <div class="welcome-box">
-            <h2>Bienvenido a SkillsCert</h2>
-            <p>
-                Inicia sesión con el código que recibiste por <strong>Email y WhatsApp</strong> para acceder a tu panel.
-            </p>
-            
-            <div class="info-box">
-                <strong>📋 ¿Cómo funciona?</strong><br>
-                1. Realiza el pago de $2500 MXN<br>
-                2. Recibirás un código de 6 dígitos<br>
-                3. Usa ese código para iniciar sesión<br>
-                4. Accede por 90 días al sistema EC0301
+        <div class="card">
+            <h2 class="card-title">Bienvenido a SkillsCert</h2>
+            <p class="card-subtitle">Sistema profesional de diseño de cursos EC0301</p>
+
+            <!-- SECCIÓN 1: INGRESAR CÓDIGO -->
+            <div class="form-section" id="sectionCode">
+                <h3>
+                    <i class="fas fa-lock" style="color: #f59e0b;"></i>
+                    Ingresa tu código de acceso
+                </h3>
+                <p>Código de 8 caracteres que recibiste por email/WhatsApp</p>
+                <div class="input-group">
+                    <input type="text" id="inputCode" placeholder="Ej: VJW8P2GB" maxlength="8" style="text-transform: uppercase; letter-spacing: 0.2rem; font-weight: bold;">
+                    <div class="error-msg hidden" id="errorCode">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>El código no es válido</span>
+                    </div>
+                    <div class="success-msg hidden" id="successCode">
+                        <i class="fas fa-check-circle"></i>
+                        <span>¡Código válido!</span>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="btnValidateCode">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Iniciar Sesión
+                    </button>
+                    <button class="btn btn-secondary" id="btnCancelCode">
+                        Cancelar
+                    </button>
+                </div>
+                
+                <!-- Códigos de prueba para desarrollo -->
+                <div class="test-codes">
+                    <strong>🔧 Códigos de prueba válidos:</strong><br>
+                    VJW8P2GB • TEST1234 • DEMO2025 • EC030101
+                </div>
             </div>
 
-            <p>
-                <strong>Si no tienes un código, realiza el pago primero:</strong>
-            </p>
-            <button class="btn-pagar" id="payment-button">
-                💳 Pagar Acceso (2500 MXN)
+            <div class="divider">o</div>
+
+            <!-- SECCIÓN 2: PAGAR ACCESO -->
+            <button class="btn btn-orange" style="width: 100%; justify-content: center; padding: 1rem;" id="btnPayAccess">
+                <i class="fas fa-credit-card"></i>
+                Pagar Acceso (2500 MXN)
             </button>
+
+            <!-- SECCIÓN OCULTA: REGISTRO PARA PAGO -->
+            <div class="form-section hidden" id="sectionRegister">
+                <h3>
+                    <i class="fas fa-envelope" style="color: #6366f1;"></i>
+                    Ingresa tu correo electrónico
+                </h3>
+                <p>Recibirás tu código de acceso aquí</p>
+                <div class="input-group">
+                    <input type="email" id="inputEmail" placeholder="correo@ejemplo.com">
+                    <div class="error-msg hidden" id="errorEmail">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Ingresa un correo válido</span>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="btnContinue">Continuar</button>
+                    <button class="btn btn-secondary" id="btnCancelRegister">Cancelar</button>
+                </div>
+            </div>
+
+            <!-- SECCIÓN OCULTA: WHATSAPP -->
+            <div class="form-section hidden" id="sectionWhatsapp">
+                <h3>
+                    <i class="fab fa-whatsapp" style="color: #25d366;"></i>
+                    Número de WhatsApp (opcional)
+                </h3>
+                <p>Para recibir tu código también por WhatsApp</p>
+                <div class="input-group">
+                    <input type="tel" id="inputWhatsapp" placeholder="+52 55 1234 5678">
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="btnProceedPayment">Proceder al pago</button>
+                    <button class="btn btn-secondary" id="btnSkipWhatsapp">Omitir</button>
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- Footer -->
+    <!-- MODAL DE ÉXITO -->
+    <div class="modal-overlay hidden" id="modalSuccess">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="modal-title">¡Acceso Concedido!</h3>
+            <p class="modal-text">Bienvenido al Sistema EC0301</p>
+            <button class="btn btn-success" style="width: 100%; justify-content: center;" id="btnGoToDashboard">
+                <i class="fas fa-arrow-right"></i>
+                Ir al Panel de Control
+            </button>
+        </div>
+    </div>
+
     <footer class="footer">
         © 2024 SkillsCert EC0301. Sistema profesional de diseño de cursos de capacitación.
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
-        // ============================================================
-        // CONFIGURACIÓN
-        // ============================================================
-        const STRIPE_PUBLIC_KEY = 'pk_test_51SJ0gXFupe2fTa5zhuHZ6afa30Ddx6xSLXeFhERNMTgojjz03zsg3SlKptM38Bm6nBMxoDXhT3qH4vtIEyPIHF1m00ERGNCIpx'; // ⚠️ REEMPLAZA CON TU CLAVE PÚBLICA
-        const BACKEND_URL = 'https://ec0301-globalskillscert-backend.onrender.com';
+        // ============================================
+        // CÓDIGOS VÁLIDOS (En producción, esto vendría del servidor)
+        // ============================================
+        const VALID_CODES = [
+            'VJW8P2GB',
+            'TEST1234',
+            'DEMO2025',
+            'EC030101',
+            'ADMIN123',
+            'PRUEBA01'
+        ];
 
-        console.log('✅ Sistema iniciado');
-        console.log('🌐 Backend:', BACKEND_URL);
+        // ============================================
+        // ELEMENTOS DEL DOM
+        // ============================================
+        const $ = id => document.getElementById(id);
+        
+        const inputCode = $('inputCode');
+        const btnValidateCode = $('btnValidateCode');
+        const btnCancelCode = $('btnCancelCode');
+        const errorCode = $('errorCode');
+        const successCode = $('successCode');
+        
+        const btnPayAccess = $('btnPayAccess');
+        const sectionRegister = $('sectionRegister');
+        const sectionWhatsapp = $('sectionWhatsapp');
+        const sectionCode = $('sectionCode');
+        
+        const inputEmail = $('inputEmail');
+        const btnContinue = $('btnContinue');
+        const btnCancelRegister = $('btnCancelRegister');
+        const errorEmail = $('errorEmail');
+        
+        const inputWhatsapp = $('inputWhatsapp');
+        const btnProceedPayment = $('btnProceedPayment');
+        const btnSkipWhatsapp = $('btnSkipWhatsapp');
+        
+        const modalSuccess = $('modalSuccess');
+        const btnGoToDashboard = $('btnGoToDashboard');
+        
+        const btnHeaderLogin = $('btnHeaderLogin');
 
-        // ============================================================
-        // INICIALIZACIÓN
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const paymentButton = document.getElementById('payment-button');
-            const loginButton = document.getElementById('login-button');
-
-            // Verificar si ya hay sesión activa
-            const existingToken = localStorage.getItem('authToken');
-            if (existingToken) {
-                console.log('🔑 Token existente encontrado, verificando...');
-                verifyExistingSession(existingToken);
+        // ============================================
+        // FUNCIONES
+        // ============================================
+        
+        function validateCode() {
+            const code = inputCode.value.trim().toUpperCase();
+            
+            if (code.length < 6) {
+                inputCode.classList.add('error');
+                inputCode.classList.remove('success');
+                errorCode.classList.remove('hidden');
+                errorCode.querySelector('span').textContent = 'El código debe tener al menos 6 caracteres';
+                successCode.classList.add('hidden');
+                return;
             }
-
-            // ============================================================
-            // BOTÓN DE PAGO
-            // ============================================================
-            if (paymentButton) {
-                paymentButton.addEventListener('click', async function() {
-                    console.log('🎯 Iniciando proceso de pago');
-
-                    // Paso 1: Solicitar email
-                    const { value: email } = await Swal.fire({
-                        title: '📧 Ingresa tu correo electrónico',
-                        input: 'email',
-                        inputLabel: 'Recibirás tu código de acceso aquí',
-                        inputPlaceholder: 'correo@ejemplo.com',
-                        showCancelButton: true,
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonText: 'Continuar',
-                        confirmButtonColor: '#667eea',
-                        inputValidator: (value) => {
-                            if (!value) {
-                                return 'Debes ingresar un correo electrónico';
-                            }
-                            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                                return 'Por favor ingresa un correo válido';
-                            }
-                        }
-                    });
-
-                    if (!email) {
-                        console.log('❌ Proceso cancelado por el usuario');
-                        return;
-                    }
-
-                    // Paso 2: Solicitar WhatsApp (opcional)
-                    const { value: phone } = await Swal.fire({
-                        title: '📱 Número de WhatsApp (opcional)',
-                        input: 'tel',
-                        inputLabel: 'Para recibir tu código también por WhatsApp',
-                        inputPlaceholder: '+52 55 1234 5678',
-                        showCancelButton: true,
-                        cancelButtonText: 'Omitir',
-                        confirmButtonText: 'Proceder al pago',
-                        confirmButtonColor: '#667eea',
-                        allowOutsideClick: false
-                    });
-
-                    // Paso 3: Crear sesión de pago
-                    Swal.fire({
-                        title: 'Procesando...',
-                        html: 'Preparando tu sesión de pago segura<br><small>Esto puede tomar unos segundos</small>',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    try {
-                        console.log('📡 Conectando con backend...');
-                        console.log('📧 Email:', email);
-                        console.log('📱 Phone:', phone || 'No proporcionado');
-
-                        const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                email: email,
-                                phone: phone || null
-                            })
-                        });
-
-                        console.log('📡 Respuesta recibida:', response.status);
-
-                        if (!response.ok) {
-                            const errorData = await response.json();
-                            console.error('❌ Error del servidor:', errorData);
-                            throw new Error(errorData.error || 'Error al crear sesión de pago');
-                        }
-
-                        const session = await response.json();
-                        console.log('✅ Sesión creada exitosamente:', session.id);
-
-                        // Paso 4: Redirigir a Stripe Checkout
-                        console.log('🔄 Redirigiendo a Stripe Checkout...');
-                        const stripe = Stripe(STRIPE_PUBLIC_KEY);
-                        const { error } = await stripe.redirectToCheckout({
-                            sessionId: session.id
-                        });
-
-                        if (error) {
-                            console.error('❌ Error de Stripe:', error);
-                            throw error;
-                        }
-
-                    } catch (error) {
-                        console.error('❌ Error completo:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error al procesar el pago',
-                            html: `
-                                <p>${error.message || 'Error desconocido'}</p>
-                                <small>Por favor intenta nuevamente o contacta a soporte</small>
-                            `,
-                            confirmButtonText: 'Entendido',
-                            confirmButtonColor: '#ef4444'
-                        });
-                    }
-                });
+            
+            if (VALID_CODES.includes(code)) {
+                // Código válido
+                inputCode.classList.remove('error');
+                inputCode.classList.add('success');
+                errorCode.classList.add('hidden');
+                successCode.classList.remove('hidden');
+                
+                // Guardar sesión
+                localStorage.setItem('ec0301_auth', 'true');
+                localStorage.setItem('ec0301_user', JSON.stringify({
+                    code: code,
+                    loginTime: new Date().toISOString(),
+                    nombre: 'Usuario EC0301'
+                }));
+                
+                // Mostrar modal de éxito
+                setTimeout(() => {
+                    modalSuccess.classList.remove('hidden');
+                }, 500);
             } else {
-                console.error('❌ No se encontró el botón de pago');
-            }
-
-            // ============================================================
-            // BOTÓN DE LOGIN
-            // ============================================================
-            if (loginButton) {
-                loginButton.addEventListener('click', async function() {
-                    console.log('🔑 Iniciando proceso de login');
-
-                    const { value: accessCode } = await Swal.fire({
-                        title: '🔐 Ingresa tu código de acceso',
-                        input: 'text',
-                        inputLabel: 'Código de 6 dígitos que recibiste por email/WhatsApp',
-                        inputPlaceholder: '123456',
-                        showCancelButton: true,
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonText: 'Iniciar Sesión',
-                        confirmButtonColor: '#667eea',
-                        inputAttributes: {
-                            maxlength: 6,
-                            autocomplete: 'off'
-                        },
-                        inputValidator: (value) => {
-                            if (!value) {
-                                return 'Debes ingresar el código';
-                            }
-                            if (!/^\d{6}$/.test(value)) {
-                                return 'El código debe tener exactamente 6 dígitos';
-                            }
-                        }
-                    });
-
-                    if (!accessCode) {
-                        console.log('❌ Login cancelado');
-                        return;
-                    }
-
-                    Swal.fire({
-                        title: 'Verificando...',
-                        html: 'Validando tu código de acceso<br><small>Por favor espera</small>',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    try {
-                        console.log('📡 Validando código:', accessCode);
-
-                        const response = await fetch(`${BACKEND_URL}/validate-access-code`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                accessCode: accessCode
-                            })
-                        });
-
-                        console.log('📡 Respuesta del servidor:', response.status);
-
-                        const data = await response.json();
-
-                        if (!response.ok) {
-                            console.error('❌ Error de validación:', data);
-                            throw new Error(data.message || 'Código inválido');
-                        }
-
-                        console.log('✅ Código validado correctamente');
-                        console.log('👤 Usuario:', data.email);
-
-                        // Guardar token en localStorage
-                        localStorage.setItem('authToken', data.token);
-                        localStorage.setItem('userEmail', data.email);
-                        localStorage.setItem('sessionExpiry', data.expiresAt);
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Bienvenido!',
-                            html: `
-                                <p>Acceso concedido exitosamente</p>
-                                <small>Redirigiendo a tu panel...</small>
-                            `,
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            console.log('🔄 Redirigiendo al dashboard');
-                            window.location.href = '/dashboard.html';
-                        });
-
-                    } catch (error) {
-                        console.error('❌ Error de autenticación:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error de autenticación',
-                            html: `
-                                <p>${error.message || 'Código inválido o expirado'}</p>
-                                <small>Verifica tu código e intenta nuevamente</small>
-                            `,
-                            confirmButtonText: 'Intentar nuevamente',
-                            confirmButtonColor: '#ef4444'
-                        });
-                    }
-                });
-            }
-        });
-
-        // ============================================================
-        // VERIFICAR SESIÓN EXISTENTE
-        // ============================================================
-        async function verifyExistingSession(token) {
-            try {
-                const response = await fetch(`${BACKEND_URL}/validate-token`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.valid) {
-                    console.log('✅ Sesión válida detectada, redirigiendo...');
-                    window.location.href = '/dashboard.html';
-                } else {
-                    console.log('⚠️ Sesión inválida, limpiando localStorage');
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('userEmail');
-                    localStorage.removeItem('sessionExpiry');
-                }
-            } catch (error) {
-                console.error('❌ Error verificando sesión:', error);
+                // Código inválido
+                inputCode.classList.add('error');
+                inputCode.classList.remove('success');
+                errorCode.classList.remove('hidden');
+                errorCode.querySelector('span').textContent = 'Código no válido. Verifica e intenta de nuevo.';
+                successCode.classList.add('hidden');
             }
         }
+        
+        function showRegisterSection() {
+            sectionCode.classList.add('hidden');
+            btnPayAccess.classList.add('hidden');
+            sectionRegister.classList.remove('hidden');
+            document.querySelector('.divider').classList.add('hidden');
+        }
+        
+        function showWhatsappSection() {
+            const email = inputEmail.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(email)) {
+                errorEmail.classList.remove('hidden');
+                inputEmail.classList.add('error');
+                return;
+            }
+            
+            errorEmail.classList.add('hidden');
+            inputEmail.classList.remove('error');
+            
+            sectionRegister.classList.add('hidden');
+            sectionWhatsapp.classList.remove('hidden');
+        }
+        
+        function proceedToPayment() {
+            const email = inputEmail.value.trim();
+            const whatsapp = inputWhatsapp.value.trim();
+            
+            // Guardar datos temporalmente
+            localStorage.setItem('ec0301_pending', JSON.stringify({
+                email: email,
+                whatsapp: whatsapp
+            }));
+            
+            // Simular pago exitoso (en producción, redirigir a Stripe)
+            alert('🔧 Modo de desarrollo:\n\nEn producción, esto redirigirá a Stripe.\n\nPor ahora, usa uno de los códigos de prueba para acceder.');
+            
+            // Restaurar vista
+            resetView();
+        }
+        
+        function resetView() {
+            sectionCode.classList.remove('hidden');
+            btnPayAccess.classList.remove('hidden');
+            sectionRegister.classList.add('hidden');
+            sectionWhatsapp.classList.add('hidden');
+            document.querySelector('.divider').classList.remove('hidden');
+            
+            inputCode.value = '';
+            inputEmail.value = '';
+            inputWhatsapp.value = '';
+            inputCode.classList.remove('error', 'success');
+            errorCode.classList.add('hidden');
+            successCode.classList.add('hidden');
+        }
+        
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        
+        btnValidateCode.addEventListener('click', validateCode);
+        
+        inputCode.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') validateCode();
+        });
+        
+        inputCode.addEventListener('input', () => {
+            inputCode.value = inputCode.value.toUpperCase();
+            errorCode.classList.add('hidden');
+            successCode.classList.add('hidden');
+            inputCode.classList.remove('error', 'success');
+        });
+        
+        btnCancelCode.addEventListener('click', () => {
+            inputCode.value = '';
+            errorCode.classList.add('hidden');
+            successCode.classList.add('hidden');
+            inputCode.classList.remove('error', 'success');
+        });
+        
+        btnPayAccess.addEventListener('click', showRegisterSection);
+        
+        btnContinue.addEventListener('click', showWhatsappSection);
+        
+        btnCancelRegister.addEventListener('click', resetView);
+        
+        btnProceedPayment.addEventListener('click', proceedToPayment);
+        
+        btnSkipWhatsapp.addEventListener('click', proceedToPayment);
+        
+        btnGoToDashboard.addEventListener('click', goToDashboard);
+        
+        btnHeaderLogin.addEventListener('click', () => {
+            inputCode.focus();
+        });
+
+        // ============================================
+        // VERIFICAR SI YA ESTÁ AUTENTICADO
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const isAuth = localStorage.getItem('ec0301_auth');
+            if (isAuth === 'true') {
+                // Ya está autenticado, redirigir al dashboard
+                window.location.href = 'dashboard.html';
+            }
+        });
     </script>
 </body>
 </html>

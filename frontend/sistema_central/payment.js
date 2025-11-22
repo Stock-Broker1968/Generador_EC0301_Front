@@ -1,58 +1,61 @@
-// sistema_central/payment.js
-// Gestión de pagos (Frontend) - Conectado correctamente a index.html y Backend
+// sistema_central/payment.js (VERSIÓN FRONTEND)
 
+// URL de tu backend en Render
 const PAYMENT_API_URL = 'https://ec0301-globalskillscert-backend.onrender.com';
 
 const payment = {
-    // Función principal llamada desde index.html
     startCheckout: async (email, nombre, telefono) => {
         try {
-            // 1. Feedback visual inmediato
+            // 1. Mostrar aviso de carga
             Swal.fire({
-                title: 'Conectando con Stripe...',
-                text: 'Estamos preparando tu pago seguro.',
+                title: 'Procesando...',
+                text: 'Conectando con la pasarela de pago segura.',
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
                 }
             });
 
-            console.log("Iniciando pago para:", email);
-
-            // 2. Petición al Backend
+            // 2. Pedir la sesión al Backend
             const response = await fetch(`${PAYMENT_API_URL}/create-checkout-session`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({ 
                     email: email,
                     nombre: nombre,
                     telefono: telefono,
-                    courseName: 'Certificación EC0301' // Nombre del producto
+                    courseName: 'Certificación EC0301'
                 })
             });
 
-            const data = await response.json();
-            console.log("Respuesta del servidor:", data);
+            if (!response.ok) {
+Utilice Control + Shift + m para alternar el foco móvil de la tecla tab. Alternativamente, use esc y luego tab para pasar al siguiente elemento interactivo de la página.
+¡La traducción de páginas con IA ya está disponible! Haz clic aquí para configurarla.
+                throw new Error(`Error del servidor: ${response.status}`);
+            }
 
-            // 3. Validación flexible (Funciona con tu backend actual)
-            // Tu backend devuelve { url: '...', ... }
+            const data = await response.json();
+
+            // 3. Redirigir si hay URL
             if (data.url) {
-                window.location.href = data.url; // Redirigir a Stripe
+                window.location.href = data.url;
             } else {
-                console.error('Error: El servidor no devolvió una URL.', data);
-                throw new Error(data.error || 'No se recibió el enlace de pago');
+                console.error('Respuesta sin URL:', data);
+                throw new Error('El sistema no devolvió el enlace de pago.');
             }
 
         } catch (error) {
-            console.error('Error crítico en pago:', error);
+            console.error('Error en payment.js:', error);
             Swal.fire({
                 icon: 'error',
                 title: 'Error de conexión',
-                text: 'No se pudo conectar con el servidor de pagos. Revisa tu internet e intenta de nuevo.'
+                text: 'No se pudo conectar con el servidor. Verifica tu internet o intenta más tarde.'
             });
         }
     }
 };
 
-// Exponer globalmente
+// Exponer al navegador
 window.payment = payment;
